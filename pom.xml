@@ -108,9 +108,6 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <modules>
-
-            </modules>
             <properties>
                 <!-- when i will try to enter this address the app will start :) -->
                 <!-- for development i want to use my local host -->
@@ -142,7 +139,7 @@
            					here for the local profile -->
                 <!-- this properties are good for all the maven modules -->
                 <server_host>github.com</server_host>
-                <server_path>/jayway/maven-android-plugin-samples</server_path>
+                <server_path>/nutgaard/KPro---Thales</server_path>
             </properties>
         </profile>
     </profiles>
