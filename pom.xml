@@ -108,6 +108,11 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <modules>
+                <module>kpro-lib</module>
+                <module>kpro-app</module>
+                <module>kpro-instrumentation</module>
+            </modules>
             <properties>
                 <!-- when i will try to enter this address the app will start :) -->
                 <!-- for development i want to use my local host -->
@@ -131,6 +136,8 @@
                 </property>
             </activation>
             <modules>
+                <module>kpro-lib</module>
+                <module>kpro-app</module>
             </modules>
             <properties>
                 <!-- when i will try to enter this address the app will start :) -->

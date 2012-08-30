@@ -6,6 +6,6 @@
         <uses-library android:name="android.test.runner"/>
     </application>
     <instrumentation android:name="android.test.InstrumentationTestRunner"
-                     android:targetPackage="no.ntnu.kpro.Application"
+                     android:targetPackage="no.ntnu.kpro"
                      android:label="Tests for KPro---Thales."/>
 </manifest>
