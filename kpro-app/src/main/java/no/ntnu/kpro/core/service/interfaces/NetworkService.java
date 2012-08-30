@@ -8,6 +8,6 @@ package no.ntnu.kpro.core.service.interfaces;
  *
  * @author Nicklas
  */
-public interface NetworkService extends Service {
+public interface NetworkService extends ServiceInterface {
     
 }

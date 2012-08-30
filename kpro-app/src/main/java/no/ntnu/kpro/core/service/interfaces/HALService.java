@@ -8,6 +8,6 @@ package no.ntnu.kpro.core.service.interfaces;
  *
  * @author Nicklas
  */
-public interface HALService extends Service {
+public interface HALService extends ServiceInterface {
     
 }

@@ -7,5 +7,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+	<service android:name="no.ntnu.kpro.core.service.ServiceProvider">
+		<intent-filter>
+        		<action android:name="no.ntnu.kpro.core.service.ServiceProvider"/>
+		</intent-filter>
+	</service>
     </application>
 </manifest>

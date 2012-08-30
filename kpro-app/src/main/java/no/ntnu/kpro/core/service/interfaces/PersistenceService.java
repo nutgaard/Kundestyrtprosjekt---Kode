@@ -8,6 +8,6 @@ package no.ntnu.kpro.core.service.interfaces;
  *
  * @author Nicklas
  */
-public interface PersistenceService extends Service {
+public interface PersistenceService extends ServiceInterface {
     
 }
