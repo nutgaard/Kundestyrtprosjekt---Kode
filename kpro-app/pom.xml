@@ -52,6 +52,12 @@
                         <artifactId>activation</artifactId>
                         <version>1.0</version>
                 </dependency>
+	 <dependency>
+	  <groupId>com.google</groupId>
+	  <artifactId>android</artifactId>
+	  <version>2.2_r2</version>
+	  <type>jar</type>
+	 </dependency>
 	</dependencies>
 
 	<build>
