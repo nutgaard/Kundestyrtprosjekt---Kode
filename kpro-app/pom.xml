@@ -37,6 +37,21 @@
 			<artifactId>android-test</artifactId>
 			<scope>provided</scope>
 		</dependency>
+                <dependency>
+                        <groupId>javax.mail</groupId>
+                        <artifactId>mail</artifactId>
+                        <version>1.0</version>
+                </dependency>
+                <dependency>
+                        <groupId>javax.mail</groupId>
+                        <artifactId>additionnal</artifactId>
+                        <version>1.0</version>
+                </dependency>
+                <dependency>
+                        <groupId>javax.mail</groupId>
+                        <artifactId>activation</artifactId>
+                        <version>1.0</version>
+                </dependency>
 	</dependencies>
 
 	<build>

@@ -4,6 +4,7 @@
  */
 package no.ntnu.kpro.core.service.factories;
 
+import no.ntnu.kpro.core.service.implementation.NetworkService.Mail;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 /**
@@ -12,6 +13,6 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  */
 public class NetworkServiceFactory {
     public static NetworkService createService() {
-        return null;
+        return new Mail();
     }
 }
