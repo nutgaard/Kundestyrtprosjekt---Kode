@@ -10,7 +10,7 @@
     
 
     <properties>
-        <android.sdk.path>C:\Program Files (x86)\Android\android-sdk</android.sdk.path>
+        <android.sdk.path>/Users/aleksandersjafjell/Documents/android-sdk-macosx</android.sdk.path>
     </properties>
   
     <dependencyManagement>
