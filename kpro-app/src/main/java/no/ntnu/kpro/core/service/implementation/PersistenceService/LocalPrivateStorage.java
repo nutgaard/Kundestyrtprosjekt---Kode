@@ -4,13 +4,10 @@
  */
 package no.ntnu.kpro.core.service.implementation.PersistenceService;
 
-import android.content.*;
+import android.content.Context;
 import android.util.Log;
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import no.ntnu.kpro.core.service.interfaces.PersistenceService;
 
 /**
@@ -25,9 +22,9 @@ public class LocalPrivateStorage implements PersistenceService {
      * @param content File content.
      * @returns true if file saved successfully, else false.
      */
-    public boolean saveToStorage(String fileName, String content) {
+    public boolean saveToStorage(String fileName, String content, Context context) {
         try{
-            FileOutputStream fos = openFileOutput(fileName, Context.MODE_PRIVATE);
+            FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
             fos.write(content.getBytes());
             fos.close();
             return true;
@@ -47,5 +44,17 @@ public class LocalPrivateStorage implements PersistenceService {
              
              
         
+    }
+
+    public boolean authorize(String userName, String password) {
+        return true;
+    }
+
+    public boolean isAuthorized() {
+        return true;
+    }
+
+    public boolean removeFile(String fileName) {
+        return true;
     }
 }

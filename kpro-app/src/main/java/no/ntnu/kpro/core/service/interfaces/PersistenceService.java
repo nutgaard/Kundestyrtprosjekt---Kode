@@ -4,7 +4,7 @@
  */
 package no.ntnu.kpro.core.service.interfaces;
 
-import android.content.SharedPreferences;
+import android.content.Context;
 import java.io.BufferedReader;
 
 /**
@@ -23,7 +23,7 @@ public interface PersistenceService extends ServiceInterface {
     
     public boolean isAuthorized();
     
-    public boolean saveToStorage(String fileName, String content);
+    public boolean saveToStorage(String fileName, String content, Context context);
     
     public BufferedReader readFromStorage(String fileName);
     
