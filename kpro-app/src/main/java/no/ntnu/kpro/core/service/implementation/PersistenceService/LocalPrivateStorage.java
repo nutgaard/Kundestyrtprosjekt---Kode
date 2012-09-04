@@ -41,10 +41,6 @@ public class LocalPrivateStorage implements PersistenceService {
      */
     public BufferedReader readFromStorage(String fileName) {
         return null;
-        fileList();
-             
-             
-        
     }
 
     public boolean authorize(String userName, String password) {
