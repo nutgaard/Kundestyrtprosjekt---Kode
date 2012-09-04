@@ -33,6 +33,17 @@ public class MainActivity extends Activity {
         Log.i(TAG, "StartService: "+startService(serviceIntent));
         Log.i(TAG, "No errors, service should be running");
         
+        Button b = (Button)findViewById(R.id.login_button);
+        
+        b.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+               Intent myIntent = new Intent(view.getContext(), SendMessageActivity.class);
+               startActivityForResult(myIntent, 0);
+            }
+        });
+        
+        /*
         Button b = (Button)findViewById(R.id.morse);
         b.setOnClickListener(new View.OnClickListener() {
 
@@ -41,6 +52,6 @@ public class MainActivity extends Activity {
                 NetworkService ns = NetworkServiceFactory.createService();
                 ns.sendMail("Testmail", "This is the testBody", "nutgaard@gmail.com", "nutgaard@gmail.com");
             }
-        });
+        });*/
     }
 }
