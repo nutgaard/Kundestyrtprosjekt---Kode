@@ -12,21 +12,24 @@ import java.io.BufferedReader;
  * @author Aleksander Sjåfjell
  */
 public interface PersistenceService extends ServiceInterface {
-    
+
+    public interface callback {
+    }
+
     /**
      * Authorize the user for saving to persistence
+     *
      * @param userName
      * @param password
      * @return true if user was successfully authorized, else false.
      */
     public boolean authorize(String userName, String password);
-    
+
     public boolean isAuthorized();
-    
+
     public boolean saveToStorage(String fileName, String content, Context context);
-    
+
     public BufferedReader readFromStorage(String fileName);
-    
+
     public boolean removeFile(String fileName);
-    
 }
