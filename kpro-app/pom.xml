@@ -16,6 +16,7 @@
         <environment>development</environment>
     </properties>
 
+<<<<<<< HEAD
     <dependencies>
         <dependency>
             <groupId>no.ntnu.kpro</groupId>
@@ -59,6 +60,52 @@
             <type>jar</type>
         </dependency>-->
     </dependencies>
+=======
+	<dependencies>
+		<dependency>
+			<groupId>no.ntnu.kpro</groupId>
+			<artifactId>kpro-library</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.android</groupId>
+			<artifactId>android</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.android</groupId>
+			<artifactId>android-test</artifactId>
+			<scope>provided</scope>
+		</dependency>
+                <dependency>
+                        <groupId>javax.mail</groupId>
+                        <artifactId>mail</artifactId>
+                        <version>1.0</version>
+                </dependency>
+                <dependency>
+                        <groupId>javax.mail</groupId>
+                        <artifactId>additionnal</artifactId>
+                        <version>1.0</version>
+                </dependency>
+                <dependency>
+                        <groupId>javax.mail</groupId>
+                        <artifactId>activation</artifactId>
+                        <version>1.0</version>
+                </dependency>
+	 <dependency>
+	  <groupId>com.google</groupId>
+	  <artifactId>android</artifactId>
+	  <version>2.2.1</version>
+          <scope>provided</scope>
+	  <type>jar</type>
+	 </dependency>
+	</dependencies>
+>>>>>>> Changed version in dependency for app
 
     <build>
         <finalName>${project.artifactId}</finalName>
