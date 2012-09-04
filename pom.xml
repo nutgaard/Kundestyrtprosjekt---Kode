@@ -10,7 +10,7 @@
     
 
     <properties>
-        <android.sdk.path>/Users/aleksandersjafjell/Documents/android-sdk-macosx</android.sdk.path>
+        <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
     </properties>
   
     <dependencyManagement>
