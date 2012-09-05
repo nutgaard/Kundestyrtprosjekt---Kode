@@ -6,14 +6,12 @@ package no.ntnu.kpro.app;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
-import no.ntnu.kpro.app.R;
 
 /**
  *
  * @author Kristin
  */
-public class SendMessageActivity extends Activity{
+public class SendMessageActivity extends WrapperActivity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.send_message);
