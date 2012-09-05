@@ -20,7 +20,8 @@ import javax.mail.internet.MimeMessage;
  *
  * @author Nicklas
  */
-public class SimpleSMTPSender extends Authenticator implements NetworkService {
+@Deprecated
+public class SimpleSMTPSender extends Authenticator {
     private String mailhost = "smtp.gmail.com";
     private String user;
     private String password;

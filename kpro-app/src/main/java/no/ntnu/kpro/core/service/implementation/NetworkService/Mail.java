@@ -22,7 +22,8 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  *
  * @author Nicklas
  */
-public class Mail extends javax.mail.Authenticator implements NetworkService {    
+@Deprecated
+public class Mail extends javax.mail.Authenticator {    
 
     private String _user;    
     private String _pass;    
@@ -111,6 +112,9 @@ public class Mail extends javax.mail.Authenticator implements NetworkService {
             Log.e("KPRO", "Something went wrong");
         }        
     }    
+    public void receiveMail() {
+        Properties props = _setProperties();
+    }
     
     public void addAttachment(String filename) throws Exception {        
         BodyPart messageBodyPart = new MimeBodyPart();        
@@ -129,7 +133,7 @@ public class Mail extends javax.mail.Authenticator implements NetworkService {
     private Properties _setProperties() {        
         Properties props = new Properties();        
         
-        props.put("mail.smtp.host", _host);        
+        props.put("mail.smtp.host", _host);    
         
         if (_debuggable) {            
             props.put("mail.debug", "true");            
@@ -139,10 +143,15 @@ public class Mail extends javax.mail.Authenticator implements NetworkService {
             props.put("mail.smtp.auth", "true");            
         }        
         
+        
+        //SMTP
         props.put("mail.smtp.port", _port);        
         props.put("mail.smtp.socketFactory.port", _sport);        
         props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");        
-        props.put("mail.smtp.socketFactory.fallback", "false");        
+        props.put("mail.smtp.socketFactory.fallback", "false");
+        
+        //IMAP
+        
         
         return props;        
     }
