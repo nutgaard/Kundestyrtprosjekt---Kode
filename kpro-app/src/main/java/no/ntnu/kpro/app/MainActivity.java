@@ -17,7 +17,7 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  *
  * @author Nicklas
  */
-public class MainActivity extends Activity {
+public class MainActivity extends WrapperActivity {
     private static final String TAG = "KPRO";
     
     @Override
