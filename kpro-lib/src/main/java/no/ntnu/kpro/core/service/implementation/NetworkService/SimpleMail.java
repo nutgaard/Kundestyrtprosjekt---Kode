@@ -19,6 +19,9 @@ public class SimpleMail implements NetworkService {
     private final String mailAdr;
     private Properties props;
     private Authenticator auth;
+    private final IMAPNotification callback;
+    private boolean run = true;
+    private Store store;
 
     public SimpleMail(final String username, final String password, final String mailAdr) {
         this.props = new Properties();
@@ -34,6 +37,7 @@ public class SimpleMail implements NetworkService {
         this.props.put("mail.imaps.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         this.props.put("mail.imaps.port", "993");
 
+        this.callback = new IMAPNotification();
 
         this.auth = new Authenticator() {
 
@@ -68,35 +72,30 @@ public class SimpleMail implements NetworkService {
             return false;
         }
     }
-
-    public void get() {
+    public void stopIMAP() {
+        if (store != null){
+            try {
+                store.close();
+            } catch (MessagingException ex) {
+                Logger.getLogger(SimpleMail.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    public void startIMAP() {
         try {
             Session session = Session.getDefaultInstance(props, auth);
-            Store store = session.getStore("imaps");
+            
+            store = session.getStore("imaps");
             store.connect();
             System.out.println("Store: store");
-
             IMAPFolder inbox = (IMAPFolder) store.getFolder("Inbox");
+            inbox.open(Folder.READ_ONLY);
+            inbox.addMessageCountListener(this.callback);
 
-            inbox.addMessageCountListener(new MessageCountListener() {
-
-                public void messagesAdded(MessageCountEvent mce) {
-                    System.out.println("New message");
-                }
-
-                public void messagesRemoved(MessageCountEvent mce) {
-                    System.out.println("Message removed");
-                }
-            });
-            inbox.open(Folder.READ_WRITE);
-            inbox.idle();
-            System.out.println("Messages: " + inbox.getMessageCount());
-//            Message[] messages = inbox.getMessages();
-//            for (Message m : messages) {
-//                System.out.println(m);
-//            }
-        } catch (MessagingException ex) {
-            Logger.getLogger(SimpleMail.class.getName()).log(Level.SEVERE, null, ex);
+            while (this.run) {
+                inbox.idle();
+            }
+        } catch (Exception e) {
         }
     }
 
@@ -106,5 +105,37 @@ public class SimpleMail implements NetworkService {
 
     public void setAuth(Authenticator auth) {
         this.auth = auth;
+    }
+    public class IMAPNotification implements MessageCountListener {
+
+        public void messagesAdded(MessageCountEvent mce) {
+            try {
+//                System.out.println("New message");
+                System.out.println("");
+                for (Message m : mce.getMessages()) {
+                    Multipart content = (Multipart)m.getContent();
+                    System.out.println("New Mail");
+                    System.out.println("From: "+m.getFrom()[0].toString()+ "@"+m.getReceivedDate());
+                    System.out.println("Subject: "+m.getSubject());
+                    System.out.println("");
+                    for (int i = 0;i< content.getCount();i++){
+                        BodyPart bp = content.getBodyPart(i);
+                        if (bp.getContentType().startsWith("TEXT/")){
+                            System.out.println(bp.getContent());
+                            break;
+                        }
+                    }
+                    System.out.println("");
+                }
+
+            } catch (Exception ex) {
+                Logger.getLogger(SimpleMail.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+            }
+        }
+
+        public void messagesRemoved(MessageCountEvent mce) {
+            System.out.println("Message removed");
+        }
     }
 }

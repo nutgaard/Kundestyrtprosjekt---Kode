@@ -1,18 +1,10 @@
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
-import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.DummySSLSocketFactory;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import com.sun.mail.smtp.SMTPTransport;
-import java.io.IOException;
 import java.security.Security;
-import java.util.Date;
 import java.util.Properties;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import org.junit.After;
 import static org.junit.Assert.*;
