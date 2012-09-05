@@ -4,26 +4,36 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-    <TextView
-        android:text="@string/messageTextToFlash"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        />
-    <EditText
-        android:id="@+id/message"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        />
     <Button
-        android:id="@+id/morse"
-        android:text="@string/morseFlashNow"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        />
-    <TextView
-        android:text="@string/deployment"
-        android:layout_width="wrap_content"
+        android:text="Emergency"
+        android:drawableLeft="@drawable/icon"
+    />
+    <View
+        android:layout_width="1dp"
+        android:layout_height="30dp">
+    </View>
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        />
+        android:maxLength="10"
+        android:maxLines="1"
+    />
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:maxLength="10"
+        android:maxLines="1"
+    />
+    <Button
+        android:id="@+id/login_button"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Log In"
+    />
 </LinearLayout>
 
