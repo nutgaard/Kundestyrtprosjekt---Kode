@@ -35,11 +35,11 @@ public class SimpleMailTest {
         public void setup() {
             Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory.class.getName());
             this.props = new Properties();
-            this.props.put("mail.smtp.host", LOCALHOST);
-            this.props.put("mail.smtp.auth", "true");
-            this.props.put("mail.smtp.port", ServerSetupTest.SMTP.getPort());
+            this.props.put("mail.smtps.host", LOCALHOST);
+            this.props.put("mail.smtps.auth", "true");
+            this.props.put("mail.smtps.port", ServerSetupTest.SMTPS.getPort());
 
-            this.mailServer = new GreenMail(ServerSetupTest.SMTP);
+            this.mailServer = new GreenMail(ServerSetupTest.SMTPS);
             this.mailServer.start();
             this.mailServer.setUser(EMAIL_USER_ADDRESS, USER_NAME, USER_PASSWORD);
             this.mailClient = new SimpleMail(USER_NAME, USER_PASSWORD, EMAIL_USER_ADDRESS);
@@ -55,7 +55,7 @@ public class SimpleMailTest {
         }
 
         @Test
-        public void getMails() throws Exception {
+        public void sendMail_Mock() throws Exception {
 //            System.out.println("Test: getMails");
             boolean b = mailClient.sendMail(EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT);
 //            System.out.println("B: " + b);
@@ -85,7 +85,7 @@ public class SimpleMailTest {
 //            System.out.println("Teardown complete");
         }
         @Test
-        public void sendMail() {
+        public void sendMail_Real() {
             boolean b = mailClient.sendMail(EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT);
             assertTrue(b);
         }
