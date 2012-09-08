@@ -10,16 +10,14 @@
                   android:orientation="horizontal"
                   android:layout_width="fill_parent"  
                   android:layout_height="wrap_content"> 
-        <TextView
-            android:id="@+id/receiver_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Receiver:"/>
+        <!-- Receiver -->
         <EditText
             android:id="@+id/receiver"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
+            android:hint="To"
         />
+        <!-- Address book -->
         <ImageButton
             android:id="@+id/contacts_button"
             android:layout_width="wrap_content"
@@ -34,14 +32,33 @@
                   android:layout_height="wrap_content"
                   android:layout_below="@+id/receiver_layout"
     >
-        <TextView
-            android:id="@+id/subject_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Subject:"/>
+        <!-- Subject -->
         <EditText
             android:id="@+id/subject"
-            android:layout_width="150dp"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:hint="Subject"
+        />
+    </LinearLayout>
+     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
+                  android:id="@+id/special_layout"
+                  android:orientation="horizontal"
+                  android:layout_width="fill_parent"  
+                  android:layout_height="wrap_content"
+                  android:layout_below="@+id/subject_layout"
+    >
+        <!-- Grading -->
+        <EditText
+            android:id="@+id/grading"
+            android:layout_width="100dp"
+            android:hint="Grading"
+            android:layout_height="wrap_content"
+        />
+        <!-- Priority -->
+        <EditText
+            android:id="@+id/priority"
+            android:layout_width="100dp"
+            android:hint="Priority"
             android:layout_height="wrap_content"
         />
     </LinearLayout>
@@ -50,26 +67,40 @@
                   android:orientation="horizontal"
                   android:layout_width="fill_parent"  
                   android:layout_height="wrap_content"
-                  android:layout_below="@+id/subject_layout"
+                  android:layout_below="@+id/special_layout"
     >
-        <TextView
-            android:id="@+id/content_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Message:"/>
+        <!-- Text -->
         <EditText
             android:id="@+id/content"
-            android:layout_width="150dp"
-            android:layout_height="100dp"
-            android:lines="5"
-            android:maxLines="5"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:lines="10"
+            android:maxLines="10"
+            android:maxLength="500"
+            android:hint="Message"
         />
     </LinearLayout>
-    <Button
-        android:id="@+id/login_button"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
+                  android:id="@+id/attachments_layout"
+                  android:orientation="horizontal"
+                  android:layout_width="fill_parent"  
+                  android:layout_height="wrap_content"
+                  android:layout_below="@+id/content_layout"
+    >
+         <!-- Attachments button -->
+         <Button
+        android:id="@+id/attachments_button"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="Send mail"
-        android:layout_below="@+id/content_layout"
+        android:text="Add element"
+    />
+    </LinearLayout>
+    <!-- Send button -->
+    <Button
+        android:id="@+id/send_button"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Send"
+        android:layout_below="@+id/attachments_layout"
     />
 </RelativeLayout>

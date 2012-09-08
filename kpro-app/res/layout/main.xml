@@ -14,6 +14,7 @@
         android:layout_width="1dp"
         android:layout_height="30dp">
     </View>
+    <!-- Username field -->
     <EditText
         android:id="@+id/username"
         android:layout_width="200dp"
@@ -21,6 +22,7 @@
         android:maxLength="10"
         android:maxLines="1"
     />
+    <!-- Password field -->
     <EditText
         android:id="@+id/password"
         android:layout_width="200dp"
@@ -29,6 +31,7 @@
         android:maxLength="10"
         android:maxLines="1"
     />
+    <!-- Send button -->
     <Button
         android:id="@+id/login_button"
         android:layout_width="200dp"
