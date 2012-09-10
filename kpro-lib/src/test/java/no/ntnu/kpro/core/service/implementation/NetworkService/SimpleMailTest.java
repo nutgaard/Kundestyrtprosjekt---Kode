@@ -9,18 +9,20 @@ import java.security.Security;
 import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.Session;
+import javax.mail.event.MessageCountEvent;
+import javax.mail.event.MessageCountListener;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({SimpleMailTest.SMTPSMock.class, SimpleMailTest.IMAPSMock.class, SimpleMailTest.SMTPSReal.class, SimpleMailTest.IMAPSReal.class})
+//@Suite.SuiteClasses({SimpleMailTest.SMTPSMock.class, SimpleMailTest.IMAPSMock.class, SimpleMailTest.SMTPSReal.class, SimpleMailTest.IMAPSReal.class})
+@Suite.SuiteClasses({SimpleMailTest.SMTPSMock.class, SimpleMailTest.IMAPSMock.class})
 public class SimpleMailTest {
 
     private static final String USER_PASSWORD = "kprothales2012";
@@ -89,7 +91,7 @@ public class SimpleMailTest {
         private GreenMailUser user;
 
         @Before
-        public void setup() {
+        public void setup() throws InterruptedException {
             Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory.class.getName());
             this.props = new Properties();
             this.props.put("mail.imaps.host", LOCALHOST);
@@ -101,13 +103,14 @@ public class SimpleMailTest {
             this.user = this.mailServer.setUser(EMAIL_USER_ADDRESS, USER_NAME, USER_PASSWORD);
             
             this.mailClient = new SimpleMail(USER_NAME, USER_PASSWORD, EMAIL_USER_ADDRESS);
+            this.mailClient.startIMAP();
             this.mailClient.setProps(props);
             this.mailClient.setAuth(null);
         }
-
         @After
         public void teardown() {
             this.mailServer.stop();
+            this.mailClient.stopIMAP();
             this.mailClient = null;
         }
 
@@ -119,12 +122,14 @@ public class SimpleMailTest {
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(EMAIL_TO));
             message.setSubject(EMAIL_SUBJECT);
             message.setText(EMAIL_TEXT);
-            
+           
             //Use greenmailuser to deliver message
             this.user.deliver(message);
             
-            //Fetch using SimpleMail IMAPS
             
+            
+            //Fetch using SimpleMail IMAPS
+//            mailClient.startIMAP();
         }
     }
 

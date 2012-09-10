@@ -27,7 +27,7 @@ public interface PersistenceService extends ServiceInterface {
 
     public boolean isAuthorized();
 
-    public boolean saveToStorage(String fileName, String content, Context context);
+    public void saveToStorage(String fileName, String content, Context context);
 
     public BufferedReader readFromStorage(String fileName);
 
