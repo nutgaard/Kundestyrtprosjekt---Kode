@@ -9,6 +9,10 @@
         </activity>
         <activity android:label="@string/app_name" android:name=".SendMessageActivity">
         </activity>
+        <activity android:label="@string/app_name" android:name=".InboxActivity">
+        </activity>
+        <activity android:label="@string/app_name" android:name=".MessageInActivity">
+        </activity>
 	<service android:name="no.ntnu.kpro.core.service.ServiceProvider">
 		<intent-filter>
         		<action android:name="no.ntnu.kpro.core.service.ServiceProvider"/>
