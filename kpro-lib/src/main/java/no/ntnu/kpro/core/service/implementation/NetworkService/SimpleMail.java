@@ -9,6 +9,7 @@ import javax.mail.*;
 import javax.mail.event.MessageCountEvent;
 import javax.mail.event.MessageCountListener;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
@@ -59,10 +60,11 @@ public class SimpleMail implements NetworkService {
         try {
             Session session = Session.getInstance(this.props, this.auth);
 
-            Message message = new MimeMessage(session);
+            MimeMessage message = new MimeMessage(session);
 
             message.setFrom(new InternetAddress(this.mailAdr));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
+            
             message.setSubject(subject);
             message.setText(body);
             SMTPTransport t = (SMTPTransport) session.getTransport("smtps");

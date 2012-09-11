@@ -24,10 +24,13 @@ public class WrapperActivity extends Activity {
         public void onServiceConnected(ComponentName cn, IBinder ib) {
             ServiceProvider.LocalBinder lb = (ServiceProvider.LocalBinder) ib;
             serviceProvider = lb.getService();
+            serviceProvider.register(WrapperActivity.this);
         }
 
         public void onServiceDisconnected(ComponentName cn) {
             serviceProvider = null;
+            serviceProvider.unregister(WrapperActivity.this);
+            
         }
     };
 
