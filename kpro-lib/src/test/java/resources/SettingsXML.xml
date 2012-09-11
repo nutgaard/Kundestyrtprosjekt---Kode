@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<settings
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xsi:noNamespaceSchemaLocation='SettingsXML.xsd'>
+    <properties>
+        <key>mail.transport.protocol</key>
+        <value>smtps</value>
+    </properties>
+    <properties>
+        <key>mail.store.protocol</key>
+        <value>imaps</value>
+    </properties>
+    <properties>
+        <key>mail.smtps.host</key>
+        <value>smtp.gmail.com</value>
+    </properties>
+
+</settings>

@@ -25,16 +25,25 @@ import no.ntnu.kpro.core.service.interfaces.PersistenceService;
  * @author Nicklas
  */
 public class ServiceProvider extends Service {
-
+    private static ServiceProvider instance;
+    
     private IBinder mBinder = new LocalBinder();
     private static final String TAG = "KPRO";
     public static ThreadPoolExecutor threadpool;
     private Activity currentActivity;
+    private PersistenceService persistenceService;
+    private HALService HALService;
+    private NetworkService networkService;
+            
 
     @Override
     public void onCreate() {
         super.onCreate();
+        ServiceProvider.instance = this;
         threadpool = new ThreadPoolExecutor(3, 100, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+        this.persistenceService = PersistenceServiceFactory.createService();
+        this.HALService = HALServiceFactory.createService();
+        this.networkService = NetworkServiceFactory.createService();
         Log.i(TAG, "Service starting");
     }
 
@@ -61,15 +70,15 @@ public class ServiceProvider extends Service {
     }
 
     public PersistenceService getPersistenceService() {
-        return PersistenceServiceFactory.createService();
+        return persistenceService;
     }
 
     public HALService getHALService() {
-        return HALServiceFactory.createService();
+        return HALService;
     }
 
     public NetworkService getNetworkService() {
-        return NetworkServiceFactory.createService();
+        return networkService;
     }
 
     public void register(Activity activity) {
@@ -83,5 +92,8 @@ public class ServiceProvider extends Service {
     }
     public Activity getCurrentActivity() {
         return this.currentActivity;
+    }
+    public static ServiceProvider getInstance() {
+        return instance;
     }
 }

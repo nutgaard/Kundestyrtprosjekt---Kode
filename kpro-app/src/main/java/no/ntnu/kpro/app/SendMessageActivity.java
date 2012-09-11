@@ -33,6 +33,7 @@ public class SendMessageActivity extends WrapperActivity{
                 XOMessage mess = new XOMessage(null, receiver, subject, content);
                 getServiceProvider().getNetworkService().send(mess);
                 confirm.show();
+                
                 finish();
             }
         });
