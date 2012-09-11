@@ -71,7 +71,7 @@
     >
         <!-- Text -->
         <EditText
-            android:id="@+id/content"
+            android:id="@+id/text"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:lines="10"
