@@ -51,7 +51,9 @@ public class XOMessage {
     public String getSubject() {
         return subject;
     }
-
+    public void addAttachment(InputStream is) {
+        this.attachments.add(is);
+    }
     public List<InputStream> getAttachments() {
         return attachments;
     }

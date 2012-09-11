@@ -11,6 +11,8 @@ import javax.mail.event.MessageCountListener;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.search.FlagTerm;
+import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 public class SimpleMail implements NetworkService {
@@ -123,6 +125,26 @@ public class SimpleMail implements NetworkService {
 
     public void setIMAPListener(MessageCountListener listener) {
         this.callback = listener;
+    }
+
+    public void send(XOMessage message) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void startIMAPIdle() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void stopIMAPIdle() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void getMessages(FlagTerm flagterm, int no) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void getAllMessages() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public class IMAPListener implements MessageCountListener {
