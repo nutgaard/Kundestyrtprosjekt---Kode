@@ -11,7 +11,7 @@ import java.io.BufferedReader;
  *
  * @author Aleksander Sjåfjell
  */
-public interface PersistenceService extends ServiceInterface {
+public interface PersistenceService {
 
     public interface callback {
     }
