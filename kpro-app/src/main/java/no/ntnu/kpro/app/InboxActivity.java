@@ -29,6 +29,8 @@ public class InboxActivity extends WrapperActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.message_list);
 
+        //getServiceProvider().getNetworkService().getAllMessages();
+        
         list = new ArrayList<HashMap<String, String>>();
 
         HashMap<String, String> map = new HashMap<String, String>();

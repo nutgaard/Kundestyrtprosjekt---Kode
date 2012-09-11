@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import no.ntnu.kpro.core.model.XOMessage;
 
 /**
  *
@@ -29,6 +30,8 @@ public class SendMessageActivity extends WrapperActivity{
                 String content = ((EditText) findViewById(R.id.text)).getText().toString();
                 
                 Toast confirm = Toast.makeText(SendMessageActivity.this, "Sending message to " + receiver + " with subject \n" + subject, Toast.LENGTH_SHORT);
+                XOMessage mess = new XOMessage(null, receiver, subject, content);
+                getServiceProvider().getNetworkService().send(mess);
                 confirm.show();
                 finish();
             }
