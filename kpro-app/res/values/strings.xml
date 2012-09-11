@@ -4,4 +4,9 @@
     <string name="app_name">XOMail</string>
     <string name="messageTextToFlash">Message text to morse via flash</string>
     <string name="morseFlashNow">Morse/Flash the message now!</string>
+     <string-array name="views">
+        <item>InboxActivity</item>
+        <item>SentActivity</item>
+        <item>SendMessageActivity</item>
+    </string-array>
 </resources>

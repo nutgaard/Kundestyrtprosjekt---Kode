@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+>
+    <!--
     <Button
         android:layout_width="200dp"
         android:layout_height="wrap_content"
@@ -14,7 +15,6 @@
         android:layout_width="1dp"
         android:layout_height="30dp">
     </View>
-    <!-- Username field -->
     <EditText
         android:id="@+id/username"
         android:layout_width="200dp"
@@ -22,7 +22,6 @@
         android:maxLength="10"
         android:maxLines="1"
     />
-    <!-- Password field -->
     <EditText
         android:id="@+id/password"
         android:layout_width="200dp"
@@ -31,12 +30,15 @@
         android:maxLength="10"
         android:maxLines="1"
     />
-    <!-- Send button -->
     <Button
         android:id="@+id/login_button"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Log In"
-    />
+    />-->
+    <ListView
+        android:id="@+id/views_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>
 

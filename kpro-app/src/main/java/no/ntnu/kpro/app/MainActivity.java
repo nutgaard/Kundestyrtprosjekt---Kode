@@ -8,8 +8,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Spinner;
 
 /**
  *
@@ -32,22 +34,43 @@ public class MainActivity extends WrapperActivity {
         Log.i(TAG, "StartService: " + startService(serviceIntent));
         Log.i(TAG, "No errors, service should be running");
 
-        Button b = (Button) findViewById(R.id.login_button);
+        String[] views = {"Inbox", "Sent", "SendMessage"};
+        ListView views_list = (ListView) findViewById(R.id.views_list);
+        views_list.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, views));
+        
+        views_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-        b.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                EditText usernameText = (EditText)findViewById(R.id.username);
-                String username = usernameText.getText().toString();
-                EditText passwordText = (EditText)findViewById(R.id.password);
-                String password = passwordText.getText().toString();
-                if (checkLogin(username, password)) {
-                    Intent myIntent = new Intent(view.getContext(), InboxActivity.class);
-                    startActivityForResult(myIntent, 0);
+            public void onItemClick(AdapterView<?> av, View view, int i, long l) {
+                try{
+                    Class newClass = Class.forName("no.ntnu.kpro.app." + av.getItemAtPosition(i) + "Activity");
+                    Intent intent = new Intent(MainActivity.this, newClass);
+                    startActivity(intent);
+                }
+                catch(ClassNotFoundException e){
+                    
                 }
             }
         });
+        
+       
 
         /*
+         Button b = (Button) findViewById(R.id.login_button);
+
+         b.setOnClickListener(new View.OnClickListener() {
+         public void onClick(View view) {
+         EditText usernameText = (EditText)findViewById(R.id.username);
+         String username = usernameText.getText().toString();
+         EditText passwordText = (EditText)findViewById(R.id.password);
+         String password = passwordText.getText().toString();
+         if (checkLogin(username, password)) {
+         Intent myIntent = new Intent(view.getContext(), InboxActivity.class);
+         startActivityForResult(myIntent, 0);
+         }
+         }
+         });
+         * /
+         /*
          Button b = (Button)findViewById(R.id.morse);
          b.setOnClickListener(new View.OnClickListener() {
 
