@@ -20,10 +20,10 @@ import no.ntnu.kpro.core.service.interfaces.PersistenceService;
  */
 public class StorageWrapper {
     XStream xs;
-    PersistenceService ps;
+    LocalPrivateStorage ps;
     Context c;
     
-    public StorageWrapper(PersistenceService storageService, Context context) {
+    public StorageWrapper(LocalPrivateStorage storageService, Context context) {
         xs = new XStream();
         ps = storageService;
         c = context;

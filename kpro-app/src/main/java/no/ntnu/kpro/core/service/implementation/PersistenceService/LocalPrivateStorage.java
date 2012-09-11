@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import no.ntnu.kpro.core.service.interfaces.PersistenceService;
 
 /**
@@ -77,9 +78,6 @@ public class LocalPrivateStorage implements PersistenceService {
         return null;
     }
 
-    public boolean authorize(String userName, String password) {
-        return true;
-    }
 
     public boolean isAuthorized() {
         return true;
@@ -92,6 +90,78 @@ public class LocalPrivateStorage implements PersistenceService {
      */
     public boolean removeFile(String fileName, Context context) {
         return context.deleteFile(fileName);
+    }
+
+    public void save(String fileName, Object objectToSave) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void save(String fileName, Object objectToSave, String folder) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void save(String fileName, String content) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void save(String fileName, String content, String folder) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void loadObject(String fileName, callback receiver) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void loadObject(String fileName, String folder, callback receiver) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void loadString(String fileName, callback receiver) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void loadString(String fileName, String folder, callback receiver) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void removeFile(String fileName) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void removeFile(String fileName, String folder) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void authorize(String userName, String password) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void authorize(String userName, String password, callback receiver) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void isAuthorized(callback receiver) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void getFileList(callback receiver) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void getFileList(String folder, callback receiver) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void getFileList(FilenameFilter filter, callback receiver) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void getFileList(String folder, FilenameFilter filter, callback receiver) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void giveContext(Context context) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 
