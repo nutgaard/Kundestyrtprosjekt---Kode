@@ -15,7 +15,7 @@ import javax.mail.search.FlagTerm;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
-public class SimpleMail implements NetworkService {
+public class SimpleMail extends NetworkService {
 
     private final String username;
     private final String password;
@@ -185,4 +185,5 @@ public class SimpleMail implements NetworkService {
     public int getNOFReceived() {
         return this.NOF_received;
     }
+    
 }
