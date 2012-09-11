@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import no.ntnu.kpro.core.model.XOMessage;
 
 /**
  *
@@ -30,6 +31,7 @@ public class SendMessageActivity extends WrapperActivity{
                 
                 Toast confirm = Toast.makeText(SendMessageActivity.this, "Sending message to " + receiver + " with subject \n" + subject, Toast.LENGTH_SHORT);
                 confirm.show();
+                
                 finish();
             }
         });

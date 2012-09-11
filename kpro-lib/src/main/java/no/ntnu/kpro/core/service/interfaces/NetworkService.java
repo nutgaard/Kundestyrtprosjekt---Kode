@@ -11,16 +11,19 @@ import no.ntnu.kpro.core.model.XOMessage;
  *
  * @author Nicklas
  */
-public interface NetworkService extends ServiceInterface {
+public abstract class NetworkService extends ServiceInterface {
 
     public interface callback {
+        public enum event{
+            MAIL_OK, MAIL_ERROR;
+        }
     }
 
 //    public boolean sendMail(final String recipient, final String subject, final String body);
     
-    public void send(XOMessage message);
-    public void startIMAPIdle();
-    public void stopIMAPIdle();
-    public void getMessages(FlagTerm flagterm, int no);
-    public void getAllMessages();
+    public abstract void send(XOMessage message);
+    public abstract void startIMAPIdle();
+    public abstract void stopIMAPIdle();
+    public abstract void getMessages(FlagTerm flagterm, int no);
+    public abstract void getAllMessages();
 }

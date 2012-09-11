@@ -4,7 +4,6 @@
  */
 package no.ntnu.kpro.core.service.factories;
 
-import no.ntnu.kpro.core.service.implementation.NetworkService.Mail;
 import no.ntnu.kpro.core.service.implementation.NetworkService.SimpleMail;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
