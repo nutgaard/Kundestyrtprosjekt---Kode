@@ -6,6 +6,7 @@ package no.ntnu.kpro.core.service.interfaces;
 
 import android.content.Context;
 import android.util.Log;
+import com.thoughtworks.xstream.XStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,12 +25,13 @@ import static org.junit.Assert.*;
  * @author magnus
  */
 public class PersistenceServiceTest {
-    
+    XStream xs;
     public PersistenceServiceTest() {
     }
     
     @Before
     public void setUp() {
+        xs = new XStream();
     }
     
     @After
@@ -41,6 +43,7 @@ public class PersistenceServiceTest {
      */
     @Test
     public void testSave_Name_Object() {
+        //this class just calls the next one with the folder:"" so really doesn't need much testing
         System.out.println("save");
         String fileName = "test";
         Object objectToSave = new Object();
@@ -48,12 +51,14 @@ public class PersistenceServiceTest {
         instance.save(fileName, objectToSave);
         try {
             FileReader fr = new FileReader(fileName);
-            BufferedReader output = new BufferedReader(fr); 
+            Object loadedObject = xs.fromXML(fr);
+            assertTrue("checking that objects can be saved successfully", loadedObject.equals(objectToSave));
         } catch (FileNotFoundException e) {
            fail("no such file");
+        } catch (IOException  e){
+            fail("IO error");
         }
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+       
     }
 
     /**
@@ -61,14 +66,22 @@ public class PersistenceServiceTest {
      */
     @Test
     public void testSave_Name_Object_Folder() {
+        //this class just calls the next one with the folder:"" so really doesn't need much testing
         System.out.println("save");
-        String fileName = "";
-        Object objectToSave = null;
-        String folder = "";
+        String fileName = "test";
+        String folder = "TestFolder";
+        Object objectToSave = new Object();
         PersistenceService instance = new PersistenceServiceImpl();
         instance.save(fileName, objectToSave, folder);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            FileReader fr = new FileReader(fileName);
+            Object loadedObject = xs.fromXML(fr);
+            assertTrue("checking that objects can be saved successfully", loadedObject.equals(objectToSave));
+        } catch (FileNotFoundException e) {
+           fail("no such file");
+        } catch (IOException  e){
+            fail("IO error");
+        }
     }
 
     /**
