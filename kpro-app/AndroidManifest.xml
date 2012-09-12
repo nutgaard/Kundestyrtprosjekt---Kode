@@ -8,8 +8,10 @@
             </intent-filter>
         </activity>
         <activity android:label="@string/app_name" android:name=".SendMessageActivity">
+            <action android:name="no.ntnu.kpro.app.SendMessageActivity"/>
         </activity>
         <activity android:label="@string/app_name" android:name=".InboxActivity">
+            <action android:name="no.ntnu.kpro.app.InboxActivity"/>
         </activity>
         <activity android:label="@string/app_name" android:name=".MessageInActivity">
         </activity>

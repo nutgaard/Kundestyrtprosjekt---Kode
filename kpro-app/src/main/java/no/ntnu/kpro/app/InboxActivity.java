@@ -47,7 +47,7 @@ public class InboxActivity extends WrapperActivity {
         ListView v = (ListView) findViewById(R.id.list);
 
         v.setAdapter(adapter);
-
+        
         v.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {

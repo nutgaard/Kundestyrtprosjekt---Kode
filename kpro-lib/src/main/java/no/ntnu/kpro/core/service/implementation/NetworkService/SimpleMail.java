@@ -9,19 +9,25 @@ import javax.mail.*;
 import javax.mail.event.MessageCountEvent;
 import javax.mail.event.MessageCountListener;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.search.FlagTerm;
+import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
-public class SimpleMail implements NetworkService {
+public class SimpleMail extends NetworkService {
 
     private final String username;
     private final String password;
     private final String mailAdr;
     private Properties props;
     private Authenticator auth;
-    private final IMAPNotification callback;
+    private MessageCountListener callback;
     private boolean run = true;
     private Store store;
+    private IMAPFolder inbox;
+    //Just for testing purposes
+    private int NOF_received = 0;
 
     public SimpleMail(final String username, final String password, final String mailAdr) {
         this.props = new Properties();
@@ -39,10 +45,9 @@ public class SimpleMail implements NetworkService {
         this.props.put("mail.imaps.auth", "true");
         this.props.put("mail.imaps.port", "993");
 
-        this.callback = new IMAPNotification();
+        this.callback = new IMAPListener();
 
         this.auth = new Authenticator() {
-
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(username, password);
@@ -57,10 +62,11 @@ public class SimpleMail implements NetworkService {
         try {
             Session session = Session.getInstance(this.props, this.auth);
 
-            Message message = new MimeMessage(session);
+            MimeMessage message = new MimeMessage(session);
 
             message.setFrom(new InternetAddress(this.mailAdr));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
+            
             message.setSubject(subject);
             message.setText(body);
             SMTPTransport t = (SMTPTransport) session.getTransport("smtps");
@@ -74,31 +80,39 @@ public class SimpleMail implements NetworkService {
             return false;
         }
     }
+
     public void stopIMAP() {
-        if (store != null){
+        if (store != null) {
             try {
                 store.close();
+                this.run = false;
             } catch (MessagingException ex) {
                 Logger.getLogger(SimpleMail.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
-    public void startIMAP() {
-        try {
-            Session session = Session.getDefaultInstance(props, auth);
-            
-            store = session.getStore("imaps");
-            store.connect();
-            System.out.println("Store: store");
-            IMAPFolder inbox = (IMAPFolder) store.getFolder("Inbox");
-            inbox.open(Folder.READ_ONLY);
-            inbox.addMessageCountListener(this.callback);
 
-            while (this.run) {
-                inbox.idle();
+    public void startIMAP() {
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Session session = Session.getDefaultInstance(props, auth);
+
+                    store = session.getStore("imaps");
+                    store.connect();
+                    System.out.println("Store: store");
+                    inbox = (IMAPFolder) store.getFolder("Inbox");
+                    inbox.open(Folder.READ_ONLY);
+                    inbox.addMessageCountListener(callback);
+
+                    while (run) {
+                        inbox.idle();
+                    }
+                } catch (Exception e) {
+                }
             }
-        } catch (Exception e) {
-        }
+        };
     }
 
     public void setProps(Properties props) {
@@ -108,27 +122,53 @@ public class SimpleMail implements NetworkService {
     public void setAuth(Authenticator auth) {
         this.auth = auth;
     }
-    public class IMAPNotification implements MessageCountListener {
+
+    public void setIMAPListener(MessageCountListener listener) {
+        this.callback = listener;
+    }
+
+    public void send(XOMessage message) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void startIMAPIdle() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void stopIMAPIdle() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void getMessages(FlagTerm flagterm, int no) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void getAllMessages() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public class IMAPListener implements MessageCountListener {
 
         public void messagesAdded(MessageCountEvent mce) {
             try {
 //                System.out.println("New message");
                 System.out.println("");
                 for (Message m : mce.getMessages()) {
-                    Multipart content = (Multipart)m.getContent();
+                    Multipart content = (Multipart) m.getContent();
                     System.out.println("New Mail");
-                    System.out.println("From: "+m.getFrom()[0].toString()+ "@"+m.getReceivedDate());
-                    System.out.println("Subject: "+m.getSubject());
+                    System.out.println("From: " + m.getFrom()[0].toString() + "@" + m.getReceivedDate());
+                    System.out.println("Subject: " + m.getSubject());
                     System.out.println("");
-                    for (int i = 0;i< content.getCount();i++){
+                    for (int i = 0; i < content.getCount(); i++) {
                         BodyPart bp = content.getBodyPart(i);
-                        if (bp.getContentType().startsWith("TEXT/")){
+                        if (bp.getContentType().startsWith("TEXT/")) {
                             System.out.println(bp.getContent());
                             break;
                         }
                     }
                     System.out.println("");
                 }
+                NOF_received++;
 
             } catch (Exception ex) {
                 Logger.getLogger(SimpleMail.class.getName()).log(Level.SEVERE, null, ex);
@@ -138,6 +178,12 @@ public class SimpleMail implements NetworkService {
 
         public void messagesRemoved(MessageCountEvent mce) {
             System.out.println("Message removed");
+            NOF_received--;
         }
     }
+
+    public int getNOFReceived() {
+        return this.NOF_received;
+    }
+    
 }
