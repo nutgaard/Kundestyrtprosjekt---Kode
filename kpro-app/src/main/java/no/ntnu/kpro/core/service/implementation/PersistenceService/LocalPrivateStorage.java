@@ -71,8 +71,9 @@ public class LocalPrivateStorage extends PersistenceService {
      * @param fileName name of the file to delete
      * @return true if the file was successfully deleted, else false.
      */
-    private boolean removeFile(String fileName, Context context) {
-        return context.deleteFile(fileName);
+    private boolean removeTheFile(String fileName, String dir) {
+        File zeFile = new File(dir,fileName);
+        return c.deleteFile(zeFile.getPath());
     }
     
     private boolean saveFile(Object fileToSave, String dir, String fileName){
@@ -80,9 +81,9 @@ public class LocalPrivateStorage extends PersistenceService {
         return saveToStorage(fileName, dir, data);
     }
     
-    private Object loadFile(String fileName){
+    private Object loadFile(String fileName, String dir){
         try{
-            BufferedReader br = readFromStorage(fileName,"");
+            BufferedReader br = readFromStorage(fileName,dir);
             String nextLine = br.readLine();
             String xml = null;
             while (nextLine != null){
@@ -113,35 +114,49 @@ public class LocalPrivateStorage extends PersistenceService {
     
     
     public void save(String fileName, Object objectToSave) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        saveFile(objectToSave, "", fileName);
     }
 
     public void save(String fileName, Object objectToSave, String folder) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        saveFile(objectToSave, folder, fileName);
     }
 
     public void save(String fileName, String content) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        save(fileName, content, "");
     }
 
     public void save(String fileName, String content, String folder) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        saveToStorage(fileName, folder, content);
     }
 
     public void loadObject(String fileName, callback receiver) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        loadObject(fileName, "", receiver);
     }
 
     public void loadObject(String fileName, String folder, callback receiver) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Object object = loadFile(fileName, "");
+        receiver.loadObjectReturn(fileName,object);
     }
 
     public void loadString(String fileName, callback receiver) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        loadString(fileName, "", receiver);
     }
 
     public void loadString(String fileName, String folder, callback receiver) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try{
+            BufferedReader br = readFromStorage(fileName, folder);
+            String nextLine = br.readLine();
+            String result = null;
+            while (nextLine != null){
+                result = result + nextLine;
+                nextLine = br.readLine();
+            }
+            receiver.loadStringReturn(fileName, result);
+        } catch (Exception e){
+            Log.d("LocalPrivateStorage", e.getStackTrace().toString());
+            receiver.someThingWentWrong(e);
+        }
+            
     }
 
     public void removeFile(String fileName) {
