@@ -100,12 +100,12 @@ public class LocalPrivateStorage extends PersistenceService {
      * provides a list of all existing files in the base folder
      * @return 
      */
-    private String[] getFileList(){
-        File dir = c.getFilesDir();
+    private String[] getFileList(String Folder){
+        File dir = c.getDir(Folder,c.MODE_PRIVATE);
         return dir.list();
     }
-    private String[] fileSearch(FilenameFilter filter){
-        File dir = c.getFilesDir();
+    private String[] fileSearch(String Folder, FilenameFilter filter){
+        File dir = c.getDir(Folder,c.MODE_PRIVATE);
         return dir.list(filter);
     }
     /*****************************************************
@@ -160,11 +160,11 @@ public class LocalPrivateStorage extends PersistenceService {
     }
 
     public void removeFile(String fileName) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        removeFile(fileName,"");
     }
 
     public void removeFile(String fileName, String folder) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        removeTheFile(fileName, folder);
     }
 
     public void authorize(String userName, String password) {
@@ -180,23 +180,23 @@ public class LocalPrivateStorage extends PersistenceService {
     }
 
     public void getFileList(callback receiver) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        getFileList("", receiver);
     }
 
     public void getFileList(String folder, callback receiver) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        receiver.fileListReturn(getFileList(folder));
     }
 
     public void getFileList(FilenameFilter filter, callback receiver) {
-        throw new UnsupportedOperationException("Not supported yet.");
+       getFileList("", filter, receiver);
     }
 
     public void getFileList(String folder, FilenameFilter filter, callback receiver) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        receiver.fileListReturn(fileSearch(folder, filter));
     }
 
     public void giveContext(Context context) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        c = context;
     }
 
 
