@@ -18,6 +18,7 @@ public abstract class PersistenceService extends ServiceInterface {
         public void loadStringReturn(String fileName, String file);
         public void authorizationConfirmation(boolean isAutorized);
         public void fileListReturn(String[] fileList);
+        public void someThingWentWrong(Exception e);
     }
     //Saving files
     public abstract void save(String fileName, Object objectToSave);
