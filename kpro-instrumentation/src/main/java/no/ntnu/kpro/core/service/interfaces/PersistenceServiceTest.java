@@ -310,7 +310,7 @@ public class PersistenceServiceTest {
         fail("The test case is a prototype.");
     }
 
-    public class PersistenceServiceImpl implements PersistenceService {
+    public class PersistenceServiceImpl extends PersistenceService {
 
         public void save(String fileName, Object objectToSave) {
         }
