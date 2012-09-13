@@ -12,7 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import no.ntnu.kpro.core.service.interfaces.PersistenceService;
 import no.ntnu.kpro.core.service.interfaces.PersistenceService.callback;
 import org.junit.After;
 import org.junit.Before;

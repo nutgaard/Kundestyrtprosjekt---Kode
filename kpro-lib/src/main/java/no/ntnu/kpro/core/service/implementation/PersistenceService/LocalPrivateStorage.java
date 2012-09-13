@@ -154,7 +154,7 @@ public class LocalPrivateStorage extends PersistenceService {
             receiver.loadStringReturn(fileName, result);
         } catch (Exception e){
             Log.d("LocalPrivateStorage", e.getStackTrace().toString());
-            receiver.someThingWentWrong(e);
+//            receiver.someThingWentWrong(e);
         }
             
     }
