@@ -4,7 +4,7 @@
  */
 package no.ntnu.kpro.core.service.factories;
 
-import no.ntnu.kpro.core.service.implementation.NetworkService.SimpleMail;
+import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 /**
@@ -13,6 +13,6 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  */
 public class NetworkServiceFactory {
     public static NetworkService createService() {
-        return new SimpleMail("nutgaard", "St140389", "nutgaard@gmail.com");
+        return new NetworkServiceImp("username", "password");
     }
 }

@@ -12,9 +12,11 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.FlagTerm;
+import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
+@Deprecated
 public class SimpleMail extends NetworkService {
 
     private final String username;
@@ -144,6 +146,11 @@ public class SimpleMail extends NetworkService {
     }
 
     public void getAllMessages() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void getMessages(SearchTerm searchterm) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

@@ -28,4 +28,10 @@ public abstract class ServiceInterface<T> {
     protected void fireCallback(Enum e) {
         
     }
+    public List<T> getListeners() {
+        return this.listeners;
+    }
+    public void clearListeners() {
+        this.listeners.clear();
+    }
 }
