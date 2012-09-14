@@ -19,7 +19,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class Settings {
 
-    private Properties properties;
+    protected Properties properties;
 
     public Settings() {
         this.properties = new Properties();
