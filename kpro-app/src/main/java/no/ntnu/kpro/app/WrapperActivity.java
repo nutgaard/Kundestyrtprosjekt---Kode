@@ -41,7 +41,7 @@ public class WrapperActivity extends Activity {
         return serviceProvider;
     }
     public boolean isConnected() {
-        return this.serviceProvider != null;
+        return this.serviceProvider != null;    
     }
 
     @Override
