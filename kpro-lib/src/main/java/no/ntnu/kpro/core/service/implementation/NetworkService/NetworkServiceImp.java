@@ -34,8 +34,8 @@ public class NetworkServiceImp extends NetworkService {
         try {
             this.smtps = new SMTPS(this);
             this.imaps = new IMAPS(this);
-            this.settings = new Settings();
-            this.settings.readFromFile(new FileInputStream("settings.xml"));
+            this.settings = new DummySettings();
+//            this.settings.readFromFile(new FileInputStream("settings.xml"));
             this.username = username;
             this.password = password;
             this.authenticator = new Authenticator() {
@@ -45,7 +45,7 @@ public class NetworkServiceImp extends NetworkService {
                 }
             };
             this.session = Session.getInstance(this.settings.getProperties(), this.authenticator);
-        } catch (FileNotFoundException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(NetworkServiceImp.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
