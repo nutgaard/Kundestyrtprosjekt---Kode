@@ -9,13 +9,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import javax.mail.Address;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 /**
  *
  * @author Kristin
  */
-public class SendMessageActivity extends WrapperActivity{
+public class SendMessageActivity extends WrapperActivity implements NetworkService.Callback{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,10 +34,27 @@ public class SendMessageActivity extends WrapperActivity{
                 Toast confirm = Toast.makeText(SendMessageActivity.this, "Sending message to " + receiver + " with subject \n" + subject, Toast.LENGTH_SHORT);
                 XOMessage mess = new XOMessage(null, receiver, subject, content);
                 getServiceProvider().getNetworkService().send(mess);
+                
                 confirm.show();
                 
                 finish();
             }
         });
+    }
+
+    public void mailSent(XOMessage message, Address[] invalidAddress) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void mailSentError(XOMessage message) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void mailReceived(XOMessage message) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void mailReceivedError() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
