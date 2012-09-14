@@ -16,9 +16,11 @@ import java.util.concurrent.TimeUnit;
 import no.ntnu.kpro.core.service.factories.HALServiceFactory;
 import no.ntnu.kpro.core.service.factories.NetworkServiceFactory;
 import no.ntnu.kpro.core.service.factories.PersistenceServiceFactory;
+import no.ntnu.kpro.core.service.factories.SecurityServiceFactory;
 import no.ntnu.kpro.core.service.interfaces.HALService;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.service.interfaces.PersistenceService;
+import no.ntnu.kpro.core.service.interfaces.SecurityService;
 
 /**
  *
@@ -34,6 +36,7 @@ public class ServiceProvider extends Service {
     private PersistenceService persistenceService;
     private HALService HALService;
     private NetworkService networkService;
+    private SecurityService securityService;
             
 
     @Override
@@ -44,12 +47,14 @@ public class ServiceProvider extends Service {
         this.persistenceService = PersistenceServiceFactory.createService();
         this.HALService = HALServiceFactory.createService();
         this.networkService = NetworkServiceFactory.createService();
+        this.securityService = SecurityServiceFactory.createService();
         Log.i(TAG, "Service starting");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        ServiceProvider.instance = null;
         Log.i(TAG, "Service destroyed");
     }
 
@@ -83,6 +88,19 @@ public class ServiceProvider extends Service {
 
     public void register(Activity activity) {
         this.currentActivity = activity;
+        
+        if (activity instanceof NetworkService.Callback) {
+            this.getNetworkService().clearListeners();
+            this.getNetworkService().addListener((NetworkService.Callback)activity);
+        }
+        if (activity instanceof HALService.callback) {
+            this.getHALService().clearListeners();
+            this.getHALService().addListener((HALService.callback)activity);
+        }
+        if (activity instanceof PersistenceService.callback) {
+            this.getPersistenceService().clearListeners();
+            this.getPersistenceService().addListener((PersistenceService.callback)activity);
+        }
     }
 
     public void unregister(Activity activity) {

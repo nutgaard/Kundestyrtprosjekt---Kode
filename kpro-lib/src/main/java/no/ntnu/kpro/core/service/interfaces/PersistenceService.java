@@ -6,13 +6,12 @@ package no.ntnu.kpro.core.service.interfaces;
 
 import android.content.Context;
 import java.io.FilenameFilter;
-import no.ntnu.kpro.core.service.interfaces.ServiceInterface;
 
 /**
  *
  * @author Aleksander Sj�fjell
  */
-public abstract class PersistenceService extends ServiceInterface {
+public abstract class PersistenceService extends ServiceInterface<PersistenceService.callback> {
 
     public interface callback {
         public void loadObjectReturn(String fileName, Object file);
