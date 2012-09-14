@@ -6,6 +6,7 @@ package no.ntnu.kpro.core.service.interfaces;
 
 import android.content.Context;
 import java.io.FilenameFilter;
+import no.ntnu.kpro.core.service.interfaces.ServiceInterface;
 
 /**
  *
