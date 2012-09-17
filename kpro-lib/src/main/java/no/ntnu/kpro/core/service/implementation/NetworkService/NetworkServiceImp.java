@@ -4,8 +4,6 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
-import com.sun.mail.smtp.SMTPSSLTransport;
-import com.sun.mail.smtp.SMTPTransport;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.logging.Level;
@@ -14,7 +12,7 @@ import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
-import javax.mail.search.FlagTerm;
+import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.Settings;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
@@ -36,8 +34,8 @@ public class NetworkServiceImp extends NetworkService {
         try {
             this.smtps = new SMTPS(this);
             this.imaps = new IMAPS(this);
-            this.settings = new Settings();
-            this.settings.readFromFile(new FileInputStream("settings.xml"));
+            this.settings = new DummySettings();
+//            this.settings.readFromFile(new FileInputStream("settings.xml"));
             this.username = username;
             this.password = password;
             this.authenticator = new Authenticator() {
@@ -47,44 +45,51 @@ public class NetworkServiceImp extends NetworkService {
                 }
             };
             this.session = Session.getInstance(this.settings.getProperties(), this.authenticator);
-        } catch (FileNotFoundException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(NetworkServiceImp.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
 
     public void send(XOMessage msg) {
-        try {
-            MimeMessage message = convertToMime(msg);
-            SMTPTransport transport = (SMTPSSLTransport) session.getTransport("smtps");
-
-            transport.connect(this.settings.getAttribute("mail.smtps.host"), username, password);
-            transport.sendMessage(message, message.getAllRecipients());
-            transport.close();
-            //Callback
-            fireCallback(NetworkService.callback.event.MAIL_OK);
-        } catch (Exception ex) {
-            fireCallback(NetworkService.callback.event.MAIL_ERROR);
-        }
+        this.smtps.send(msg);
     }
 
     public void startIMAPIdle() {
+        this.imaps.startIMAPIdle();
     }
 
     public void stopIMAPIdle() {
+        this.imaps.stopIMAPIdle();
     }
 
-    public void getMessages(FlagTerm flagterm, int no) {
+    public void getMessages(SearchTerm searchterm) {
+        this.imaps.getMessages(searchterm);
     }
 
     public void getAllMessages() {
+        this.imaps.getMessages(null);
     }
 
-    private MimeMessage convertToMime(XOMessage message) {
+    public static MimeMessage convertToMime(XOMessage message) {
         return null;
     }
 
-    private XOMessage convertToXO(MimeMessage message) {
+    public static XOMessage convertToXO(MimeMessage message) {
         return null;
+    }
+
+    //Don't make public to everybody
+    Session getSession() {
+        return this.session;
+    }
+    Settings getSettings() {
+        return this.settings;
+    }
+    String getUsername() {
+        return this.username;
+    }
+    String getPassword() {
+        return this.password;
     }
 }

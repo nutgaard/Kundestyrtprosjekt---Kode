@@ -11,7 +11,7 @@ import java.io.FilenameFilter;
  *
  * @author Aleksander Sj�fjell
  */
-public abstract class PersistenceService extends ServiceInterface {
+public abstract class PersistenceService extends ServiceInterface<PersistenceService.callback> {
 
     public interface callback {
         public void loadObjectReturn(String fileName, Object file);

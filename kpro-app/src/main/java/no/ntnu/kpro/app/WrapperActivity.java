@@ -36,9 +36,12 @@ public class WrapperActivity extends Activity {
 
     public ServiceProvider getServiceProvider() {
         if (serviceProvider == null) {
-            throw new RuntimeException("The fuck?? ServiceProvider == null");
+            throw new RuntimeException("ServiceProvider not connected, check isConnected before use");
         }
         return serviceProvider;
+    }
+    public boolean isConnected() {
+        return this.serviceProvider != null;    
     }
 
     @Override

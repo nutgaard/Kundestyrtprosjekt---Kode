@@ -8,7 +8,7 @@ package no.ntnu.kpro.core.service.interfaces;
  *
  * @author Nicklas
  */
-public abstract class HALService extends ServiceInterface {
+public abstract class HALService extends ServiceInterface<HALService.callback> {
     public interface callback {
     }
 }

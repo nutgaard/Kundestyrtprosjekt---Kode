@@ -13,22 +13,34 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import javax.mail.Address;
+import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 /**
  *
  * @author Kristin
  */
-public class InboxActivity extends WrapperActivity {
+public class InboxActivity extends WrapperActivity implements NetworkService.Callback {
 
-    ArrayList<HashMap<String, String>> list;
+    List<XOMessage> messages;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.message_list);
 
+        //getServiceProvider().getNetworkService().getAllMessages();
+        
+        messages = new ArrayList<XOMessage>();
+        messages.add(new XOMessage("kristonn@stud.ntnu.no", "kristonn@stud.ntnu.no", "Test", "Hallo på deg"));
+        messages.add(new XOMessage("kristonn@stud.ntnu.no", "idakatt@stud.ntnu.no", "Testing", "Hey ya"));
+        //SimpleAdapter ad = new SimpleAdapter(this, messages, R.layout.message_list_item, from, FOCUSED_STATE_SET)
+        
+        
+        /*
         list = new ArrayList<HashMap<String, String>>();
 
         HashMap<String, String> map = new HashMap<String, String>();
@@ -41,12 +53,13 @@ public class InboxActivity extends WrapperActivity {
         map2.put("subject", "Dinner");
         map2.put("date", "29.08.2012");
         list.add(map2);
-
-        SimpleAdapter adapter = new SimpleAdapter((this), list, R.layout.message_list_item, new String[]{"from", "subject", "date"}, new int[]{R.id.from, R.id.subject, R.id.date});
+        */
+       
+        //SimpleAdapter adapter = new SimpleAdapter((this), list, R.layout.message_list_item, new String[]{"from", "subject", "date"}, new int[]{R.id.from, R.id.subject, R.id.date});
 
         ListView v = (ListView) findViewById(R.id.list);
 
-        v.setAdapter(adapter);
+        v.setAdapter(new XOMessageAdapter(this, messages));
         
         v.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
@@ -54,10 +67,15 @@ public class InboxActivity extends WrapperActivity {
 
                 // selected item
                 //String from = ((TextView) view).getText().toString();
-
-                HashMap hmap = list.get(position);
-                String from = hmap.get("from").toString();
-                String subj = hmap.get("subject").toString();
+                
+                XOMessage mess = messages.get(position);
+                String from = mess.getFrom();
+                String subj = mess.getSubject();
+                
+//                
+//                HashMap hmap = list.get(position);
+//                String from = hmap.get("from").toString();
+//                String subj = hmap.get("subject").toString();
 
 //                TextView v = (TextView) findViewById(R.id.from);
 //                String s = v.getText().toString();
@@ -100,5 +118,21 @@ public class InboxActivity extends WrapperActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void mailSent(XOMessage message, Address[] invalidAddress) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void mailSentError(XOMessage message) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void mailReceived(XOMessage message) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void mailReceivedError() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

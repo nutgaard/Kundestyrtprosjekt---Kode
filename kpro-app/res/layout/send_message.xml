@@ -2,25 +2,27 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
+                android:padding="10dp"
 >
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
                   android:id="@+id/receiver_layout"
                   android:orientation="horizontal"
-                  android:layout_width="fill_parent"  
+                  android:layout_width="fill_parent" 
+                  android:weightSum="100" 
                   android:layout_height="wrap_content"> 
         <!-- Receiver -->
         <EditText
             android:id="@+id/receiver"
-            android:layout_width="150dp"
+            android:layout_weight="80"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="To"
         />
         <!-- Address book -->
         <ImageButton
             android:id="@+id/contacts_button"
-            android:layout_width="wrap_content"
+            android:layout_weight="20"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:src="@drawable/icon"
     />
@@ -35,7 +37,7 @@
         <!-- Subject -->
         <EditText
             android:id="@+id/subject"
-            android:layout_width="200dp"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:hint="Subject"
         />
@@ -45,20 +47,30 @@
                   android:orientation="horizontal"
                   android:layout_width="fill_parent"  
                   android:layout_height="wrap_content"
+                  android:weightSum="100"
                   android:layout_below="@+id/subject_layout"
     >
         <!-- Grading -->
         <EditText
             android:id="@+id/grading"
-            android:layout_width="100dp"
+            android:layout_width="0dp"
+            android:layout_weight="33"
             android:hint="Grading"
             android:layout_height="wrap_content"
         />
         <!-- Priority -->
         <EditText
             android:id="@+id/priority"
-            android:layout_width="100dp"
+            android:layout_width="0dp"
+            android:layout_weight="33"
             android:hint="Priority"
+            android:layout_height="wrap_content"
+        />
+        <EditText
+            android:id="@+id/type"
+            android:layout_width="0dp"
+            android:layout_weight="33"
+            android:hint="Type"
             android:layout_height="wrap_content"
         />
     </LinearLayout>
@@ -72,8 +84,8 @@
         <!-- Text -->
         <EditText
             android:id="@+id/text"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="fill_parent"
+            android:layout_height="150dp"
             android:lines="10"
             android:maxLines="10"
             android:maxLength="500"
@@ -90,15 +102,15 @@
          <!-- Attachments button -->
          <Button
         android:id="@+id/attachments_button"
-        android:layout_width="200dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="Add element"
     />
     </LinearLayout>
     <!-- Send button -->
     <Button
-        android:id="@+id/send_button"
-        android:layout_width="200dp"
+        android:id="@+id/send_button"   
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="Send"
         android:layout_below="@+id/attachments_layout"

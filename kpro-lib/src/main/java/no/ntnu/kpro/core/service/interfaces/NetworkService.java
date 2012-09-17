@@ -4,19 +4,21 @@
  */
 package no.ntnu.kpro.core.service.interfaces;
 
-import javax.mail.search.FlagTerm;
+import javax.mail.Address;
+import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.XOMessage;
 
 /**
  *
  * @author Nicklas
  */
-public abstract class NetworkService extends ServiceInterface {
+public abstract class NetworkService extends ServiceInterface<NetworkService.Callback> {
 
-    public interface callback {
-        public enum event{
-            MAIL_OK, MAIL_ERROR;
-        }
+    public interface Callback {
+        public void mailSent(XOMessage message, Address[] invalidAddress);
+        public void mailSentError(XOMessage message);
+        public void mailReceived(XOMessage message);
+        public void mailReceivedError();
     }
 
 //    public boolean sendMail(final String recipient, final String subject, final String body);
@@ -24,6 +26,6 @@ public abstract class NetworkService extends ServiceInterface {
     public abstract void send(XOMessage message);
     public abstract void startIMAPIdle();
     public abstract void stopIMAPIdle();
-    public abstract void getMessages(FlagTerm flagterm, int no);
+    public abstract void getMessages(SearchTerm searchterm);
     public abstract void getAllMessages();
 }

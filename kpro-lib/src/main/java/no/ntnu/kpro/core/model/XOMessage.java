@@ -13,7 +13,7 @@ import javax.mail.internet.MimeMessage;
  *
  * @author Nicklas
  */
-public class XOMessage {
+public class XOMessage implements Comparable<XOMessage> {
     private final String from;
     private final String to;
     private final String subject;
@@ -76,5 +76,9 @@ public class XOMessage {
 
     public XOMessageType getType() {
         return type;
-    }    
+    }
+
+    public int compareTo(XOMessage o) {
+        return 0;
+    }
 }
