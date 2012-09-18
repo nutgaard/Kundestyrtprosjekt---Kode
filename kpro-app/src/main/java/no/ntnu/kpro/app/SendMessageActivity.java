@@ -49,7 +49,7 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
     @Override
     public void onServiceConnected(ServiceProvider serviceProvider) {
         super.onServiceConnected(serviceProvider);
-        getServiceProvider().register(this);
+//        getServiceProvider().register(this);
     }
     public void mailSent(XOMessage message, Address[] invalidAddress) {
 //        throw new UnsupportedOperationException("Not supported yet.");

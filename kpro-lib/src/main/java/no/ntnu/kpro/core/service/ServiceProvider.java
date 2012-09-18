@@ -96,37 +96,22 @@ public class ServiceProvider extends Service {
         return networkService;
     }
 
-    public void register(Activity activity) {
-        this.currentActivity = activity;
-        
-        if (activity instanceof NetworkService.Callback) {
-            this.getNetworkService().clearListeners();
-            this.getNetworkService().addListener((NetworkService.Callback)activity);
-        }
-        if (activity instanceof HALService.callback) {
-            this.getHALService().clearListeners();
-            this.getHALService().addListener((HALService.callback)activity);
-        }
-        if (activity instanceof PersistenceService.callback) {
-            this.getPersistenceService().clearListeners();
-            this.getPersistenceService().addListener((PersistenceService.callback)activity);
-        }
-    }
-
-//    public void unregister(Activity activity) {
-//        Log.i(this.getClass().getName(), "Unregister: "+activity);
-//        Log.i(this.getClass().getName(), "Unregister: "+this.getNetworkService());
+//    public void register(Activity activity) {
+//        this.currentActivity = activity;
 //        
-//        if (activity == this.currentActivity) {
-//            this.currentActivity = null;
+//        if (activity instanceof NetworkService.Callback) {
+//            this.getNetworkService().clearListeners();
+//            this.getNetworkService().addListener((NetworkService.Callback)activity);
 //        }
-//        this.getNetworkService().clearListeners();
-////        this.getHALService().clearListeners();
-////        this.persistenceService.clearListeners();
+//        if (activity instanceof HALService.callback) {
+//            this.getHALService().clearListeners();
+//            this.getHALService().addListener((HALService.callback)activity);
+//        }
+//        if (activity instanceof PersistenceService.callback) {
+//            this.getPersistenceService().clearListeners();
+//            this.getPersistenceService().addListener((PersistenceService.callback)activity);
+//        }
 //    }
-    public Activity getCurrentActivity() {
-        return this.currentActivity;
-    }
     //Can to this because Service is implicit singleton
     public static ServiceProvider getInstance() {
         return instance;

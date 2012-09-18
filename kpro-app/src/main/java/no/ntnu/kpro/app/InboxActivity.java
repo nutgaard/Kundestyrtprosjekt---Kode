@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import javax.mail.Address;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 /**
@@ -33,64 +34,30 @@ public class InboxActivity extends WrapperActivity implements NetworkService.Cal
         setContentView(R.layout.message_list);
 
         //getServiceProvider().getNetworkService().getAllMessages();
-        
-        messages = new ArrayList<XOMessage>();
-        messages.add(new XOMessage("kristonn@stud.ntnu.no", "kristonn@stud.ntnu.no", "Test", "Hallo på deg"));
-        messages.add(new XOMessage("kristonn@stud.ntnu.no", "idakatt@stud.ntnu.no", "Testing", "Hey ya"));
+
+//        messages = new ArrayList<XOMessage>();
+//        messages.add(new XOMessage("kristonn@stud.ntnu.no", "kristonn@stud.ntnu.no", "Test", "Hallo på deg"));
+//        messages.add(new XOMessage("kristonn@stud.ntnu.no", "idakatt@stud.ntnu.no", "Testing", "Hey ya"));'
         //SimpleAdapter ad = new SimpleAdapter(this, messages, R.layout.message_list_item, from, FOCUSED_STATE_SET)
-        
-        
+
+
         /*
-        list = new ArrayList<HashMap<String, String>>();
+         list = new ArrayList<HashMap<String, String>>();
 
-        HashMap<String, String> map = new HashMap<String, String>();
-        map.put("from", "Kristin");
-        map.put("subject", "Meeting");
-        map.put("date", "30.08.2012");
-        list.add(map);
-        HashMap<String, String> map2 = new HashMap<String, String>();
-        map2.put("from", "Ida");
-        map2.put("subject", "Dinner");
-        map2.put("date", "29.08.2012");
-        list.add(map2);
-        */
-       
+         HashMap<String, String> map = new HashMap<String, String>();
+         map.put("from", "Kristin");
+         map.put("subject", "Meeting");
+         map.put("date", "30.08.2012");
+         list.add(map);
+         HashMap<String, String> map2 = new HashMap<String, String>();
+         map2.put("from", "Ida");
+         map2.put("subject", "Dinner");
+         map2.put("date", "29.08.2012");
+         list.add(map2);
+         */
+
         //SimpleAdapter adapter = new SimpleAdapter((this), list, R.layout.message_list_item, new String[]{"from", "subject", "date"}, new int[]{R.id.from, R.id.subject, R.id.date});
-
-        ListView v = (ListView) findViewById(R.id.list);
-
-        v.setAdapter(new XOMessageAdapter(this, messages));
         
-        v.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                    int position, long id) {
-
-                // selected item
-                //String from = ((TextView) view).getText().toString();
-                
-                XOMessage mess = messages.get(position);
-                String from = mess.getFrom();
-                String subj = mess.getSubject();
-                
-//                
-//                HashMap hmap = list.get(position);
-//                String from = hmap.get("from").toString();
-//                String subj = hmap.get("subject").toString();
-
-//                TextView v = (TextView) findViewById(R.id.from);
-//                String s = v.getText().toString();
-//                TextView v2 = (TextView) findViewById(R.id.subject);
-//                String s2 = v2.getText().toString();
-
-                // Launching new Activity on selecting single List Item
-                Intent i = new Intent(getApplicationContext(), MessageInActivity.class);
-                // sending data to new activity
-                i.putExtra("from", from);
-                i.putExtra("subject", subj);
-                startActivity(i);
-
-            }
-        });
 
     }
 
@@ -118,6 +85,45 @@ public class InboxActivity extends WrapperActivity implements NetworkService.Cal
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onServiceConnected(ServiceProvider sp) {
+        messages = sp.getNetworkService().getInbox();
+        ListView v = (ListView) findViewById(R.id.list);
+
+        v.setAdapter(new XOMessageAdapter(this, messages));
+
+        v.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                    int position, long id) {
+
+                // selected item
+                //String from = ((TextView) view).getText().toString();
+
+                XOMessage mess = messages.get(position);
+                String from = mess.getFrom();
+                String subj = mess.getSubject();
+
+//                
+//                HashMap hmap = list.get(position);
+//                String from = hmap.get("from").toString();
+//                String subj = hmap.get("subject").toString();
+
+//                TextView v = (TextView) findViewById(R.id.from);
+//                String s = v.getText().toString();
+//                TextView v2 = (TextView) findViewById(R.id.subject);
+//                String s2 = v2.getText().toString();
+
+                // Launching new Activity on selecting single List Item
+                Intent i = new Intent(getApplicationContext(), MessageInActivity.class);
+                // sending data to new activity
+                i.putExtra("from", from);
+                i.putExtra("subject", subj);
+                startActivity(i);
+
+            }
+        });
     }
 
     public void mailSent(XOMessage message, Address[] invalidAddress) {
