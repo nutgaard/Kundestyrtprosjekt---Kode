@@ -6,6 +6,7 @@ package no.ntnu.kpro.core.service.implementation.NetworkService;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -104,6 +105,16 @@ public class NetworkServiceImp extends NetworkService {
 
     @Override
     public boolean sendMail(String recipient, String subject, String body) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<XOMessage> getOutbox() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<XOMessage> getInbox() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

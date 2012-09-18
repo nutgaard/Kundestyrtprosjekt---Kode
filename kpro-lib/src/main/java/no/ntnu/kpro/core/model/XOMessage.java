@@ -81,4 +81,10 @@ public class XOMessage implements Comparable<XOMessage> {
     public int compareTo(XOMessage o) {
         return 0;
     }
+
+    @Override
+    public String toString() {
+        return "XOMessage{" + "from=" + from + ", to=" + to + ", subject=" + subject + ", strippedBody=" + strippedBody + '}';
+    }
+    
 }
