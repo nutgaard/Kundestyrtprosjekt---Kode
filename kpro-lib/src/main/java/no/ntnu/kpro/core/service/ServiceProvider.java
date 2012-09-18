@@ -72,7 +72,7 @@ public class ServiceProvider extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         boolean b = super.onUnbind(intent);
-        this.unregister(currentActivity);
+        this.currentActivity = null;
         Log.d(this.getClass().getName(), "OnUnbind");
         return b;
     }
@@ -113,14 +113,17 @@ public class ServiceProvider extends Service {
         }
     }
 
-    public void unregister(Activity activity) {
-        if (activity == this.currentActivity) {
-            this.currentActivity = null;
-        }
-        this.getNetworkService().clearListeners();
-        this.getHALService().clearListeners();
-        this.persistenceService.clearListeners();
-    }
+//    public void unregister(Activity activity) {
+//        Log.i(this.getClass().getName(), "Unregister: "+activity);
+//        Log.i(this.getClass().getName(), "Unregister: "+this.getNetworkService());
+//        
+//        if (activity == this.currentActivity) {
+//            this.currentActivity = null;
+//        }
+//        this.getNetworkService().clearListeners();
+////        this.getHALService().clearListeners();
+////        this.persistenceService.clearListeners();
+//    }
     public Activity getCurrentActivity() {
         return this.currentActivity;
     }

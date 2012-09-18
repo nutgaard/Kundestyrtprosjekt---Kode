@@ -21,35 +21,54 @@ import no.ntnu.kpro.core.service.ServiceProvider;
 public class WrapperActivity extends Activity {
 
     protected ServiceProvider mServiceProvider;
-    private ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName cn, IBinder ib) {
-            ServiceProvider.LocalBinder lb = (ServiceProvider.LocalBinder) ib;
-            WrapperActivity.this.onServiceConnected(lb.getService());
-        }
+    private ServiceConnection mConnection;
 
-        public void onServiceDisconnected(ComponentName cn) {
-            WrapperActivity.this.onServiceDisconnected(mServiceProvider);
-        }
-    };
     public boolean isConnected() {
-        return this.mServiceProvider != null;    
+        return this.mServiceProvider != null;
     }
+
     public ServiceProvider getServiceProvider() {
-        if (!isConnected())return null;
+        if (!isConnected()) {
+            return null;
+        }
         return mServiceProvider;
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Needs some intent to bind to serice
+        mConnection = newServiceConnection();
         bindService(new Intent(this, ServiceProvider.class), mConnection, Service.BIND_AUTO_CREATE);
     }
+
     public void onServiceConnected(ServiceProvider serviceProvider) {
-        Log.d(this.getClass().getName(), "ServiceConnected");
+        Log.d(this.getClass().getName(), "ServiceConnected to " + this.getClass().getName());
         this.mServiceProvider = serviceProvider;
     }
+
     public void onServiceDisconnected(ServiceProvider serviceProvider) {
-        Log.d(this.getClass().getName(), "ServiceDisconnected");
+        Log.d(this.getClass().getName(), "ServiceDisconnected from " + this.getClass().getName());
         this.mServiceProvider = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        unbindService(mConnection);
+        onServiceDisconnected(mServiceProvider);
+        super.onDestroy();
+    }
+
+    private ServiceConnection newServiceConnection() {
+        return new ServiceConnection() {
+            public void onServiceConnected(ComponentName cn, IBinder ib) {
+                ServiceProvider.LocalBinder lb = (ServiceProvider.LocalBinder) ib;
+                WrapperActivity.this.onServiceConnected(lb.getService());
+            }
+
+            public void onServiceDisconnected(ComponentName cn) {
+                WrapperActivity.this.onServiceDisconnected(mServiceProvider);
+            }
+        };
     }
 }
