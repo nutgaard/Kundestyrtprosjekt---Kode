@@ -3,10 +3,8 @@ package no.ntnu.kpro.core.service.implementation.NetworkService;
 import android.widget.Toast;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.smtp.SMTPTransport;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -67,8 +65,8 @@ public class SimpleMail extends NetworkService {
         this.mailAdr = mailAdr;
         this.inboxM = new LinkedList<XOMessage>();
         this.outboxM = new LinkedList<XOMessage>();
-        getAllMessages();
-        startIMAP();
+//        getAllMessages();
+//        startIMAP();
     }
 
     public boolean sendMail(final String recipient, final String subject, final String body) {
@@ -148,11 +146,11 @@ public class SimpleMail extends NetworkService {
     }
 
     public void startIMAPIdle() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        startIMAP();
     }
 
     public void stopIMAPIdle() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        stopIMAP();
     }
 
     public void getMessages(FlagTerm flagterm, int no) {
