@@ -19,9 +19,11 @@ public class MessageInActivity extends WrapperActivity{
         Intent i = getIntent();
         String from = i.getStringExtra("from");
         String subject = i.getStringExtra("subject");
+        String text = i.getStringExtra("text");
         TextView v = (TextView)findViewById(R.id.from);
         v.setText(from);
         TextView v2 = (TextView)findViewById(R.id.subject);
         v2.setText(subject);
+        TextView v3 = (TextView) findViewById(R.id.text);
     }
 }

@@ -54,11 +54,12 @@ public class XOMessageAdapter extends ArrayAdapter {
  
         // Transfer the stock data from the data object
         // to the view objects
+       
         XOMessage message = (XOMessage)messages.get(position);
         xoView.address.setText(message.getFrom());
         xoView.subject.setText(message.getSubject());
         xoView.date.setText("01.01.2012 00:00");
- 
+        
         return rowView;
     }
      

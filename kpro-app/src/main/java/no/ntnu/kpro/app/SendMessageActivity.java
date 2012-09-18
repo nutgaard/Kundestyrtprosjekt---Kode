@@ -32,13 +32,12 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
                 String subject = ((EditText) findViewById(R.id.subject)).getText().toString();
                 String content = ((EditText) findViewById(R.id.text)).getText().toString();
                 
-                Toast confirm = Toast.makeText(SendMessageActivity.this, "Sending message to " + receiver + " with subject \n" + subject, Toast.LENGTH_SHORT);
-//                XOMessage mess = new XOMessage(null, receiver, subject, content);
+                Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent.", Toast.LENGTH_SHORT);
+
                 while (!isConnected()){
                     Thread.yield();
                 }
                 getServiceProvider().getNetworkService().sendMail(receiver, subject, content);
-//                getServiceProvider().getNetworkService().send(mess);
                 
                 confirm.show();
                 
@@ -51,12 +50,15 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
         super.onServiceConnected(serviceProvider);
         getServiceProvider().register(this);
     }
+    
     public void mailSent(XOMessage message, Address[] invalidAddress) {
-//        throw new UnsupportedOperationException("Not supported yet.");
+         Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent", Toast.LENGTH_SHORT);
+         confirm.show();
     }
 
     public void mailSentError(XOMessage message) {
-//        throw new UnsupportedOperationException("Not supported yet.");
+         Toast errorMess = Toast.makeText(SendMessageActivity.this, "Something went wrong", Toast.LENGTH_SHORT);
+         errorMess.show();
     }
 
     public void mailReceived(XOMessage message) {
