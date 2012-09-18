@@ -1,5 +1,6 @@
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
+import android.os.Looper;
 import android.widget.Toast;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.smtp.SMTPTransport;
@@ -223,7 +224,6 @@ public class SimpleMail extends NetworkService {
 //        sm.sendMail("nutgaard@gmail.com", "JAOSFIJAOSFJ", "THIS IS THA BODY");
 //        sm.stopIMAP();
 //    }
-
     public class IMAPListener implements MessageCountListener {
 
         public void messagesAdded(MessageCountEvent mce) {
@@ -262,9 +262,10 @@ public class SimpleMail extends NetworkService {
 //                    System.out.println("--------");
                     XOMessage newMessage = new XOMessage(from, to, subject, body);
                     inboxM.add(newMessage);
-                    if (ServiceProvider.getInstance().getCurrentActivity() == null) {
-                        Toast.makeText(ServiceProvider.getInstance().getApplicationContext(), "You got mail", Toast.LENGTH_LONG).show();
-                    }
+//                    Looper.prepare();
+//                    Looper.loop();
+//                    Toast.makeText(ServiceProvider.getInstance().getApplicationContext(), "You got mail", Toast.LENGTH_LONG).show();
+//                    Looper.myLooper().quit();
                 }
                 NOF_received++;
 
