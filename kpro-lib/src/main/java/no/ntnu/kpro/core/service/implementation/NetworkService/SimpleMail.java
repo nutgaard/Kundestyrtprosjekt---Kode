@@ -1,7 +1,9 @@
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
+import android.widget.Toast;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.smtp.SMTPTransport;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -16,6 +18,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.search.FlagTerm;
 import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 @Deprecated
@@ -211,15 +214,16 @@ public class SimpleMail extends NetworkService {
 
 //    public static void main(String[] args) throws InterruptedException {
 //        SimpleMail sm = new SimpleMail("kprothales", "kprothales2012", "kprothales@gmail.com");
-//        sm.getAllMessages();
-//        List<XOMessage> o = sm.getInbox();
-//        System.out.println("InboxSize: " + o.size());
-//        for (XOMessage m : o){
-//            System.out.println(m);
-//        }
+////        sm.getAllMessages();
+////        List<XOMessage> o = sm.getInbox();
+////        System.out.println("InboxSize: " + o.size());
+////        for (XOMessage m : o){
+////            System.out.println(m);
+////        }
 ////        sm.startIMAP();
-////        System.out.println("Sending");
-////        sm.sendMail("kprothales@gmail.com", "JAOSFIJAOSFJ", "THIS IS THA BODY");
+//        System.out.println("Sending");
+//        sm.sendMail("nutgaard@gmail.com", "JAOSFIJAOSFJ", "THIS IS THA BODY");
+//        sm.stopIMAP();
 //    }
 
     public class IMAPListener implements MessageCountListener {
@@ -260,6 +264,9 @@ public class SimpleMail extends NetworkService {
 //                    System.out.println("--------");
                     XOMessage newMessage = new XOMessage(from, to, subject, body);
                     inboxM.add(newMessage);
+                    if (ServiceProvider.getInstance().getCurrentActivity() == null) {
+                        Toast.makeText(ServiceProvider.getInstance().getApplicationContext(), "You got mail", Toast.LENGTH_LONG).show();
+                    }
                 }
                 NOF_received++;
 
