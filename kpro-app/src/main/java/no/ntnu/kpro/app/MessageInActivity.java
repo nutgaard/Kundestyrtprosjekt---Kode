@@ -25,5 +25,6 @@ public class MessageInActivity extends WrapperActivity{
         TextView v2 = (TextView)findViewById(R.id.subject);
         v2.setText(subject);
         TextView v3 = (TextView) findViewById(R.id.text);
+        v3.setText(text);
     }
 }

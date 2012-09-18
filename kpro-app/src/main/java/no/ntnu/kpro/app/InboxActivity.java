@@ -32,33 +32,6 @@ public class InboxActivity extends WrapperActivity implements NetworkService.Cal
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.message_list);
-
-        //getServiceProvider().getNetworkService().getAllMessages();
-
-//        messages = new ArrayList<XOMessage>();
-//        messages.add(new XOMessage("kristonn@stud.ntnu.no", "kristonn@stud.ntnu.no", "Test", "Hallo på deg"));
-//        messages.add(new XOMessage("kristonn@stud.ntnu.no", "idakatt@stud.ntnu.no", "Testing", "Hey ya"));'
-        //SimpleAdapter ad = new SimpleAdapter(this, messages, R.layout.message_list_item, from, FOCUSED_STATE_SET)
-
-
-        /*
-         list = new ArrayList<HashMap<String, String>>();
-
-         HashMap<String, String> map = new HashMap<String, String>();
-         map.put("from", "Kristin");
-         map.put("subject", "Meeting");
-         map.put("date", "30.08.2012");
-         list.add(map);
-         HashMap<String, String> map2 = new HashMap<String, String>();
-         map2.put("from", "Ida");
-         map2.put("subject", "Dinner");
-         map2.put("date", "29.08.2012");
-         list.add(map2);
-         */
-
-        //SimpleAdapter adapter = new SimpleAdapter((this), list, R.layout.message_list_item, new String[]{"from", "subject", "date"}, new int[]{R.id.from, R.id.subject, R.id.date});
-        
-
     }
 
     @Override
@@ -104,6 +77,7 @@ public class InboxActivity extends WrapperActivity implements NetworkService.Cal
                 XOMessage mess = messages.get(position);
                 String from = mess.getFrom();
                 String subj = mess.getSubject();
+                String text = mess.getStrippedBody();
 
 //                
 //                HashMap hmap = list.get(position);
@@ -120,6 +94,7 @@ public class InboxActivity extends WrapperActivity implements NetworkService.Cal
                 // sending data to new activity
                 i.putExtra("from", from);
                 i.putExtra("subject", subj);
+                i.putExtra("text", text);
                 startActivity(i);
 
             }
