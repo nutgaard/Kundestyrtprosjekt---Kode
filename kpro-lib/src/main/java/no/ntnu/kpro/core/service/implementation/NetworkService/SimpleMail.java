@@ -2,6 +2,7 @@ package no.ntnu.kpro.core.service.implementation.NetworkService;
 
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.smtp.SMTPTransport;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -9,7 +10,6 @@ import javax.mail.*;
 import javax.mail.event.MessageCountEvent;
 import javax.mail.event.MessageCountListener;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.FlagTerm;
 import javax.mail.search.SearchTerm;
@@ -71,6 +71,13 @@ public class SimpleMail extends NetworkService {
             
             message.setSubject(subject);
             message.setText(body);
+            
+            //Printing props
+            System.out.println("Props");
+            for (Entry<Object, Object> s : this.props.entrySet()) {
+                System.out.println("    "+s.getKey().toString()+": "+s.getValue().toString());
+            }
+            
             SMTPTransport t = (SMTPTransport) session.getTransport("smtps");
             t.connect(this.props.getProperty("mail.smtps.host"), this.mailAdr, this.password);
             t.sendMessage(message, message.getAllRecipients());
@@ -153,6 +160,8 @@ public class SimpleMail extends NetworkService {
     public void getMessages(SearchTerm searchterm) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    
 
     public class IMAPListener implements MessageCountListener {
 

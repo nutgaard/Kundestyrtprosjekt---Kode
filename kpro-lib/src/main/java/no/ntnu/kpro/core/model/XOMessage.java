@@ -34,7 +34,7 @@ public class XOMessage implements Comparable<XOMessage> {
         this.subject = subject;
         this.attachments = new LinkedList<InputStream>();
         this.htmlBody = body;
-        this.strippedBody = android.text.Html.fromHtml(body).toString();
+        this.strippedBody = body.replaceAll("\\<.*?>","");
         this.grading = grading;
         this.priority = priority;
         this.type = type;

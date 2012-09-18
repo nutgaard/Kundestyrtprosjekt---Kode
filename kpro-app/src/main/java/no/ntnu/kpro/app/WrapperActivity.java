@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import no.ntnu.kpro.core.service.ServiceProvider;
 
 /**
@@ -19,35 +20,36 @@ import no.ntnu.kpro.core.service.ServiceProvider;
  */
 public class WrapperActivity extends Activity {
 
-    private ServiceProvider serviceProvider;
+    protected ServiceProvider mServiceProvider;
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName cn, IBinder ib) {
             ServiceProvider.LocalBinder lb = (ServiceProvider.LocalBinder) ib;
-            serviceProvider = lb.getService();
-            serviceProvider.register(WrapperActivity.this);
+            WrapperActivity.this.onServiceConnected(lb.getService());
         }
 
         public void onServiceDisconnected(ComponentName cn) {
-            serviceProvider = null;
-            serviceProvider.unregister(WrapperActivity.this);
-            
+            WrapperActivity.this.onServiceDisconnected(mServiceProvider);
         }
     };
-
-    public ServiceProvider getServiceProvider() {
-        if (serviceProvider == null) {
-            throw new RuntimeException("ServiceProvider not connected, check isConnected before use");
-        }
-        return serviceProvider;
-    }
     public boolean isConnected() {
-        return this.serviceProvider != null;    
+        return this.mServiceProvider != null;    
     }
-
+    public ServiceProvider getServiceProvider() {
+        if (!isConnected())return null;
+        return mServiceProvider;
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Needs some intent to bind to serice
         bindService(new Intent(this, ServiceProvider.class), mConnection, Service.BIND_AUTO_CREATE);
+    }
+    public void onServiceConnected(ServiceProvider serviceProvider) {
+        Log.d(this.getClass().getName(), "ServiceConnected");
+        this.mServiceProvider = serviceProvider;
+    }
+    public void onServiceDisconnected(ServiceProvider serviceProvider) {
+        Log.d(this.getClass().getName(), "ServiceDisconnected");
+        this.mServiceProvider = null;
     }
 }

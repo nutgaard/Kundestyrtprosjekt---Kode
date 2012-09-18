@@ -25,11 +25,11 @@ public class Settings {
         this.properties = new Properties();
     }
 
-    public void setAttribute(String key, String value) {
+    public void put(Object key, Object value) {
         this.properties.put(key, value);
     }
 
-    public String getAttribute(String key) {
+    public String get(String key) {
         return this.properties.getProperty(key, "");
     }
 
@@ -81,7 +81,7 @@ class SettingsXMLHandler extends DefaultHandler {
         } else if (localName.equalsIgnoreCase("value")) {
             this.propertyValue = elementValue;
         } else if (localName.equalsIgnoreCase("property")) {
-            this.settings.setAttribute(propertyKey, propertyValue);
+            this.settings.put(propertyKey, propertyValue);
         }
     }
 

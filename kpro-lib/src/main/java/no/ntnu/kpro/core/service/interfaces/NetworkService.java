@@ -22,7 +22,7 @@ public abstract class NetworkService extends ServiceInterface<NetworkService.Cal
     }
 
 //    public boolean sendMail(final String recipient, final String subject, final String body);
-    
+    public abstract boolean sendMail(final String recipient, final String subject, final String body);
     public abstract void send(XOMessage message);
     public abstract void startIMAPIdle();
     public abstract void stopIMAPIdle();

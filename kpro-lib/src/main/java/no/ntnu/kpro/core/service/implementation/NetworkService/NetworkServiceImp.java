@@ -6,6 +6,7 @@ package no.ntnu.kpro.core.service.implementation.NetworkService;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.Authenticator;
@@ -25,26 +26,30 @@ public class NetworkServiceImp extends NetworkService {
 
     private SMTPS smtps;
     private IMAPS imaps;
-    private Settings settings;
+    private Properties props;
     private Authenticator authenticator;
-    private String username, password;
+    private String username, password, mailAdr;
     private Session session;
 
-    public NetworkServiceImp(final String username, final String password) {
+    public NetworkServiceImp(final String username, final String password, final String mailAdr) {
+        this(username, password, mailAdr, new Properties(), new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+    }
+    public NetworkServiceImp(final String username, final String password, final String mailAdr, Properties properties, Authenticator authenticator) {
         try {
             this.smtps = new SMTPS(this);
             this.imaps = new IMAPS(this);
-            this.settings = new DummySettings();
+            this.props = properties;
 //            this.settings.readFromFile(new FileInputStream("settings.xml"));
             this.username = username;
             this.password = password;
-            this.authenticator = new Authenticator() {
-                @Override
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(username, password);
-                }
-            };
-            this.session = Session.getInstance(this.settings.getProperties(), this.authenticator);
+            this.mailAdr = mailAdr;
+            this.authenticator = authenticator;
+            this.session = Session.getInstance(this.props, this.authenticator);
         } catch (Exception ex) {
             Logger.getLogger(NetworkServiceImp.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
@@ -83,13 +88,22 @@ public class NetworkServiceImp extends NetworkService {
     Session getSession() {
         return this.session;
     }
-    Settings getSettings() {
-        return this.settings;
+    Properties getSettings() {
+        return this.props;
     }
     String getUsername() {
         return this.username;
     }
     String getPassword() {
         return this.password;
+    }
+
+    String getUserMail() {
+        return this.mailAdr;
+    }
+
+    @Override
+    public boolean sendMail(String recipient, String subject, String body) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

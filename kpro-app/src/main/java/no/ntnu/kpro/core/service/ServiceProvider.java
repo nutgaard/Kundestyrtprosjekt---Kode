@@ -63,8 +63,15 @@ public class ServiceProvider extends Service {
         if (this.mBinder == null) {
             this.mBinder = new LocalBinder();
         }
-
+        Log.d(this.getClass().getName(), "OnBind");
         return this.mBinder;
+    }
+    @Override
+    public boolean onUnbind(Intent intent) {
+        boolean b = super.onUnbind(intent);
+        this.unregister(currentActivity);
+        Log.d(this.getClass().getName(), "OnUnbind");
+        return b;
     }
 
     public class LocalBinder extends Binder {
@@ -107,10 +114,14 @@ public class ServiceProvider extends Service {
         if (activity == this.currentActivity) {
             this.currentActivity = null;
         }
+        this.getNetworkService().clearListeners();
+        this.getHALService().clearListeners();
+        this.persistenceService.clearListeners();
     }
     public Activity getCurrentActivity() {
         return this.currentActivity;
     }
+    //Can to this because Service is implicit singleton
     public static ServiceProvider getInstance() {
         return instance;
     }

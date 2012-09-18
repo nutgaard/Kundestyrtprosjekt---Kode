@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import javax.mail.Address;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 /**
@@ -32,8 +33,12 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
                 String content = ((EditText) findViewById(R.id.text)).getText().toString();
                 
                 Toast confirm = Toast.makeText(SendMessageActivity.this, "Sending message to " + receiver + " with subject \n" + subject, Toast.LENGTH_SHORT);
-                XOMessage mess = new XOMessage(null, receiver, subject, content);
-                getServiceProvider().getNetworkService().send(mess);
+//                XOMessage mess = new XOMessage(null, receiver, subject, content);
+                while (!isConnected()){
+                    Thread.yield();
+                }
+                getServiceProvider().getNetworkService().sendMail(receiver, subject, content);
+//                getServiceProvider().getNetworkService().send(mess);
                 
                 confirm.show();
                 
@@ -41,20 +46,24 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
             }
         });
     }
-
+    @Override
+    public void onServiceConnected(ServiceProvider serviceProvider) {
+        super.onServiceConnected(serviceProvider);
+        getServiceProvider().register(this);
+    }
     public void mailSent(XOMessage message, Address[] invalidAddress) {
-        throw new UnsupportedOperationException("Not supported yet.");
+//        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void mailSentError(XOMessage message) {
-        throw new UnsupportedOperationException("Not supported yet.");
+//        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void mailReceived(XOMessage message) {
-        throw new UnsupportedOperationException("Not supported yet.");
+//        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void mailReceivedError() {
-        throw new UnsupportedOperationException("Not supported yet.");
+//        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

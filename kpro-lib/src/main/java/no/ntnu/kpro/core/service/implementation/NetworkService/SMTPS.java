@@ -9,6 +9,7 @@ import com.sun.mail.smtp.SMTPTransport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import javax.mail.event.TransportEvent;
 import javax.mail.event.TransportListener;
 import javax.mail.internet.MimeMessage;
@@ -28,14 +29,22 @@ public class SMTPS {
     public SMTPS(NetworkServiceImp imp) {
         this.imp = imp;
         this.msgList = Collections.synchronizedList(new ArrayList<XOMessage>());
+        this.sender = new SMTPSender();
+        System.out.println("SenderCOnst: " + sender);
+        new Thread(this.sender).start();
     }
 
     void send(XOMessage msg) {
         int index = Collections.binarySearch(msgList, msg);
+        System.out.println("Message Index: " + index);
         if (index < 0) {
             //Not found, so add it to queue
             msgList.add(~index, msg);
-            sender.notifyAll();
+            System.out.println("SenderSend: " + sender);
+            synchronized (sender) {
+                sender.notifyAll();
+                System.out.println("Notify");
+            }
         }
     }
 
@@ -48,20 +57,53 @@ public class SMTPS {
         public void run() {
             while (run) {
                 XOMessage msg = null;
+                System.out.println("Running");
                 try {
-                    SMTPTransport transport = (SMTPSSLTransport) imp.getSession().getTransport("smtps");
-                    transport.addTransportListener(listener);
-                    while (msgList.isEmpty()) {
-                        this.wait();
+                    while (imp.getSession() == null) {
+//                        System.out.println("Yield");
+                        Thread.yield();
                     }
+                    System.out.println("Fetching socket");
+                    System.out.println("IMP: " + imp);
+                    System.out.println("SESSION: " + imp.getSession());
+
+                    System.out.println("Props");
+                    for (Map.Entry<Object, Object> s : imp.getSettings().entrySet()) {
+                        System.out.println("    " + s.getKey().toString() + ": " + s.getValue().toString());
+                    }
+
+
+                    SMTPTransport transport = (SMTPSSLTransport) imp.getSession().getTransport("smtps");
+                    System.out.println("Transport " + transport);
+                    System.out.println("Adding listeners");
+                    transport.removeTransportListener(listener);
+                    transport.addTransportListener(listener);
+                    System.out.println("Queue: " + msgList.size());
+                    while (msgList.isEmpty()) {
+                        synchronized (this) {
+                            this.wait();
+                            System.out.println("Waiting");
+                        }
+                    }
+                    System.out.println("Sending");
                     msg = msgList.remove(0);
                     MimeMessage message = NetworkServiceImp.convertToMime(msg);
 //                  transport.connect(imp.getSettings().getAttribute("mail.smtps.host"), imp.getUsername(), imp.getPassword());
                     if (!transport.isConnected()) {
-                        transport.connect();
+                        System.out.println("Connection " + imp.getSettings().getProperty("mail.smtps.host") + " " + imp.getUserMail() + " " + imp.getPassword());
+                        transport.connect(imp.getSettings().getProperty("mail.smtps.host"), imp.getUserMail(), imp.getPassword());
+//                        transport.connect();
+                        System.out.println("Connected: " + transport.isConnected());
                     }
                     transport.sendMessage(message, message.getAllRecipients());
                     if (msgList.isEmpty()) {
+//                        transport.close();
+                        System.out.println("Closing");
+                        synchronized (this) {
+                            this.wait();
+                        }
+                    }
+                    if (!run) {
                         transport.close();
                     }
 
@@ -72,7 +114,9 @@ public class SMTPS {
                         }
                         c.mailSentError(msg);
                     }
+                    throw new RuntimeException(ex);
                 }
+
             }
         }
 
