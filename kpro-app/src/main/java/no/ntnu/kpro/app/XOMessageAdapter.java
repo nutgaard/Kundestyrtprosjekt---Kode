@@ -9,9 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.List;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.XOMessageGrading;
 
 /**
  *
@@ -44,6 +46,7 @@ public class XOMessageAdapter extends ArrayAdapter {
             xoView.address = (TextView) rowView.findViewById(R.id.from);
             xoView.subject = (TextView) rowView.findViewById(R.id.subject);
             xoView.date = (TextView) rowView.findViewById(R.id.date);
+            
  
             // Cache the view objects in the tag,
             // so they can be re-accessed later
@@ -60,6 +63,13 @@ public class XOMessageAdapter extends ArrayAdapter {
         xoView.subject.setText(message.getSubject());
         xoView.date.setText("01.01.2012 00:00");
         
+        // TODO: Set background (or something else) based on classification?
+        switch(message.getGrading()){
+            
+                
+              
+        }
+        
         return rowView;
     }
      
@@ -67,5 +77,7 @@ public class XOMessageAdapter extends ArrayAdapter {
         protected TextView address;
         protected TextView subject;
         protected TextView date;
+        protected ImageView classification;
+        protected ImageView priority;
     }
 }

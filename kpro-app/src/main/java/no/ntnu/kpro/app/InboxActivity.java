@@ -11,10 +11,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import java.util.ArrayList;
-import java.util.HashMap;
+import android.widget.Spinner;
 import java.util.List;
 import javax.mail.Address;
 import no.ntnu.kpro.core.model.XOMessage;
@@ -31,9 +30,18 @@ public class InboxActivity extends WrapperActivity implements NetworkService.Cal
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // GetExtra for in/out/sent, set corresponding content view
         setContentView(R.layout.message_list);
+//        Spinner folders = (Spinner) findViewById(R.id.folders);
+//        String[] folderChoices = {"Inbox", "Outbox", "Sent"};
+//        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+//		android.R.layout.simple_spinner_item, folderChoices);
+//        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        folders.setAdapter(dataAdapter);
+        
     }
 
+    // Create "popup" menu (shows by pressing MENU button) based on layout
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -41,6 +49,7 @@ public class InboxActivity extends WrapperActivity implements NetworkService.Cal
         return true;
     }
 
+    // Handler for pressing the popup menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -62,6 +71,9 @@ public class InboxActivity extends WrapperActivity implements NetworkService.Cal
 
     @Override
     public void onServiceConnected(ServiceProvider sp) {
+        
+        
+        
         messages = sp.getNetworkService().getInbox();
         ListView v = (ListView) findViewById(R.id.list);
 
