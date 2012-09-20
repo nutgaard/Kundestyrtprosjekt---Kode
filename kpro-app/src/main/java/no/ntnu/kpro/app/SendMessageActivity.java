@@ -15,6 +15,7 @@ import javax.mail.Address;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
+import no.ntnu.kpro.core.model.*;
 
 /**
  *
@@ -30,6 +31,7 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
         addBtnSendClickListener(btnSend);
         
         Spinner sprGrading = (Spinner) findViewById(R.id.sprGrading);
+        
                 
     }
     @Override
