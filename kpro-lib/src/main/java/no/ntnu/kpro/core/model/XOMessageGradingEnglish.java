@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package no.ntnu.kpro.core.model.Grading;
+package no.ntnu.kpro.core.model;
 
 /**
  *
@@ -18,7 +18,8 @@ public enum XOMessageGradingEnglish {
         this.val = value;
     }
     
-    public String getValue(){
+    @Override
+    public String toString(){
         return this.val;
     }
     

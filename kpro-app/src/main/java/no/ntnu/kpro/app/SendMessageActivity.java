@@ -13,10 +13,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import javax.mail.Address;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.XOMessageGradingEnglish;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
-import no.ntnu.kpro.core.model.*;
-
 /**
  *
  * @author Kristin
@@ -32,7 +31,10 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
         
         Spinner sprGrading = (Spinner) findViewById(R.id.sprGrading);
         
-                
+        ArrayAdapter adapter = new ArrayAdapter<XOMessageGradingEnglish>(this, android.R.layout.simple_list_item_1, XOMessageGradingEnglish.values());
+        sprGrading.setAdapter(adapter);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        
     }
     @Override
     public void onServiceConnected(ServiceProvider serviceProvider) {
@@ -78,4 +80,5 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
             }
         });
     }
+
 }

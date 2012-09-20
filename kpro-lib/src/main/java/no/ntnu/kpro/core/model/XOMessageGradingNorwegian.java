@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package no.ntnu.kpro.core.model.Grading;
+package no.ntnu.kpro.core.model;
 
 /**
  *
@@ -19,7 +19,8 @@ public enum XOMessageGradingNorwegian {
         this.val = value;
     }
     
-    private String getValue(){
+    @Override
+    public String toString(){
         return this.val;
     }
         
