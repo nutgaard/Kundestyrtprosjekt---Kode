@@ -51,12 +51,11 @@
                   android:layout_below="@+id/subject_layout"
     >
         <!-- Grading -->
-        <EditText
-            android:id="@+id/grading"
-            android:layout_width="0dp"
-            android:layout_weight="33"
-            android:hint="Grading"
-            android:layout_height="wrap_content"
+        <Spinner
+        android:id="@+id/sprGrading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="33"
         />
         <!-- Priority -->
         <EditText
