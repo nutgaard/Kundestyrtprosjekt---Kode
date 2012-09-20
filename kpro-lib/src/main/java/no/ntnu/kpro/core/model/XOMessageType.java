@@ -9,5 +9,5 @@ package no.ntnu.kpro.core.model;
  * @author Nicklas
  */
 public enum XOMessageType {
-    NONE;
+    NONE, EXERCISE, OPERATION, PROJECT, DRILL;
 }

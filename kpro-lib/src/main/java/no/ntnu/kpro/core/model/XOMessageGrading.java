@@ -9,5 +9,8 @@ package no.ntnu.kpro.core.model;
  * @author Nicklas
  */
 public enum XOMessageGrading {
-    NONE;
+    NONE, // TODO: All messages should have a classification
+    UGRADERT, BEGRENSET, KONFIDENSIELT, 
+    UNCLASSIFIED, RESTRICTED, CONFIDENTIAL, 
+    NATO_UNCLASSIFIED, NATO_RESTRICTED, NATO_CONFIDENTIAL;
 }
