@@ -6,6 +6,7 @@ package no.ntnu.kpro.app;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -29,7 +30,7 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
         addBtnSendClickListener(btnSend);
         
         Spinner sprGrading = (Spinner) findViewById(R.id.sprGrading);
-        
+                
     }
     @Override
     public void onServiceConnected(ServiceProvider serviceProvider) {
