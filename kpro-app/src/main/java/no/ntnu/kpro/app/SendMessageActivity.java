@@ -12,8 +12,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 import javax.mail.Address;
+import no.ntnu.kpro.core.helpers.EnumHelper;
 import no.ntnu.kpro.core.model.XOMessage;
-import no.ntnu.kpro.core.model.XOMessageGradingEnglish;
+import no.ntnu.kpro.core.model.XOMessageGrading;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 /**
@@ -28,14 +29,16 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
         
         Button btnSend = (Button) findViewById(R.id.send_button);
         addBtnSendClickListener(btnSend);
-        
-        Spinner sprGrading = (Spinner) findViewById(R.id.sprGrading);
-        
-        ArrayAdapter adapter = new ArrayAdapter<XOMessageGradingEnglish>(this, android.R.layout.simple_list_item_1, XOMessageGradingEnglish.values());
+        populateGradingSpinner();                        
+    }   
+    
+    private void populateGradingSpinner(){
+        Spinner sprGrading = (Spinner) findViewById(R.id.sprGrading);            
+        ArrayAdapter adapter = EnumHelper.getEnumAdapterByEnumClass(XOMessageGrading.class, this, android.R.layout.simple_spinner_item);
         sprGrading.setAdapter(adapter);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        
     }
+    
     @Override
     public void onServiceConnected(ServiceProvider serviceProvider) {
         super.onServiceConnected(serviceProvider);
