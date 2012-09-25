@@ -69,6 +69,22 @@ public class XOMessageAdapter extends ArrayAdapter {
                 
               
         }
+        switch(message.getPriority()){
+            case DEFERRED:
+                break;
+            case ROUTINE:
+                break;
+            case PRIORITY:
+                break;
+            case IMMEDIATE:
+                break;
+            case FLASH:
+                break;
+            case OVERRIDE:
+                break;
+            case NONE:
+                break;
+        }
         
         return rowView;
     }
