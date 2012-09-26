@@ -24,7 +24,7 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  *
  * @author Kristin
  */
-public class InboxActivity extends WrapperActivity implements NetworkService.Callback {
+public class FoldersActivity extends WrapperActivity implements NetworkService.Callback {
 
     List<XOMessage> messages;
 
@@ -32,15 +32,43 @@ public class InboxActivity extends WrapperActivity implements NetworkService.Cal
         super.onCreate(savedInstanceState);
         // GetExtra for in/out/sent, set corresponding content view
         setContentView(R.layout.message_list);
-//        Spinner folders = (Spinner) findViewById(R.id.folders);
-//        String[] folderChoices = {"Inbox", "Outbox", "Sent"};
-//        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-//		android.R.layout.simple_spinner_item, folderChoices);
-//        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        folders.setAdapter(dataAdapter);
-        
     }
 
+    private void populateSprFolders(){
+        Spinner folders = (Spinner) findViewById(R.id.folders);
+        String[] folderChoices = {"Inbox", "Outbox", "Sent"};
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+		android.R.layout.simple_spinner_item, folderChoices);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        folders.setAdapter(dataAdapter);
+    }
+    
+    private void addSprFoldersClickListener(ServiceProvider sp, Spinner sprFolders){
+        final ServiceProvider spr;
+        spr = sp;
+        sprFolders.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            
+            public void onItemSelected(AdapterView<?> av, View view, int i, long l) {
+                String folder = av.getItemAtPosition(i).toString();
+                if(folder.equals("Inbox")){
+                    messages = spr.getNetworkService().getInbox();
+                }
+                else if (folder.equals("Outbox")) {
+                    
+                }
+                else if (folder.equals("Sent")) {
+                    messages = spr.getNetworkService().getOutbox();
+                }
+                ListView v = (ListView) findViewById(R.id.list);
+                v.setAdapter(new XOMessageAdapter(FoldersActivity.this, messages));
+            }
+
+            public void onNothingSelected(AdapterView<?> av) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        });
+    }
+    
     // Create "popup" menu (shows by pressing MENU button) based on layout
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,9 +100,10 @@ public class InboxActivity extends WrapperActivity implements NetworkService.Cal
     @Override
     public void onServiceConnected(ServiceProvider sp) {
         
-        
-        
+        populateSprFolders();
         messages = sp.getNetworkService().getInbox();
+        addSprFoldersClickListener(sp, (Spinner) findViewById(R.id.folders));
+        
         ListView v = (ListView) findViewById(R.id.list);
 
         v.setAdapter(new XOMessageAdapter(this, messages));
