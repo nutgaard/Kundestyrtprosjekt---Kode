@@ -1,119 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!-- was: no XML declaration present -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent" android:layout_height="fill_parent">
+            android:layout_width="fill_parent" android:layout_height="fill_parent">
 
 
-<RelativeLayout 
-    android:layout_width="fill_parent" 
-    android:layout_height="fill_parent" 
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout 
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent" 
+        xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <!--RECEIVER OF MESSAGE-->
+        <!--RECEIVER OF MESSAGE-->
     
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
-                  android:id="@+id/receiver_layout"
-                  android:orientation="horizontal"
-                  android:layout_width="fill_parent" 
-                  android:weightSum="100" 
-                  android:layout_height="wrap_content"> 
-        <!-- Receiver -->
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
+                      android:id="@+id/receiver_layout"
+                      android:orientation="horizontal"
+                      android:layout_width="fill_parent" 
+                      android:weightSum="100" 
+                      android:layout_height="wrap_content"> 
+            <!-- Receiver -->
+            <EditText
+                android:id="@+id/txtMessageReceiver"
+                android:layout_weight="80"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="To"/>
+            <!-- Address book -->
+            <ImageButton
+                android:id="@+id/btnContacts"
+                android:layout_weight="20"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:src="@drawable/icon"/>
+        </LinearLayout>
+    
+        <EditText 
+            android:id="@+id/txtSubject"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_below="@id/receiver_layout"
+            android:hint="Subject"/>
+    
+        <!--MESSAGE SECURITY LABEL-->
+    
+        <TextView
+            android:id="@+id/lblSecurityLabelInfo"
+            android:text="Security Label"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_below="@id/txtSubject"/>
+        <Spinner
+            android:id="@+id/sprSecurityLabel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lblSecurityLabelInfo" />
+    
+        <!--MESSAGE PRIORITY-->
+    
+        <TextView
+            android:id="@+id/lblPriorityInfo"
+            android:text="Message Priority"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_below="@id/sprSecurityLabel"/>
+        <Spinner
+            android:id="@+id/sprPriority"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lblPriorityInfo"/>
+    
+        <!--MESSAGE TYPE-->
+    
+        <TextView
+            android:id="@+id/lblTypeInfo"
+            android:text="Message Type"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_below="@id/sprPriority"/>
+    
+        <Spinner
+            android:id="@+id/sprType"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lblTypeInfo"/>
+    
+        <!-- ATTACHMENTS BUTTON -->
+        <Button
+            android:id="@+id/btnAddAttachment"
+            android:layout_marginTop="7dp"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sprType"
+            android:text="Add attachment"/>
+    
+        <!-- MESSAGE TEXT -->
         <EditText
-            android:id="@+id/messageReceiver"
-            android:layout_weight="80"
-            android:layout_width="0dp"
+            android:id="@+id/txtMessage"
+            android:layout_width="fill_parent"
+            android:layout_height="150dp"
+            android:layout_below="@id/btnAddAttachment"
+            android:layout_marginTop="7dp"
+            android:lines="10"
+            android:maxLines="10"
+            android:maxLength="500"
+            android:hint="Message text"
+            android:gravity="top|left"/>    
+    
+        <!-- SEND BUTTON-->
+        <Button
+            android:id="@+id/btnSend"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:hint="To"
-            
-        />
-        <!-- Address book -->
-        <ImageButton
-            android:id="@+id/contacts_button"
-            android:layout_weight="20"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/icon"
-    />
-    </LinearLayout>
+            android:text="Send"
+            android:layout_below="@id/txtMessage"/> 
     
-    <!--MESSAGE SECURITY LABEL-->
-    
-    <TextView
-        android:id="@+id/lblSecurityLabelInfo"
-        android:text="Security Label"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_below="@id/receiver_layout"
-        />
-    <Spinner
-        android:id="@+id/sprSecurityLabel"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/lblSecurityLabelInfo" />
-    
-    <!--MESSAGE PRIORITY-->
-    
-    <TextView
-        android:id="@+id/lblPriorityInfo"
-        android:text="Message Priority"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_below="@id/sprSecurityLabel"
-        />
-    <Spinner
-        android:id="@+id/sprPriority"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/lblPriorityInfo"/>
-    
-    <!--MESSAGE TYPE-->
-    
-    <TextView
-        android:id="@+id/lblTypeInfo"
-        android:text="Message Type"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_below="@id/sprPriority"
-        />
-    
-    <Spinner
-        android:id="@+id/sprType"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/lblTypeInfo"/>
-    
-    <!-- ATTACHMENTS BUTTON -->
-    <Button
-        android:id="@+id/btnAttachments"
-        android:layout_marginTop="7dp"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/sprType"
-        android:text="Add attachment"
-       />
-    
-    <!-- MESSAGE TEXT -->
-    <EditText
-        android:id="@+id/txtMessage"
-        android:layout_width="fill_parent"
-        android:layout_height="150dp"
-        android:layout_below="@id/btnAttachments"
-        android:layout_marginTop="7dp"
-        android:lines="10"
-        android:maxLines="10"
-        android:maxLength="500"
-        android:hint="Message text"
-        android:gravity="top|left"
-        
-        />    
-    
-    <!-- SEND BUTTON-->
-    <Button
-        android:id="@+id/btnSend"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:text="Send"
-        android:layout_below="@id/txtMessage"
-    /> 
-    
-</RelativeLayout>
+    </RelativeLayout>
 
 </ScrollView>

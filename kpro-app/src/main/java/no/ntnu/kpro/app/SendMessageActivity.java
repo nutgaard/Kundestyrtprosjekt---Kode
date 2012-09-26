@@ -5,6 +5,7 @@
 package no.ntnu.kpro.app;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -24,21 +25,38 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  * @author Kristin
  */
 public class SendMessageActivity extends WrapperActivity implements NetworkService.Callback{
+    
+    private Spinner sprSecurityLabel;
+    private Spinner sprPriority;
+    private Spinner sprType;
+    
+    private Button btnAddAttachment;
+    private Button btnSend;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.send_message);
         
-        Button btnSend = (Button) findViewById(R.id.btnSend);
-        addBtnSendClickListener(btnSend);
+        //Find all buttons and spinners
+        sprSecurityLabel =(Spinner) findViewById(R.id.sprSecurityLabel);
+        sprPriority = (Spinner) findViewById(R.id.sprPriority);
+        sprType = (Spinner) findViewById(R.id.sprType);
         
+        btnAddAttachment = (Button) findViewById(R.id.btnAddAttachment);
+        btnSend = (Button) findViewById(R.id.btnSend);
+        
+        //Add listener to the send button.
+        addBtnSendClickListener(btnSend);        
+        
+        //Fill all spinners with data values
         populateSpinners();
     }
     
     public void populateSpinners(){
-        EnumHelper.populateSpinnerWithEnumValues((Spinner) findViewById(R.id.sprSecurityLabel), this, XOMessageSecurityLabel.class);
-        EnumHelper.populateSpinnerWithEnumValues((Spinner) findViewById(R.id.sprPriority), this, XOMessagePriority.class);
-        EnumHelper.populateSpinnerWithEnumValues((Spinner) findViewById(R.id.sprType), this, XOMessageType.class);
+        EnumHelper.populateSpinnerWithEnumValues(sprSecurityLabel, this, XOMessageSecurityLabel.class);
+        EnumHelper.populateSpinnerWithEnumValues(sprPriority, this, XOMessagePriority.class);
+        EnumHelper.populateSpinnerWithEnumValues(sprType, this, XOMessageType.class);
     }
        
     @Override
@@ -58,34 +76,54 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
     }
 
     public void mailReceived(XOMessage message) {
-//        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void mailReceivedError() {
-//        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private void addBtnSendClickListener(Button btnSend) {
-//        btnSend.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View view) {
-//                String receiver = ((EditText) findViewById(R.id.receiver)).getText().toString(); //Only one address atm
-//                String subject = ((EditText) findViewById(R.id.subject)).getText().toString();
-//                String content = ((EditText) findViewById(R.id.text)).getText().toString();
-//                
-//                while (!isConnected()){
-//                    Thread.yield();
-//                }
-//                getServiceProvider().getNetworkService().sendMail(receiver, subject, content);
-//                
-//                //Is not necessary to have this when callback is implemented, as mailSent() will be called
-//                Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent.", Toast.LENGTH_SHORT);                
-//                confirm.show();
-//                
-//                finish();
-//            }
-//        });
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                String txtReceiver = ((EditText) findViewById(R.id.txtMessageReceiver)).getText().toString();
+                String txtSubject = ((EditText) findViewById(R.id.txtSubject)).getText().toString();
+                String txtMessage = ((EditText) findViewById(R.id.txtMessage)).getText().toString();
+                
+                while (!isConnected()){
+                    Thread.yield();
+                }
+                
+                /**
+                 * Parse selected values from spinners
+                 **/
+                
+                //Parse security string
+                String selectedSecurityString = (String) sprSecurityLabel.getSelectedItem();
+                XOMessageSecurityLabel selectedSecurity = EnumHelper.getEnumValue(XOMessageSecurityLabel.class, selectedSecurityString);
+               
+                //Parse priority string
+                String selectedPriorityString = (String) sprPriority.getSelectedItem();
+                XOMessagePriority selectedPriority = EnumHelper.getEnumValue(XOMessagePriority.class, selectedPriorityString);
+                        
+                //Parse message type string
+                String selectedTypeString = (String) sprType.getSelectedItem();
+                XOMessageType selectedType = EnumHelper.getEnumValue(XOMessageType.class, selectedTypeString);                
+                
+                //getServiceProvider().getNetworkService().sendMail(txtReceiver, txtSubject, txtMessage);
+                
+                
+                //Is not necessary to have this when callback is implemented, as mailSent() will be called
+                Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent.", Toast.LENGTH_SHORT);                
+                confirm.show();
+                
+                finish();
+            }
+        });
         
         
     }
+    
+    
 
 }
