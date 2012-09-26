@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import java.util.ArrayList;
 import java.util.List;
-import no.ntnu.kpro.core.model.XOMessageGrading;
+import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 
 /**
  *

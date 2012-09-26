@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.List;
 import no.ntnu.kpro.core.model.XOMessage;
-import no.ntnu.kpro.core.model.XOMessageGrading;
+import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 
 /**
  *
@@ -81,7 +81,8 @@ public class XOMessageAdapter extends ArrayAdapter {
             case FLASH:
                 break;
             case OVERRIDE:
-                break;            
+                break;
+            
         }
         
         return rowView;
