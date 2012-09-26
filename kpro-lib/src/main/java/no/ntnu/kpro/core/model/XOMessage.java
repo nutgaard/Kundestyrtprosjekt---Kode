@@ -20,15 +20,15 @@ public class XOMessage implements Comparable<XOMessage> {
     private final List<InputStream> attachments;
     private final String htmlBody;
     private final String strippedBody;
-    private final XOMessageGrading grading;
+    private final XOMessageSecurityLabel grading;
     private final XOMessagePriority priority;
     private final XOMessageType type;
 
     public XOMessage(String from, String to, String subject, String body) {
-        this(from, to, subject, body, XOMessageGrading.NONE, XOMessagePriority.NONE, XOMessageType.NONE);
+        this(from, to, subject, body, XOMessageSecurityLabel.BEGRENSET, XOMessagePriority.DEFERRED, XOMessageType.DRILL);
     }
 
-    public XOMessage(String from, String to, String subject, String body, XOMessageGrading grading, XOMessagePriority priority, XOMessageType type) {
+    public XOMessage(String from, String to, String subject, String body, XOMessageSecurityLabel grading, XOMessagePriority priority, XOMessageType type) {
         this.from = from;
         this.to = to;
         this.subject = subject;
@@ -66,7 +66,7 @@ public class XOMessage implements Comparable<XOMessage> {
         return strippedBody;
     }
 
-    public XOMessageGrading getGrading() {
+    public XOMessageSecurityLabel getGrading() {
         return grading;
     }
 

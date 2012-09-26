@@ -16,7 +16,7 @@ import no.ntnu.kpro.core.service.ServiceProvider;
 
 /**
  *
- * @author Nicklas
+ * @author Nicklas & Ida
  */
 public class WrapperActivity extends Activity {
 

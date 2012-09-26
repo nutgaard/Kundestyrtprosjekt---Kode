@@ -2,33 +2,55 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical" 
+                android:background="@color/white"
+>
  
     <!-- From Label -->
     <TextView
         android:id="@+id/from"
-        android:layout_width="fill_parent"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textColor="@color/black"
         android:paddingTop="8dp"
         android:paddingLeft="8dp"
         android:paddingBottom="4dp"
-        android:textSize="20dp"
-        android:textStyle="bold" />
+        android:textSize="14dp" />
  
+    <!-- Icon for priority -->
+    <ImageView
+        android:id="@+id/priority"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_toRightOf="@+id/from"
+        android:src="@drawable/icon"/>
+    <!-- Icon for label? -->
+    <ImageView
+        android:id="@+id/label"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_toRightOf="@+id/priority"
+        android:src="@drawable/icon"
+        />
+    
     <!-- Mail Subject -->
     <TextView android:id="@+id/subject"
               android:layout_height="wrap_content"
-              android:layout_width="wrap_content"
+              android:maxLines="1"
+              android:layout_width="220dp"
               android:paddingLeft="8dp"
               android:paddingBottom="6dp"
-              android:textSize="15dp"
-              android:layout_below="@id/from"/>
+              android:textSize="12dp"
+              android:textColor="@color/gray"
+              android:layout_below="@+id/from"/>
  
     <!-- Mail date -->
     <TextView android:id="@+id/date"
+              android:layout_below="@+id/from"
+              android:layout_toRightOf="@+id/subject"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_alignParentRight="true"
-              android:padding="8dp"/>
+              android:textSize="12dp"/>
  
 </RelativeLayout>

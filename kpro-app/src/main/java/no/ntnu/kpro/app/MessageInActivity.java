@@ -7,6 +7,8 @@ package no.ntnu.kpro.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
+import no.ntnu.kpro.app.R;
+import no.ntnu.kpro.app.WrapperActivity;
 
 /**
  *

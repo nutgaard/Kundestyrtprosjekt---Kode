@@ -6,8 +6,24 @@ package no.ntnu.kpro.core.model;
 
 /**
  *
- * @author Nicklas
+ * @author Aleksander
  */
 public enum XOMessagePriority {
-    NONE;
+    DEFERRED("Deferred"),
+    ROUTINE("Routine"),
+    PRIORITY("Priority"),
+    IMMEDIATE("Immediate"),
+    FLASH("Flash"),
+    OVERRIDE("Override");
+    
+    private String val;
+    
+    private XOMessagePriority(String value){
+        this.val = value;
+    }
+    
+    @Override
+    public String toString(){
+        return this.val;
+    }
 }

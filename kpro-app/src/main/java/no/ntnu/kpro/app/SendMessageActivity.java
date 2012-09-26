@@ -6,14 +6,19 @@ package no.ntnu.kpro.app;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 import javax.mail.Address;
+import no.ntnu.kpro.core.helpers.EnumHelper;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
+import no.ntnu.kpro.core.model.XOMessagePriority;
+import no.ntnu.kpro.core.model.XOMessageType;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
-
 /**
  *
  * @author Kristin
@@ -24,27 +29,18 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.send_message);
         
-        Button b = (Button) findViewById(R.id.send_button);
-
-        b.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                String receiver = ((EditText) findViewById(R.id.receiver)).getText().toString(); //Only one address atm
-                String subject = ((EditText) findViewById(R.id.subject)).getText().toString();
-                String content = ((EditText) findViewById(R.id.text)).getText().toString();
-                
-                Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent.", Toast.LENGTH_SHORT);
-
-                while (!isConnected()){
-                    Thread.yield();
-                }
-                getServiceProvider().getNetworkService().sendMail(receiver, subject, content);
-                
-                confirm.show();
-                
-                finish();
-            }
-        });
+        Button btnSend = (Button) findViewById(R.id.btnSend);
+        addBtnSendClickListener(btnSend);
+        
+        populateSpinners();
     }
+    
+    public void populateSpinners(){
+        EnumHelper.populateSpinnerWithEnumValues((Spinner) findViewById(R.id.sprSecurityLabel), this, XOMessageSecurityLabel.class);
+        EnumHelper.populateSpinnerWithEnumValues((Spinner) findViewById(R.id.sprPriority), this, XOMessagePriority.class);
+        EnumHelper.populateSpinnerWithEnumValues((Spinner) findViewById(R.id.sprType), this, XOMessageType.class);
+    }
+       
     @Override
     public void onServiceConnected(ServiceProvider serviceProvider) {
         super.onServiceConnected(serviceProvider);
@@ -68,4 +64,28 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
     public void mailReceivedError() {
 //        throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    private void addBtnSendClickListener(Button btnSend) {
+//        btnSend.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View view) {
+//                String receiver = ((EditText) findViewById(R.id.receiver)).getText().toString(); //Only one address atm
+//                String subject = ((EditText) findViewById(R.id.subject)).getText().toString();
+//                String content = ((EditText) findViewById(R.id.text)).getText().toString();
+//                
+//                while (!isConnected()){
+//                    Thread.yield();
+//                }
+//                getServiceProvider().getNetworkService().sendMail(receiver, subject, content);
+//                
+//                //Is not necessary to have this when callback is implemented, as mailSent() will be called
+//                Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent.", Toast.LENGTH_SHORT);                
+//                confirm.show();
+//                
+//                finish();
+//            }
+//        });
+        
+        
+    }
+
 }

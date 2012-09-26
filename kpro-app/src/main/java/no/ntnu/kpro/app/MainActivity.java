@@ -34,7 +34,7 @@ public class MainActivity extends WrapperActivity {
         Log.i(TAG, "StartService: " + startService(serviceIntent));
         Log.i(TAG, "No errors, service should be running");
 
-        String[] views = {"Inbox", "Sent", "SendMessage"};
+        String[] views = {"Folders", "SendMessage"};
         ListView views_list = (ListView) findViewById(R.id.views_list);
         views_list.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, views));
         
