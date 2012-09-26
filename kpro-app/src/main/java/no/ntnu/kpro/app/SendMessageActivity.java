@@ -110,7 +110,7 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
                 String selectedTypeString = (String) sprType.getSelectedItem();
                 XOMessageType selectedType = EnumHelper.getEnumValue(XOMessageType.class, selectedTypeString);                
                 
-                //getServiceProvider().getNetworkService().sendMail(txtReceiver, txtSubject, txtMessage);
+                getServiceProvider().getNetworkService().sendMail(txtReceiver, txtSubject, txtMessage, selectedSecurity, selectedPriority, selectedType);
                 
                 
                 //Is not necessary to have this when callback is implemented, as mailSent() will be called
