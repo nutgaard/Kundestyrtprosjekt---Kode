@@ -1,3 +1,7 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="fill_parent">
+
+
 <RelativeLayout 
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent" 
@@ -5,31 +9,31 @@
     
     <!--RECEIVER OF MESSAGE-->
     
-    <EditText
-        android:id="@+id/messageReceiver"
-        android:layout_weight=".70"
-        android:hint="To"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-       />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
+                  android:id="@+id/receiver_layout"
+                  android:orientation="horizontal"
+                  android:layout_width="fill_parent" 
+                  android:weightSum="100" 
+                  android:layout_height="wrap_content"> 
+        <!-- Receiver -->
+        <EditText
+            android:id="@+id/messageReceiver"
+            android:layout_weight="80"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="To"
+            
+        />
+        <!-- Address book -->
+        <ImageButton
+            android:id="@+id/contacts_button"
+            android:layout_weight="20"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon"
+    />
+    </LinearLayout>
     
-    <EditText
-        android:id="@+id/Bogusfield"
-        android:layout_weight=".30"
-        android:hint="Bogus"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/messageReceiver"
-       />
-   
-    <!--<ImageButton
-        android:id="@+id/contacts_button"
-        android:layout_weight=".20"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/messageReceiver"
-        android:src="@drawable/icon"
-    /> -->
     <!--MESSAGE GRADING-->
     
     <TextView
@@ -37,7 +41,7 @@
         android:text="Security Label"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_below="@id/messageReceiver"
+        android:layout_below="@id/receiver_layout"
         />
     <Spinner
         android:id="@+id/sprGrading"
@@ -75,4 +79,41 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/lblTypeInfo"/>
+    
+    <!-- ATTACHMENTS BUTTON -->
+    <Button
+        android:id="@+id/btnAttachments"
+        android:layout_marginTop="7dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sprType"
+        android:text="Add attachment"
+       />
+    
+    <!-- MESSAGE TEXT -->
+    <EditText
+        android:id="@+id/txtMessage"
+        android:layout_width="fill_parent"
+        android:layout_height="150dp"
+        android:layout_below="@id/btnAttachments"
+        android:layout_marginTop="7dp"
+        android:lines="10"
+        android:maxLines="10"
+        android:maxLength="500"
+        android:hint="Message text"
+        android:gravity="top|left"
+        
+        />    
+    
+    <!-- SEND BUTTON-->
+    <Button
+        android:id="@+id/btnSend"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="Send"
+        android:layout_below="@id/txtMessage"
+    /> 
+    
 </RelativeLayout>
+
+</ScrollView>

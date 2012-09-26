@@ -81,7 +81,8 @@ public class XOMessageAdapter extends ArrayAdapter {
             case FLASH:
                 break;
             case OVERRIDE:
-                break;            
+                break;
+            
         }
         
         return rowView;
