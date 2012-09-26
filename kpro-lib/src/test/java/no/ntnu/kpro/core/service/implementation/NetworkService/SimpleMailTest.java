@@ -13,6 +13,9 @@ import javax.mail.event.MessageCountEvent;
 import javax.mail.event.MessageCountListener;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import no.ntnu.kpro.core.model.XOMessagePriority;
+import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
+import no.ntnu.kpro.core.model.XOMessageType;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -68,7 +71,7 @@ public class SimpleMailTest {
         @Test
         public void sendMail_Mock() throws Exception {
 //            System.out.println("Test: getMails");
-            boolean b = mailClient.sendMail(EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT);
+            boolean b = mailClient.sendMail(EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.BEGRENSET, XOMessagePriority.DEFERRED, XOMessageType.DRILL);
 //            System.out.println("B: " + b);
             assertTrue(b);
 
@@ -150,7 +153,7 @@ public class SimpleMailTest {
 
         @Test
         public void sendMail_Real() {
-            boolean b = mailClient.sendMail(EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT);
+            boolean b = mailClient.sendMail(EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.BEGRENSET, XOMessagePriority.DEFERRED, XOMessageType.DRILL);
             assertTrue(b);
         }
     }

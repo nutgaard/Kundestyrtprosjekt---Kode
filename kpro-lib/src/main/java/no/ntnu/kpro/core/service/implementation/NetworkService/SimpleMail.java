@@ -25,11 +25,10 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 @Deprecated
 public class SimpleMail extends NetworkService {
+
     public static String LABEL = "XOMailLabel";
     public static String PRIORITY = "XOMailPriority";
     public static String TYPE = "XOMailType";
-    
-
     private List<XOMessage> outboxM;
     private List<XOMessage> inboxM;
     private final String username;
@@ -85,11 +84,11 @@ public class SimpleMail extends NetworkService {
 
             message.setFrom(new InternetAddress(this.mailAdr));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
-            
+
             message.addHeader(LABEL, label.name());
             message.addHeader(PRIORITY, priority.name());
             message.addHeader(TYPE, type.name());
-            
+
             message.setSubject(subject);
             message.setText(body);
 
@@ -184,16 +183,13 @@ public class SimpleMail extends NetworkService {
                 XOMessageSecurityLabel label = XOMessageSecurityLabel.UGRADERT;
                 XOMessagePriority priority = XOMessagePriority.ROUTINE;
                 XOMessageType type = XOMessageType.OPERATION;
-                
+
                 if (m.getContentType().startsWith("multipart")) {
                     Multipart content = (Multipart) m.getContent();
 
                     from = m.getFrom()[0].toString();
                     to = mailAdr;
                     subject = m.getSubject();
-                    label = XOMessageSecurityLabel.valueOf(m.getHeader(LABEL)[0]);
-                    priority = XOMessagePriority.valueOf(m.getHeader(PRIORITY)[0]);
-                    type = XOMessageType.valueOf(m.getHeader(TYPE)[0]);
                     for (int i = 0; i < content.getCount(); i++) {
                         BodyPart bp = content.getBodyPart(i);
                         if (bp.getContentType().startsWith("TEXT/")) {
@@ -206,9 +202,18 @@ public class SimpleMail extends NetworkService {
                     to = m.getHeader("To")[0];
                     subject = m.getHeader("Subject")[0];
                     body = m.getContent().toString();
-                    label = XOMessageSecurityLabel.valueOf(m.getHeader(LABEL)[0]);
-                    priority = XOMessagePriority.valueOf(m.getHeader(PRIORITY)[0]);
-                    type = XOMessageType.valueOf(m.getHeader(TYPE)[0]);
+                }
+                String labelString = (m.getHeader(LABEL) != null) ? m.getHeader(LABEL)[0] : null;
+                String priorityString = (m.getHeader(PRIORITY) != null) ? m.getHeader(PRIORITY)[0] : null;
+                String typeString = (m.getHeader(TYPE) != null) ? m.getHeader(TYPE)[0] : null;
+                if (labelString != null) {
+                    label = XOMessageSecurityLabel.valueOf(labelString);
+                }
+                if (priorityString != null) {
+                    priority = XOMessagePriority.valueOf(priorityString);
+                }
+                if (typeString != null) {
+                    type = XOMessageType.valueOf(typeString);
                 }
                 inboxM.add(new XOMessage(from, to, subject, body));
             }

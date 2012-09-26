@@ -18,6 +18,9 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import no.ntnu.kpro.core.model.Settings;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.XOMessagePriority;
+import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
+import no.ntnu.kpro.core.model.XOMessageType;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import org.junit.After;
 import org.junit.Before;
@@ -172,7 +175,7 @@ public class NetworkServiceImpTest {
 
         @Test
         public void sendMail_Real() {
-            boolean b = mailClient.sendMail(EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT);
+            boolean b = mailClient.sendMail(EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.BEGRENSET, XOMessagePriority.DEFERRED, XOMessageType.DRILL);
             assertTrue(b);
         }
     }
