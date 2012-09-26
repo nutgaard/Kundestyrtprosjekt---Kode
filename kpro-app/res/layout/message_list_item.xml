@@ -18,12 +18,14 @@
         android:paddingBottom="4dp"
         android:textSize="14dp" />
  
+    <!-- Icon for priority -->
     <ImageView
         android:id="@+id/priority"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_toRightOf="@+id/from"
         android:src="@drawable/icon"/>
+    <!-- Icon for label? -->
     <ImageView
         android:id="@+id/label"
         android:layout_width="30dp"
