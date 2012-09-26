@@ -25,9 +25,9 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  * @author Kristin
  */
 public class FoldersActivity extends WrapperActivity implements NetworkService.Callback {
-
     List<XOMessage> messages;
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.message_list);
@@ -35,7 +35,7 @@ public class FoldersActivity extends WrapperActivity implements NetworkService.C
 
     // Populating spinner with folder choices
     private void populateSprFolders(){
-        Spinner folders = (Spinner) findViewById(R.id.folders);
+        Spinner folders = (Spinner) findViewById(R.id.sprFolders);
         String[] folderChoices = {"Inbox", "Outbox", "Sent"};
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
 		android.R.layout.simple_spinner_item, folderChoices);
@@ -43,7 +43,7 @@ public class FoldersActivity extends WrapperActivity implements NetworkService.C
         folders.setAdapter(dataAdapter);
     }
     
-    // Adding clicklistener to the folders spinner and fetching the correct message list
+    // Adding click listener to the folders spinner and fetching the correct message list
     private void addSprFoldersClickListener(ServiceProvider sp, Spinner sprFolders){
         final ServiceProvider spr;
         spr = sp;
@@ -55,12 +55,12 @@ public class FoldersActivity extends WrapperActivity implements NetworkService.C
                     messages = spr.getNetworkService().getInbox();
                 }
                 else if (folder.equals("Outbox")) {
-                    //TODO
+                    //TODO: Not implemented
                 }
                 else if (folder.equals("Sent")) {
                     messages = spr.getNetworkService().getOutbox();
                 }
-                ListView v = (ListView) findViewById(R.id.list);
+                ListView v = (ListView) findViewById(R.id.lstFolder);
                 v.setAdapter(new XOMessageAdapter(FoldersActivity.this, messages));
             }
 
@@ -98,33 +98,27 @@ public class FoldersActivity extends WrapperActivity implements NetworkService.C
         }
     }
 
+  
     @Override
     public void onServiceConnected(ServiceProvider sp) {
-        
+        super.onServiceConnected(sp);
         populateSprFolders();
-        messages = sp.getNetworkService().getInbox(); //Start with inbox messages
-        addSprFoldersClickListener(sp, (Spinner) findViewById(R.id.folders));
-        
-        ListView v = (ListView) findViewById(R.id.list);
+        messages = sp.getNetworkService().getInbox(); // Default is inbox messages
+        addSprFoldersClickListener(sp, (Spinner) findViewById(R.id.sprFolders));
+       
+        // Populate list (inbox/sent/etc) and add click listener for viewing a single message
+        ListView v = (ListView) findViewById(R.id.lstFolder);
         v.setAdapter(new XOMessageAdapter(this, messages));
 
         v.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
 
-                XOMessage mess = messages.get(position);
-                String from = mess.getFrom();
-                String subj = mess.getSubject();
-                String text = mess.getStrippedBody();
-
                 // Launching new Activity on selecting single List Item
-                Intent i = new Intent(getApplicationContext(), MessageInActivity.class);
+                Intent i = new Intent(getApplicationContext(), MessageViewActivity.class);
                 // sending data to new activity
-                i.putExtra("from", from);
-                i.putExtra("subject", subj);
-                i.putExtra("text", text);
+                i.putExtra("index", position);
                 startActivity(i);
-                //TODO: Find a better way of doing this?
             }
         });
     }
