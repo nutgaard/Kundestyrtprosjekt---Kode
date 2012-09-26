@@ -14,7 +14,7 @@ import android.widget.Toast;
 import javax.mail.Address;
 import no.ntnu.kpro.core.helpers.EnumHelper;
 import no.ntnu.kpro.core.model.XOMessage;
-import no.ntnu.kpro.core.model.XOMessageGrading;
+import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageType;
 import no.ntnu.kpro.core.service.ServiceProvider;
@@ -29,14 +29,16 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.send_message);
         
-//        Button btnSend = (Button) findViewById(R.id.send_button);
-//        addBtnSendClickListener(btnSend);
+        Button btnSend = (Button) findViewById(R.id.btnSend);
+        addBtnSendClickListener(btnSend);
         
         populateSpinners();
     }
     
     public void populateSpinners(){
-//        EnumHelper.populateSpinnerWithEnumValues((Spinner) findViewById(R.id.sprGrading), this, XOMessageGrading.class);
+        EnumHelper.populateSpinnerWithEnumValues((Spinner) findViewById(R.id.sprSecurityLabel), this, XOMessageSecurityLabel.class);
+        EnumHelper.populateSpinnerWithEnumValues((Spinner) findViewById(R.id.sprPriority), this, XOMessagePriority.class);
+        EnumHelper.populateSpinnerWithEnumValues((Spinner) findViewById(R.id.sprType), this, XOMessageType.class);
     }
        
     @Override

@@ -34,20 +34,20 @@
     />
     </LinearLayout>
     
-    <!--MESSAGE GRADING-->
+    <!--MESSAGE SECURITY LABEL-->
     
     <TextView
-        android:id="@+id/lblGradingInfo"
+        android:id="@+id/lblSecurityLabelInfo"
         android:text="Security Label"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_below="@id/receiver_layout"
         />
     <Spinner
-        android:id="@+id/sprGrading"
+        android:id="@+id/sprSecurityLabel"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/lblGradingInfo" />
+        android:layout_below="@id/lblSecurityLabelInfo" />
     
     <!--MESSAGE PRIORITY-->
     
@@ -56,7 +56,7 @@
         android:text="Message Priority"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_below="@id/sprGrading"
+        android:layout_below="@id/sprSecurityLabel"
         />
     <Spinner
         android:id="@+id/sprPriority"

@@ -9,7 +9,6 @@ package no.ntnu.kpro.core.model;
  * @author Aleksander
  */
 public enum XOMessagePriority {
-    NONE("None"),
     DEFERRED("Deferred"),
     ROUTINE("Routine"),
     PRIORITY("Priority"),

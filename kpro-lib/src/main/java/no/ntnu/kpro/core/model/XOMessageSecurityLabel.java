@@ -10,8 +10,7 @@ package no.ntnu.kpro.core.model;
  * Note. There also exists separate enums for each of the grading classes.
  * Unsure of which to keep as of now.
  */
-public enum XOMessageGrading {
-    NONE("None"), // TODO: All messages should have a classification
+public enum XOMessageSecurityLabel {
     UGRADERT("Ugradert"),
     BEGRENSET("Begrenset"),
     KONFIDENSIELT("Kondfidensielt"),
@@ -24,7 +23,7 @@ public enum XOMessageGrading {
     
     private String val;
     
-    private XOMessageGrading(String value){
+    private XOMessageSecurityLabel(String value){
         this.val = value;
     }
     
