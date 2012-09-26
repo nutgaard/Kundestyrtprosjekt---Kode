@@ -17,11 +17,18 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.search.FlagTerm;
 import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.XOMessagePriority;
+import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
+import no.ntnu.kpro.core.model.XOMessageType;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 @Deprecated
 public class SimpleMail extends NetworkService {
+    public static String LABEL = "XOMailLabel";
+    public static String PRIORITY = "XOMailPriority";
+    public static String TYPE = "XOMailType";
+    
 
     private List<XOMessage> outboxM;
     private List<XOMessage> inboxM;
@@ -70,7 +77,7 @@ public class SimpleMail extends NetworkService {
 //        startIMAP();
     }
 
-    public boolean sendMail(final String recipient, final String subject, final String body) {
+    public boolean sendMail(final String recipient, final String subject, final String body, XOMessageSecurityLabel label, XOMessagePriority priority, XOMessageType type) {
         try {
             Session session = Session.getInstance(this.props, this.auth);
 
@@ -78,7 +85,11 @@ public class SimpleMail extends NetworkService {
 
             message.setFrom(new InternetAddress(this.mailAdr));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
-
+            
+            message.addHeader(LABEL, label.name());
+            message.addHeader(PRIORITY, priority.name());
+            message.addHeader(TYPE, type.name());
+            
             message.setSubject(subject);
             message.setText(body);
 
@@ -170,12 +181,19 @@ public class SimpleMail extends NetworkService {
 
             for (Message m : messages) {
                 String from, to, subject, body = "--";
+                XOMessageSecurityLabel label = XOMessageSecurityLabel.UGRADERT;
+                XOMessagePriority priority = XOMessagePriority.ROUTINE;
+                XOMessageType type = XOMessageType.OPERATION;
+                
                 if (m.getContentType().startsWith("multipart")) {
                     Multipart content = (Multipart) m.getContent();
 
                     from = m.getFrom()[0].toString();
                     to = mailAdr;
                     subject = m.getSubject();
+                    label = XOMessageSecurityLabel.valueOf(m.getHeader(LABEL)[0]);
+                    priority = XOMessagePriority.valueOf(m.getHeader(PRIORITY)[0]);
+                    type = XOMessageType.valueOf(m.getHeader(TYPE)[0]);
                     for (int i = 0; i < content.getCount(); i++) {
                         BodyPart bp = content.getBodyPart(i);
                         if (bp.getContentType().startsWith("TEXT/")) {
@@ -183,12 +201,14 @@ public class SimpleMail extends NetworkService {
                             break;
                         }
                     }
-//                    System.out.println("");
                 } else {
                     from = m.getHeader("From")[0];
                     to = m.getHeader("To")[0];
                     subject = m.getHeader("Subject")[0];
                     body = m.getContent().toString();
+                    label = XOMessageSecurityLabel.valueOf(m.getHeader(LABEL)[0]);
+                    priority = XOMessagePriority.valueOf(m.getHeader(PRIORITY)[0]);
+                    type = XOMessageType.valueOf(m.getHeader(TYPE)[0]);
                 }
                 inboxM.add(new XOMessage(from, to, subject, body));
             }
@@ -211,26 +231,10 @@ public class SimpleMail extends NetworkService {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-//    public static void main(String[] args) throws InterruptedException {
-//        SimpleMail sm = new SimpleMail("kprothales", "kprothales2012", "kprothales@gmail.com");
-////        sm.getAllMessages();
-////        List<XOMessage> o = sm.getInbox();
-////        System.out.println("InboxSize: " + o.size());
-////        for (XOMessage m : o){
-////            System.out.println(m);
-////        }
-////        sm.startIMAP();
-//        System.out.println("Sending");
-//        sm.sendMail("nutgaard@gmail.com", "JAOSFIJAOSFJ", "THIS IS THA BODY");
-//        sm.stopIMAP();
-//    }
     public class IMAPListener implements MessageCountListener {
 
         public void messagesAdded(MessageCountEvent mce) {
             try {
-//                System.out.println("New message");
-//                System.out.println("");
-//                System.out.println("Length: "+mce.getMessages().length);
                 for (Message m : mce.getMessages()) {
                     String from, to, subject, body = "--";
                     if (m.getContentType().startsWith("multipart")) {
@@ -246,26 +250,14 @@ public class SimpleMail extends NetworkService {
                                 break;
                             }
                         }
-//                        System.out.println("");
                     } else {
                         from = m.getHeader("From")[0];
                         to = m.getHeader("To")[0];
                         subject = m.getHeader("Subject")[0];
                         body = m.getContent().toString();
                     }
-//                    System.out.println("--------");
-//                    System.out.println("New Mail");
-//                    System.out.println("From: " + from);
-//                    System.out.println("Subject: " + subject);
-//                    System.out.println("");
-//                    System.out.println(body);
-//                    System.out.println("--------");
                     XOMessage newMessage = new XOMessage(from, to, subject, body);
                     inboxM.add(newMessage);
-//                    Looper.prepare();
-//                    Looper.loop();
-//                    Toast.makeText(ServiceProvider.getInstance().getApplicationContext(), "You got mail", Toast.LENGTH_LONG).show();
-//                    Looper.myLooper().quit();
                 }
                 NOF_received++;
 

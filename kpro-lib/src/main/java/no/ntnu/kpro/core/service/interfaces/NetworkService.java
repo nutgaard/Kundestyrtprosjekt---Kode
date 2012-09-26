@@ -8,6 +8,9 @@ import java.util.List;
 import javax.mail.Address;
 import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.XOMessagePriority;
+import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
+import no.ntnu.kpro.core.model.XOMessageType;
 
 /**
  *
@@ -23,7 +26,7 @@ public abstract class NetworkService extends ServiceInterface<NetworkService.Cal
     }
 
 //    public boolean sendMail(final String recipient, final String subject, final String body);
-    public abstract boolean sendMail(final String recipient, final String subject, final String body);
+    public abstract boolean sendMail(final String recipient, final String subject, final String body, XOMessageSecurityLabel label, XOMessagePriority priority, XOMessageType type);
     public abstract void send(XOMessage message);
     public abstract void startIMAPIdle();
     public abstract void stopIMAPIdle();

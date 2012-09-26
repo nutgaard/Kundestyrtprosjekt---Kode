@@ -17,6 +17,9 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.Settings;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.XOMessagePriority;
+import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
+import no.ntnu.kpro.core.model.XOMessageType;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 /**
@@ -104,7 +107,7 @@ public class NetworkServiceImp extends NetworkService {
     }
 
     @Override
-    public boolean sendMail(String recipient, String subject, String body) {
+    public boolean sendMail(String recipient, String subject, String body, XOMessageSecurityLabel label, XOMessagePriority priority, XOMessageType type) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
