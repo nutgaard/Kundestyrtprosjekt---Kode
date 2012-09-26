@@ -30,10 +30,10 @@ public class FoldersActivity extends WrapperActivity implements NetworkService.C
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // GetExtra for in/out/sent, set corresponding content view
         setContentView(R.layout.message_list);
     }
 
+    // Populating spinner with folder choices
     private void populateSprFolders(){
         Spinner folders = (Spinner) findViewById(R.id.folders);
         String[] folderChoices = {"Inbox", "Outbox", "Sent"};
@@ -43,6 +43,7 @@ public class FoldersActivity extends WrapperActivity implements NetworkService.C
         folders.setAdapter(dataAdapter);
     }
     
+    // Adding clicklistener to the folders spinner and fetching the correct message list
     private void addSprFoldersClickListener(ServiceProvider sp, Spinner sprFolders){
         final ServiceProvider spr;
         spr = sp;
@@ -54,7 +55,7 @@ public class FoldersActivity extends WrapperActivity implements NetworkService.C
                     messages = spr.getNetworkService().getInbox();
                 }
                 else if (folder.equals("Outbox")) {
-                    
+                    //TODO
                 }
                 else if (folder.equals("Sent")) {
                     messages = spr.getNetworkService().getOutbox();
@@ -101,34 +102,20 @@ public class FoldersActivity extends WrapperActivity implements NetworkService.C
     public void onServiceConnected(ServiceProvider sp) {
         
         populateSprFolders();
-        messages = sp.getNetworkService().getInbox();
+        messages = sp.getNetworkService().getInbox(); //Start with inbox messages
         addSprFoldersClickListener(sp, (Spinner) findViewById(R.id.folders));
         
         ListView v = (ListView) findViewById(R.id.list);
-
         v.setAdapter(new XOMessageAdapter(this, messages));
 
         v.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
 
-                // selected item
-                //String from = ((TextView) view).getText().toString();
-
                 XOMessage mess = messages.get(position);
                 String from = mess.getFrom();
                 String subj = mess.getSubject();
                 String text = mess.getStrippedBody();
-
-//                
-//                HashMap hmap = list.get(position);
-//                String from = hmap.get("from").toString();
-//                String subj = hmap.get("subject").toString();
-
-//                TextView v = (TextView) findViewById(R.id.from);
-//                String s = v.getText().toString();
-//                TextView v2 = (TextView) findViewById(R.id.subject);
-//                String s2 = v2.getText().toString();
 
                 // Launching new Activity on selecting single List Item
                 Intent i = new Intent(getApplicationContext(), MessageInActivity.class);
@@ -137,7 +124,7 @@ public class FoldersActivity extends WrapperActivity implements NetworkService.C
                 i.putExtra("subject", subj);
                 i.putExtra("text", text);
                 startActivity(i);
-
+                //TODO: Find a better way of doing this?
             }
         });
     }
