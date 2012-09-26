@@ -54,6 +54,7 @@ public class WrapperActivity extends Activity {
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
         unbindService(mConnection);
         onServiceDisconnected(mServiceProvider);
         super.onDestroy();
