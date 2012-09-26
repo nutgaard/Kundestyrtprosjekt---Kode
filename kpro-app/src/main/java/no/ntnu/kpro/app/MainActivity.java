@@ -34,11 +34,13 @@ public class MainActivity extends WrapperActivity {
         Log.i(TAG, "StartService: " + startService(serviceIntent));
         Log.i(TAG, "No errors, service should be running");
 
+        // Create simple list of the menu choices
         String[] views = {"Folders", "SendMessage"};
-        ListView views_list = (ListView) findViewById(R.id.views_list);
-        views_list.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, views));
+        ListView lstMenuChoices = (ListView) findViewById(R.id.lstMenuChoices);
+        lstMenuChoices.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, views));
         
-        views_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        // Add click listener to the menu list
+        lstMenuChoices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
                 try{
@@ -51,37 +53,9 @@ public class MainActivity extends WrapperActivity {
                 }
             }
         });
-        
-       
-
-        /*
-         Button b = (Button) findViewById(R.id.login_button);
-
-         b.setOnClickListener(new View.OnClickListener() {
-         public void onClick(View view) {
-         EditText usernameText = (EditText)findViewById(R.id.username);
-         String username = usernameText.getText().toString();
-         EditText passwordText = (EditText)findViewById(R.id.password);
-         String password = passwordText.getText().toString();
-         if (checkLogin(username, password)) {
-         Intent myIntent = new Intent(view.getContext(), InboxActivity.class);
-         startActivityForResult(myIntent, 0);
-         }
-         }
-         });
-         * /
-         /*
-         Button b = (Button)findViewById(R.id.morse);
-         b.setOnClickListener(new View.OnClickListener() {
-
-         public void onClick(View view) {
-         Log.i(TAG, "Button clicked, sending mail");
-         NetworkService ns = NetworkServiceFactory.createService();
-         ns.sendMail("Testmail", "This is the testBody", "nutgaard@gmail.com", "nutgaard@gmail.com");
-         }
-         });*/
     }
 
+    //TODO: Check username/password later
     public boolean checkLogin(String email, String password) {
         if (email.equalsIgnoreCase("123") && password.equalsIgnoreCase("123")) {
             return true;

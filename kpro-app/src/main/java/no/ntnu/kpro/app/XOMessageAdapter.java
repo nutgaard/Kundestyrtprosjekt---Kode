@@ -43,9 +43,9 @@ public class XOMessageAdapter extends ArrayAdapter {
             // Hold the view objects in an object,
             // so they don't need to be re-fetched
             xoView = new XOMessageView();
-            xoView.address = (TextView) rowView.findViewById(R.id.from);
-            xoView.subject = (TextView) rowView.findViewById(R.id.subject);
-            xoView.date = (TextView) rowView.findViewById(R.id.date);
+            xoView.address = (TextView) rowView.findViewById(R.id.lblFrom);
+            xoView.subject = (TextView) rowView.findViewById(R.id.lblSubject);
+            xoView.date = (TextView) rowView.findViewById(R.id.lblDate);
             
  
             // Cache the view objects in the tag,
