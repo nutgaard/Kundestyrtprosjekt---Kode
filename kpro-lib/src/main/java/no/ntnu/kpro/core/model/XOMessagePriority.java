@@ -6,7 +6,7 @@ package no.ntnu.kpro.core.model;
 
 /**
  *
- * @author Nicklas
+ * @author Aleksander
  */
 public enum XOMessagePriority {
     NONE("None"),
