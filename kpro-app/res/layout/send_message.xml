@@ -1,117 +1,78 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:padding="10dp"
->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
-                  android:id="@+id/receiver_layout"
-                  android:orientation="horizontal"
-                  android:layout_width="fill_parent" 
-                  android:weightSum="100" 
-                  android:layout_height="wrap_content"> 
-        <!-- Receiver -->
-        <EditText
-            android:id="@+id/receiver"
-            android:layout_weight="80"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="To"
-            
+<RelativeLayout 
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent" 
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <!--RECEIVER OF MESSAGE-->
+    
+    <EditText
+        android:id="@+id/messageReceiver"
+        android:layout_weight=".70"
+        android:hint="To"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+       />
+    
+    <EditText
+        android:id="@+id/Bogusfield"
+        android:layout_weight=".30"
+        android:hint="Bogus"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/messageReceiver"
+       />
+   
+    <!--<ImageButton
+        android:id="@+id/contacts_button"
+        android:layout_weight=".20"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/messageReceiver"
+        android:src="@drawable/icon"
+    /> -->
+    <!--MESSAGE GRADING-->
+    
+    <TextView
+        android:id="@+id/lblGradingInfo"
+        android:text="Security Label"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_below="@id/messageReceiver"
         />
-        <!-- Address book -->
-        <ImageButton
-            android:id="@+id/contacts_button"
-            android:layout_weight="20"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/icon"
-    />
-    </LinearLayout>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
-                  android:id="@+id/subject_layout"
-                  android:orientation="horizontal"
-                  android:layout_width="fill_parent"  
-                  android:layout_height="wrap_content"
-                  android:layout_below="@+id/receiver_layout"
-    >
-        <!-- Subject -->
-        <EditText
-            android:id="@+id/subject"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="Subject"
-        />
-    </LinearLayout>
-     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
-                  android:id="@+id/special_layout"
-                  android:orientation="horizontal"
-                  android:layout_width="fill_parent"  
-                  android:layout_height="wrap_content"
-                  android:weightSum="100"
-                  android:layout_below="@+id/subject_layout"
-    >
-        <!-- Grading -->
-        <Spinner
+    <Spinner
         android:id="@+id/sprGrading"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        />
-        <!-- Priority -->
-        <EditText
-            android:id="@+id/priority"
-            android:layout_width="0dp"
-            android:layout_weight="33"
-            android:hint="Priority"
-            android:layout_height="wrap_content"
-        />
-        <EditText
-            android:id="@+id/type"
-            android:layout_width="0dp"
-            android:layout_weight="33"
-            android:hint="Type"
-            android:layout_height="wrap_content"
-        />
-    </LinearLayout>
-     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
-                  android:id="@+id/content_layout"
-                  android:orientation="horizontal"
-                  android:layout_width="fill_parent"  
-                  android:layout_height="wrap_content"
-                  android:layout_below="@+id/special_layout"
-    >
-        <!-- Text -->
-        <EditText
-            android:id="@+id/text"
-            android:layout_width="fill_parent"
-            android:layout_height="150dp"
-            android:lines="10"
-            android:maxLines="10"
-            android:maxLength="500"
-            android:hint="Message"
-        />
-    </LinearLayout>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
-                  android:id="@+id/attachments_layout"
-                  android:orientation="horizontal"
-                  android:layout_width="fill_parent"  
-                  android:layout_height="wrap_content"
-                  android:layout_below="@+id/content_layout"
-    >
-         <!-- Attachments button -->
-         <Button
-        android:id="@+id/attachments_button"
-        android:layout_width="150dp"
+        android:layout_below="@id/lblGradingInfo" />
+    
+    <!--MESSAGE PRIORITY-->
+    
+    <TextView
+        android:id="@+id/lblPriorityInfo"
+        android:text="Message Priority"
         android:layout_height="wrap_content"
-        android:text="Add element"
-    />
-    </LinearLayout>
-    <!-- Send button -->
-    <Button
-        android:id="@+id/send_button"   
-        android:layout_width="150dp"
+        android:layout_width="fill_parent"
+        android:layout_below="@id/sprGrading"
+        />
+    <Spinner
+        android:id="@+id/sprPriority"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Send"
-        android:layout_below="@+id/attachments_layout"
-    />
+        android:layout_below="@id/lblPriorityInfo"/>
+    
+    <!--MESSAGE TYPE-->
+    
+    <TextView
+        android:id="@+id/lblTypeInfo"
+        android:text="Message Type"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_below="@id/sprPriority"
+        />
+    
+    <Spinner
+        android:id="@+id/sprType"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lblTypeInfo"/>
 </RelativeLayout>

@@ -25,7 +25,7 @@ public class XOMessage implements Comparable<XOMessage> {
     private final XOMessageType type;
 
     public XOMessage(String from, String to, String subject, String body) {
-        this(from, to, subject, body, XOMessageGrading.NONE, XOMessagePriority.NONE, XOMessageType.NONE);
+        this(from, to, subject, body, XOMessageGrading.BEGRENSET, XOMessagePriority.DEFERRED, XOMessageType.DRILL);
     }
 
     public XOMessage(String from, String to, String subject, String body, XOMessageGrading grading, XOMessagePriority priority, XOMessageType type) {
