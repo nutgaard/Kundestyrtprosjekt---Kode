@@ -12,6 +12,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import java.util.List;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.XOMessagePriority;
+import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
+import no.ntnu.kpro.core.model.XOMessageType;
 import no.ntnu.kpro.core.service.ServiceProvider;
 
 /**
@@ -56,7 +59,21 @@ public class MessageViewActivity extends WrapperActivity {
         v2.setText(subject);
         TextView v3 = (TextView) findViewById(R.id.lblText);
         v3.setText(text);
-        
+        TextView lblSecurityLabel = (TextView) findViewById(R.id.lblSecurityLabel);
+        XOMessageSecurityLabel label = currentMessage.getGrading();
+        lblSecurityLabel.setText(label.toString());
+        if(label.equals(XOMessageSecurityLabel.UGRADERT) || label.equals(XOMessageSecurityLabel.UNCLASSIFIED) || label.equals(XOMessageSecurityLabel.NATO_UNCLASSIFIED)){
+            lblSecurityLabel.setTextColor(getResources().getColor(R.color.black));
+        }
+        else{
+            lblSecurityLabel.setTextColor(getResources().getColor(R.color.red));
+        }
+        XOMessagePriority priority = currentMessage.getPriority();
+        TextView lblPriority = (TextView) findViewById(R.id.lblPriority);
+        lblPriority.setText(priority.toString());
+        XOMessageType type = currentMessage.getType();
+        TextView lblType = (TextView) findViewById(R.id.lblType);
+        lblType.setText(type.toString());
     }
     
     @Override

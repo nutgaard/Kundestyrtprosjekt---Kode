@@ -4,6 +4,9 @@
     <string name="app_name">XOMail</string>
     <string name="messageTextToFlash">Message text to morse via flash</string>
     <string name="morseFlashNow">Morse/Flash the message now!</string>
+    <string name="securityLabelSpinnerPrompt">Choose a security label </string>
+    <string name="messagePrioritySpinnerPrompt">Choose a message priority </string>
+    <string name="messageTypeSpinnerPrompt">Choose a message type </string>
      <string-array name="views">
         <item>InboxActivity</item>
         <item>SentActivity</item>

@@ -119,9 +119,7 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
                 
                 finish();
             }
-        });
-        
-        
+        });        
     }
     
     
