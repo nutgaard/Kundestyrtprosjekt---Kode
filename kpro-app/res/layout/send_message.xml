@@ -23,6 +23,7 @@
                 android:layout_weight="80"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
                 android:hint="To"/>
             <!-- Address book -->
             <ImageButton
@@ -33,15 +34,17 @@
                 android:src="@drawable/icon"/>
         </LinearLayout>
     
+        <!--SUBJECT-->
         <EditText 
             android:id="@+id/txtSubject"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_below="@id/receiver_layout"
+            android:singleLine="true"
             android:hint="Subject"/>
     
-        <!--MESSAGE SECURITY LABEL-->
+        <!--MESSAGE SECURITY LABEL SPINNER-->
     
         <TextView
             android:id="@+id/lblSecurityLabelInfo"
@@ -53,9 +56,10 @@
             android:id="@+id/sprSecurityLabel"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:prompt="@string/securityLabelSpinnerPrompt"
             android:layout_below="@id/lblSecurityLabelInfo" />
     
-        <!--MESSAGE PRIORITY-->
+        <!--MESSAGE PRIORITY SPINNER-->
     
         <TextView
             android:id="@+id/lblPriorityInfo"
@@ -67,9 +71,10 @@
             android:id="@+id/sprPriority"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:prompt="@string/messagePrioritySpinnerPrompt"
             android:layout_below="@id/lblPriorityInfo"/>
     
-        <!--MESSAGE TYPE-->
+        <!--MESSAGE TYPE SPINNER-->
     
         <TextView
             android:id="@+id/lblTypeInfo"
@@ -82,6 +87,7 @@
             android:id="@+id/sprType"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:prompt="@string/messageTypeSpinnerPrompt"
             android:layout_below="@id/lblTypeInfo"/>
     
         <!-- ATTACHMENTS BUTTON -->
