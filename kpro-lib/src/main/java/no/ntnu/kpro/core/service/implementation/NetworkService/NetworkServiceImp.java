@@ -4,9 +4,6 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,7 +12,7 @@ import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
-import no.ntnu.kpro.core.model.Settings;
+import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
@@ -112,12 +109,12 @@ public class NetworkServiceImp extends NetworkService {
     }
 
     @Override
-    public List<XOMessage> getOutbox() {
+    public Box<XOMessage> getOutbox() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public List<XOMessage> getInbox() {
+    public Box<XOMessage> getInbox() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

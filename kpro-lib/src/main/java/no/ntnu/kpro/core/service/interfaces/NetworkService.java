@@ -4,9 +4,9 @@
  */
 package no.ntnu.kpro.core.service.interfaces;
 
-import java.util.List;
 import javax.mail.Address;
 import javax.mail.search.SearchTerm;
+import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
@@ -32,6 +32,6 @@ public abstract class NetworkService extends ServiceInterface<NetworkService.Cal
     public abstract void stopIMAPIdle();
     public abstract void getMessages(SearchTerm searchterm);
     public abstract void getAllMessages();
-    public abstract List<XOMessage> getOutbox();
-    public abstract List<XOMessage> getInbox();
+    public abstract Box<XOMessage> getOutbox();
+    public abstract Box<XOMessage> getInbox();
 }
