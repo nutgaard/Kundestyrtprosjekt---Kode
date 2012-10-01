@@ -202,9 +202,9 @@ public class SimpleMail extends NetworkService {
                     subject = m.getHeader("Subject")[0];
                     body = m.getContent().toString();
                 }
-                Log.d("SimpleMail", Arrays.toString(m.getHeader(LABEL)));
-                Log.d("SimpleMail", Arrays.toString(m.getHeader(PRIORITY)));
-                Log.d("SimpleMail", Arrays.toString(m.getHeader(TYPE)));
+//                Log.d("SimpleMail", Arrays.toString(m.getHeader(LABEL)));
+//                Log.d("SimpleMail", Arrays.toString(m.getHeader(PRIORITY)));
+//                Log.d("SimpleMail", Arrays.toString(m.getHeader(TYPE)));
                 
                 String labelString = (m.getHeader(LABEL) != null) ? m.getHeader(LABEL)[0] : null;
                 String priorityString = (m.getHeader(PRIORITY) != null) ? m.getHeader(PRIORITY)[0] : null;
@@ -218,7 +218,7 @@ public class SimpleMail extends NetworkService {
                 if (typeString != null) {
                     type = XOMessageType.valueOf(typeString);
                 }
-                inboxM.add(new XOMessage(from, to, subject, body));
+                inboxM.add(new XOMessage(from, to, subject, body, label, priority, type));
             }
         } catch (Exception ex) {
             Logger.getLogger(SimpleMail.class.getName()).log(Level.SEVERE, null, ex);
