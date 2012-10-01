@@ -1,9 +1,9 @@
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
-import android.os.Looper;
-import android.widget.Toast;
+import android.util.Log;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.smtp.SMTPTransport;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -20,7 +20,6 @@ import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 import no.ntnu.kpro.core.model.XOMessageType;
-import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 @Deprecated
@@ -97,7 +96,7 @@ public class SimpleMail extends NetworkService {
             t.sendMessage(message, message.getAllRecipients());
 
             t.close();
-            this.outboxM.add(new XOMessage(mailAdr, recipient, subject, body));
+            this.outboxM.add(new XOMessage(mailAdr, recipient, subject, body, label, priority, type));
             return true;
         } catch (MessagingException ex) {
             Logger.getLogger(SimpleMail.class.getName()).log(Level.SEVERE, null, ex);
@@ -203,6 +202,10 @@ public class SimpleMail extends NetworkService {
                     subject = m.getHeader("Subject")[0];
                     body = m.getContent().toString();
                 }
+                Log.d("SimpleMail", Arrays.toString(m.getHeader(LABEL)));
+                Log.d("SimpleMail", Arrays.toString(m.getHeader(PRIORITY)));
+                Log.d("SimpleMail", Arrays.toString(m.getHeader(TYPE)));
+                
                 String labelString = (m.getHeader(LABEL) != null) ? m.getHeader(LABEL)[0] : null;
                 String priorityString = (m.getHeader(PRIORITY) != null) ? m.getHeader(PRIORITY)[0] : null;
                 String typeString = (m.getHeader(TYPE) != null) ? m.getHeader(TYPE)[0] : null;
