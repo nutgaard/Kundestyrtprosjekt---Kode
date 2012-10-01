@@ -205,7 +205,7 @@ public class SimpleMail extends NetworkService {
 //                Log.d("SimpleMail", Arrays.toString(m.getHeader(LABEL)));
 //                Log.d("SimpleMail", Arrays.toString(m.getHeader(PRIORITY)));
 //                Log.d("SimpleMail", Arrays.toString(m.getHeader(TYPE)));
-                
+
                 String labelString = (m.getHeader(LABEL) != null) ? m.getHeader(LABEL)[0] : null;
                 String priorityString = (m.getHeader(PRIORITY) != null) ? m.getHeader(PRIORITY)[0] : null;
                 String typeString = (m.getHeader(TYPE) != null) ? m.getHeader(TYPE)[0] : null;
@@ -245,6 +245,10 @@ public class SimpleMail extends NetworkService {
             try {
                 for (Message m : mce.getMessages()) {
                     String from, to, subject, body = "--";
+                    XOMessageSecurityLabel label = XOMessageSecurityLabel.UGRADERT;
+                    XOMessagePriority priority = XOMessagePriority.ROUTINE;
+                    XOMessageType type = XOMessageType.OPERATION;
+
                     if (m.getContentType().startsWith("multipart")) {
                         Multipart content = (Multipart) m.getContent();
 
@@ -264,8 +268,23 @@ public class SimpleMail extends NetworkService {
                         subject = m.getHeader("Subject")[0];
                         body = m.getContent().toString();
                     }
-                    XOMessage newMessage = new XOMessage(from, to, subject, body);
-                    inboxM.add(newMessage);
+//                Log.d("SimpleMail", Arrays.toString(m.getHeader(LABEL)));
+//                Log.d("SimpleMail", Arrays.toString(m.getHeader(PRIORITY)));
+//                Log.d("SimpleMail", Arrays.toString(m.getHeader(TYPE)));
+
+                    String labelString = (m.getHeader(LABEL) != null) ? m.getHeader(LABEL)[0] : null;
+                    String priorityString = (m.getHeader(PRIORITY) != null) ? m.getHeader(PRIORITY)[0] : null;
+                    String typeString = (m.getHeader(TYPE) != null) ? m.getHeader(TYPE)[0] : null;
+                    if (labelString != null) {
+                        label = XOMessageSecurityLabel.valueOf(labelString);
+                    }
+                    if (priorityString != null) {
+                        priority = XOMessagePriority.valueOf(priorityString);
+                    }
+                    if (typeString != null) {
+                        type = XOMessageType.valueOf(typeString);
+                    }
+                    inboxM.add(new XOMessage(from, to, subject, body, label, priority, type));
                 }
                 NOF_received++;
 
