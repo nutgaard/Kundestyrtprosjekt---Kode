@@ -27,8 +27,8 @@ public class SimpleMail extends NetworkService {
     public static String LABEL = "XOMailLabel";
     public static String PRIORITY = "XOMailPriority";
     public static String TYPE = "XOMailType";
-    private Box outboxM;
-    private Box inboxM;
+    private Box<XOMessage> outboxM;
+    private Box<XOMessage> inboxM;
     private final String username;
     private final String password;
     private final String mailAdr;
@@ -225,11 +225,11 @@ public class SimpleMail extends NetworkService {
         }
     }
 
-    public Box getInbox() {
+    public Box<XOMessage> getInbox() {
         return inboxM;
     }
 
-    public Box getOutbox() {
+    public Box<XOMessage> getOutbox() {
         return outboxM;
     }
 
