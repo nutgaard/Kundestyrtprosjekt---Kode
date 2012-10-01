@@ -1,9 +1,7 @@
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
-import android.util.Log;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.smtp.SMTPTransport;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -16,6 +14,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.FlagTerm;
 import javax.mail.search.SearchTerm;
+import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
@@ -28,8 +27,8 @@ public class SimpleMail extends NetworkService {
     public static String LABEL = "XOMailLabel";
     public static String PRIORITY = "XOMailPriority";
     public static String TYPE = "XOMailType";
-    private List<XOMessage> outboxM;
-    private List<XOMessage> inboxM;
+    private Box outboxM;
+    private Box inboxM;
     private final String username;
     private final String password;
     private final String mailAdr;
@@ -69,8 +68,8 @@ public class SimpleMail extends NetworkService {
         this.username = username;
         this.password = password;
         this.mailAdr = mailAdr;
-        this.inboxM = new LinkedList<XOMessage>();
-        this.outboxM = new LinkedList<XOMessage>();
+        this.inboxM = new Box();
+        this.outboxM = new Box();
 //        getAllMessages();
 //        startIMAP();
     }
@@ -226,11 +225,11 @@ public class SimpleMail extends NetworkService {
         }
     }
 
-    public List<XOMessage> getInbox() {
+    public Box getInbox() {
         return inboxM;
     }
 
-    public List<XOMessage> getOutbox() {
+    public Box getOutbox() {
         return outboxM;
     }
 
