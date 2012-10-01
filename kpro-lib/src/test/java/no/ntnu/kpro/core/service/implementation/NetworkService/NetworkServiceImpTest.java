@@ -79,7 +79,7 @@ public class NetworkServiceImpTest {
         @Test
         public void sendMail_Mock() throws Exception {
 //            System.out.println("Test: getMails");
-            XOMessage xoMessage = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT);
+            XOMessage xoMessage = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.BEGRENSET);
             mailClient.send(xoMessage);
 //            System.out.println("B: " + b);
 
