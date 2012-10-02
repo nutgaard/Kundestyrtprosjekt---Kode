@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.List;
+import javax.mail.Quota;
 import no.ntnu.kpro.core.model.XOMessage;
 
 /**
@@ -45,7 +46,8 @@ public class XOMessageAdapter extends ArrayAdapter {
             xoView.address = (TextView) rowView.findViewById(R.id.lblFrom);
             xoView.subject = (TextView) rowView.findViewById(R.id.lblSubject);
             xoView.date = (TextView) rowView.findViewById(R.id.lblDate);
-            
+            xoView.label = (TextView) rowView.findViewById(R.id.imvLabel);
+            xoView.priority = (TextView) rowView.findViewById(R.id.imvPriority);
  
             // Cache the view objects in the tag,
             // so they can be re-accessed later
@@ -62,26 +64,15 @@ public class XOMessageAdapter extends ArrayAdapter {
         xoView.subject.setText(message.getSubject());
         xoView.date.setText("01.01.2012 00:00");
         
-        // TODO: Set background (or something else) based on classification?
-        switch(message.getGrading()){
-            
-                
-              
+        xoView.label.setText(message.getGrading().getShortValue());
+        xoView.priority.setText(message.getPriority().toString());
+        
+        String shortVal = message.getGrading().getShortValue();
+        if (shortVal.equals("nu") || shortVal.equals("ug") || shortVal.equals("uc")){
+            xoView.label.setTextColor(android.graphics.Color.BLACK);
         }
-        switch(message.getPriority()){
-            case DEFERRED:
-                break;
-            case ROUTINE:
-                break;
-            case PRIORITY:
-                break;
-            case IMMEDIATE:
-                break;
-            case FLASH:
-                break;
-            case OVERRIDE:
-                break;
-            
+        else{
+            xoView.label.setTextColor(android.graphics.Color.RED);
         }
         
         return rowView;
@@ -91,7 +82,9 @@ public class XOMessageAdapter extends ArrayAdapter {
         protected TextView address;
         protected TextView subject;
         protected TextView date;
-        protected ImageView classification;
-        protected ImageView priority;
+        protected TextView label;
+        protected TextView priority;
+        //protected ImageView classification;
+        //protected ImageView priority;
     }
 }

@@ -18,22 +18,45 @@
         android:paddingBottom="4dp"
         android:textSize="14dp" />
  
-    <!-- Icon for priority -->
+    <!-- Text for label - will be replaced by icon later? -->
+    <TextView
+        android:id="@+id/imvLabel"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_toRightOf="@id/lblFrom"
+        android:text="nc"
+        android:textColor="@color/black"
+        />
+    
+    <!-- Icon for label?
+    <ImageView
+        android:id="@+id/imvLabel"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_toRightOf="@id/imvPriority"
+        android:src="@drawable/icon"
+        /> -->
+    
+    <!-- Text for priority - will be replaced by icon later? -->
+    <TextView
+        android:id="@+id/imvPriority"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_toRightOf="@id/imvLabel"
+        android:text="Override"
+        android:textColor="@color/black"
+        />
+ 
+    <!-- Icon for priority 
     <ImageView
         android:id="@+id/imvPriority"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_toRightOf="@+id/lblFrom"
-        android:src="@drawable/icon"/>
-   
-    <!-- Icon for label? -->
-    <ImageView
-        android:id="@+id/imvLabel"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_toRightOf="@+id/imvPriority"
         android:src="@drawable/icon"
-        />
+    />-->
+   
+    
     
     <!-- Mail Subject -->
     <TextView android:id="@+id/lblSubject"
