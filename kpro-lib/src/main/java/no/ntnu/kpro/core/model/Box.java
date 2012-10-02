@@ -4,44 +4,28 @@
  */
 package no.ntnu.kpro.core.model;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.ListIterator;
 
 /**
  *
  * @author Nicklas
  */
-public class Box<T> extends LinkedList<T> {
+public class Box<T> extends ArrayList<T> {
 
     public T getNext(T current) {
-        ListIterator<T> search = findCurrent(current);
-        if (search == null) {
-            return null;
-        }
-        if (search.hasNext()) {
-            return search.next();
+        int search = indexOf(current);
+        if (search+1 < size()){
+            return get(search+1);
         }
         return null;
     }
 
     public T getPrevious(T current) {
-        ListIterator<T> search = findCurrent(current);
-        if (search == null) {
-            return null;
-        }
-        if (search.hasPrevious()) {
-            return search.previous();
+        int search = indexOf(current);
+        if (search-1 >= 0){
+            return get(search-1);
         }
         return null;
-    }
-
-    private ListIterator<T> findCurrent(T current) {
-        ListIterator<T> search = listIterator();
-        while (search.hasNext()) {
-            if (search.next().equals(current)) {
-                return search;
-            }
-        }
-        return null;
-    }
+    }  
 }
