@@ -42,28 +42,37 @@ public class MessageViewActivity extends WrapperActivity {
         currentMessage = i.getParcelableExtra("message");
     }
 
-    //TODO: Disable buttons if index too small or big
-
     private void getPreviousMessage() {
-        Log.i(("KT1"), currentMessage.getSubject());
-        if (messages.getPrevious(currentMessage) == null) {
-            Log.i("KRT", "NULL");
+        enableButtons();
+        if(messages.getPrevious(currentMessage) != null){
+            XOMessage newM = (XOMessage) messages.getPrevious(currentMessage);
+            currentMessage = newM;
+            Button btnPrev = (Button) findViewById(R.id.btnPrevious);
+            if(messages.getPrevious(currentMessage)==null){
+                btnPrev.setEnabled(false);
+            }
         }
-        XOMessage newM = (XOMessage) messages.getPrevious(currentMessage);
-        currentMessage = newM;
-        Log.i("KRI", currentMessage.getSubject());
     }
 
     private void getNextMessage() {
-        Log.i(("KT2"), currentMessage.getFrom());
-        if (messages.getNext(currentMessage) == null) {
-            Log.i("KRI", "NULL");
+        enableButtons();
+        if (messages.getNext(currentMessage) != null){
+            XOMessage newM = (XOMessage) messages.getNext(currentMessage);
+            currentMessage = newM;
+            Button btnNext = (Button) findViewById(R.id.btnNext);
+            if(messages.getNext(currentMessage)==null){
+                btnNext.setEnabled(false);
+            }
         }
-        XOMessage newM = (XOMessage) messages.getNext(currentMessage);
-        currentMessage = newM;
-        Log.i(("KT"), currentMessage.toString());
     }
 
+    private void enableButtons(){
+        Button btnNext = (Button) findViewById(R.id.btnNext);
+        Button btnPrev = (Button) findViewById(R.id.btnPrevious);
+        btnNext.setEnabled(true);
+        btnPrev.setEnabled(true);
+    }
+    
     // Update the current message and the fields corresponding to the message
     private void updateViews() {
         // From
@@ -127,7 +136,7 @@ public class MessageViewActivity extends WrapperActivity {
                 updateViews();
             }
         });
-        
+
         Button reply = (Button) findViewById(R.id.btnReply);
     }
 }
