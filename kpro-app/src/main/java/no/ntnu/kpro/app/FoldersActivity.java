@@ -26,6 +26,7 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  */
 public class FoldersActivity extends WrapperActivity implements NetworkService.Callback {
     List<XOMessage> messages;
+    String folderChoice = "Inbox";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class FoldersActivity extends WrapperActivity implements NetworkService.C
     // Populating spinner with folder choices
     private void populateSprFolders(){
         Spinner folders = (Spinner) findViewById(R.id.sprFolders);
-        String[] folderChoices = {"Inbox", "Outbox", "Sent"};
+        String[] folderChoices = {"Inbox", "Sent"};
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
 		android.R.layout.simple_spinner_item, folderChoices);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
@@ -51,11 +52,12 @@ public class FoldersActivity extends WrapperActivity implements NetworkService.C
             
             public void onItemSelected(AdapterView<?> av, View view, int i, long l) {
                 String folder = av.getItemAtPosition(i).toString();
+                folderChoice = folder;
                 if(folder.equals("Inbox")){
                     messages = spr.getNetworkService().getInbox();
                 }
                 else if (folder.equals("Outbox")) {
-                    //TODO: Not implemented
+                    messages = null;
                 }
                 else if (folder.equals("Sent")) {
                     messages = spr.getNetworkService().getOutbox();
@@ -113,11 +115,15 @@ public class FoldersActivity extends WrapperActivity implements NetworkService.C
         v.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
-
+                XOMessage currentMessage = (XOMessage)parent.getItemAtPosition(position);
+                
                 // Launching new Activity on selecting single List Item
                 Intent i = new Intent(getApplicationContext(), MessageViewActivity.class);
                 // sending data to new activity
-                i.putExtra("index", position);
+                i.putExtra("index", position); //TODO: Do not do this
+                i.putExtra("folder", folderChoice);
+                i.putExtra("message", currentMessage);
+                
                 startActivity(i);
             }
         });

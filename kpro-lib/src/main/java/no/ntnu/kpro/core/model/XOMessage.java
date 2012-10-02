@@ -4,16 +4,20 @@
  */
 package no.ntnu.kpro.core.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import javax.mail.internet.MimeMessage;
+import no.ntnu.kpro.core.helpers.EnumHelper;
 
 /**
  *
  * @author Nicklas
  */
-public class XOMessage implements Comparable<XOMessage> {
+public class XOMessage implements Comparable<XOMessage>, Parcelable {
     private final String from;
     private final String to;
     private final String subject;
@@ -40,6 +44,13 @@ public class XOMessage implements Comparable<XOMessage> {
         this.type = type;
     }
 
+    public XOMessage(Parcel in){
+        this(in.readString(), in.readString(), in.readString(), in.readString(), 
+                EnumHelper.getEnumValue(XOMessageSecurityLabel.class, in.readString()), 
+                EnumHelper.getEnumValue(XOMessagePriority.class, in.readString()),
+                EnumHelper.getEnumValue(XOMessageType.class, in.readString()));
+    }
+    
     public String getFrom() {
         return from;
     }
@@ -86,5 +97,32 @@ public class XOMessage implements Comparable<XOMessage> {
     public String toString() {
         return "XOMessage{" + "from=" + from + ", to=" + to + ", subject=" + subject + ", strippedBody=" + strippedBody + '}';
     }
+    
+    public int describeContents() {
+        return 0;
+    }
+
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(from);
+        parcel.writeString(to);
+        parcel.writeString(subject);
+        //parcel.writeList(attachments); 
+        parcel.writeString(htmlBody);
+        //parcel.writeString(strippedBody);
+        parcel.writeString(grading.toString());
+        parcel.writeString(priority.toString());
+        parcel.writeString(type.toString());
+    }
+    
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+
+        public XOMessage createFromParcel(Parcel parcel) {
+            return new XOMessage(parcel);
+        }
+
+        public XOMessage[] newArray(int i) {
+            return new XOMessage[i];
+        }
+    };
     
 }
