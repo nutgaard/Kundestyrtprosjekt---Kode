@@ -97,6 +97,38 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
     public String toString() {
         return "XOMessage{" + "from=" + from + ", to=" + to + ", subject=" + subject + ", strippedBody=" + strippedBody + '}';
     }
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final XOMessage other = (XOMessage) obj;
+        if ((this.from == null) ? (other.from != null) : !this.from.equals(other.from)) {
+            return false;
+        }
+        if ((this.to == null) ? (other.to != null) : !this.to.equals(other.to)) {
+            return false;
+        }
+        if ((this.subject == null) ? (other.subject != null) : !this.subject.equals(other.subject)) {
+            return false;
+        }
+        if ((this.htmlBody == null) ? (other.htmlBody != null) : !this.htmlBody.equals(other.htmlBody)) {
+            return false;
+        }
+        if (this.grading != other.grading) {
+            return false;
+        }
+        if (this.priority != other.priority) {
+            return false;
+        }
+        if (this.type != other.type) {
+            return false;
+        }
+        return true;
+    }
     
     public int describeContents() {
         return 0;
