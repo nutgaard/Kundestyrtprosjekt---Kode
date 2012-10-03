@@ -5,6 +5,7 @@
 package no.ntnu.kpro.core.helpers;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class EnumHelper {
      */
     public static <E extends Enum<?>> E getEnumValue(Class<E> enumClass, String enumString){
         for(E enumValue : enumClass.getEnumConstants()){
-            if(enumValue.toString() == enumString){
+            if(enumValue.toString().equals(enumString)){
                 return enumValue;
             }
         }

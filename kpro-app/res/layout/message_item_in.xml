@@ -16,7 +16,7 @@
         android:lines="3"
         android:text="Sender"
         android:textStyle="bold" />
- 
+    <!-- Security label -->
     <TextView
         android:id="@+id/lblSecurityLabel"
         android:layout_width="80dp"
@@ -27,6 +27,7 @@
         android:background="@color/white"
         android:textColor="@color/black"
     />
+    <!-- Priority -->
     <TextView
         android:id="@+id/lblPriority"
         android:layout_width="80dp"
@@ -38,6 +39,7 @@
         android:background="@color/white"
         android:layout_below="@id/lblSecurityLabel"
     />
+    <!-- Type -->
     <TextView
         android:id="@+id/lblType"
         android:layout_width="80dp"

@@ -10,7 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import java.util.List;
+import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
@@ -22,87 +22,149 @@ import no.ntnu.kpro.core.service.ServiceProvider;
  * @author Kristin
  */
 public class MessageViewActivity extends WrapperActivity {
-    List<XOMessage> messages;
+
+    Box messages;
     XOMessage currentMessage;
-    int index;
+    String folder = "Inbox";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.message_item_in); //TODO: Change this if sent message
 
         Intent i = getIntent();
-        index = i.getIntExtra("index", 0);
-
+        // Get what folder you came from and set the correct layout
+        folder = i.getStringExtra("folder");
+        if (folder.equals("Inbox")) {
+            setContentView(R.layout.message_item_in);
+        } else if (folder.equals("Outbox")) {
+            setContentView(null);//TODO:
+        } else if (folder.equals("Sent")) {
+            setContentView(R.layout.message_item_out);
+        }
+        // Get the selected message and update the view
+        currentMessage = i.getParcelableExtra("message");
+        updateViews();
+        enableButtons();
     }
 
-    // Increases the index (limit at list size)
-    private int increaseIndex(){
-        return index<messages.size()-1 ? index++ : messages.size()-1;
+    // Get the previous message
+    private void getPreviousMessage() {
+        enableButtons();
+        if (messages.getPrevious(currentMessage) != null) {
+            XOMessage newM = (XOMessage) messages.getPrevious(currentMessage);
+            currentMessage = newM;
+            Button btnPrev = (Button) findViewById(R.id.btnPrevious);
+            if (messages.getPrevious(currentMessage) == null) {
+                btnPrev.setEnabled(false);
+            }
+        }
     }
-    
-    //TODO: Disable buttons if index too small or big
-    
-    // Decrease the index (limit at 0)
-    private int decreaseIndex(){
-        return index>0 ? index-- : 0;
+
+    // Get the next message
+    private void getNextMessage() {
+        enableButtons();
+        if (messages.getNext(currentMessage) != null) {
+            XOMessage newM = (XOMessage) messages.getNext(currentMessage);
+            currentMessage = newM;
+            Button btnNext = (Button) findViewById(R.id.btnNext);
+            if (messages.getNext(currentMessage) == null) {
+                btnNext.setEnabled(false);
+            }
+        }
     }
-    
+
+    // Enable the prev/next buttons
+    private void enableButtons() {
+        Button btnNext = (Button) findViewById(R.id.btnNext);
+        Button btnPrev = (Button) findViewById(R.id.btnPrevious);
+        btnNext.setEnabled(true);
+        btnPrev.setEnabled(true);
+    }
+
     // Update the current message and the fields corresponding to the message
-    private void updateViews(){
-        currentMessage = messages.get(index);
+    private void updateViews() {
+        // From
         String from = currentMessage.getFrom();
+        TextView lblFrom = (TextView) findViewById(R.id.lblFrom);
+        lblFrom.setText(from);
+
+        // Subject
         String subject = currentMessage.getSubject();
+        TextView lblSubject = (TextView) findViewById(R.id.lblSubject);
+        lblSubject.setText(subject);
+
+        // Text
         String text = currentMessage.getStrippedBody();
-        TextView v = (TextView) findViewById(R.id.lblFrom);
-        v.setText(from);
-        TextView v2 = (TextView) findViewById(R.id.lblSubject);
-        v2.setText(subject);
-        TextView v3 = (TextView) findViewById(R.id.lblText);
-        v3.setText(text);
+        TextView lblText = (TextView) findViewById(R.id.lblText);
+        lblText.setText(text);
+
+        // Security label
         TextView lblSecurityLabel = (TextView) findViewById(R.id.lblSecurityLabel);
         XOMessageSecurityLabel label = currentMessage.getGrading();
         lblSecurityLabel.setText(label.toString());
-        if(label.equals(XOMessageSecurityLabel.UGRADERT) || label.equals(XOMessageSecurityLabel.UNCLASSIFIED) || label.equals(XOMessageSecurityLabel.NATO_UNCLASSIFIED)){
+
+        if (label.equals(XOMessageSecurityLabel.UGRADERT) || label.equals(XOMessageSecurityLabel.UNCLASSIFIED) || label.equals(XOMessageSecurityLabel.NATO_UNCLASSIFIED)) {
             lblSecurityLabel.setTextColor(getResources().getColor(R.color.black));
-        }
-        else{
+        } else {
             lblSecurityLabel.setTextColor(getResources().getColor(R.color.red));
         }
+
+        // Priority
         XOMessagePriority priority = currentMessage.getPriority();
         TextView lblPriority = (TextView) findViewById(R.id.lblPriority);
         lblPriority.setText(priority.toString());
+
+        // Type
         XOMessageType type = currentMessage.getType();
         TextView lblType = (TextView) findViewById(R.id.lblType);
         lblType.setText(type.toString());
     }
-    
+
+    // 
     @Override
     public void onServiceConnected(ServiceProvider sp) {
         super.onServiceConnected(sp);
+        // Fetch messages acc to what folder you came from (storage later?)
+        if (folder.equals("Inbox")) {
+            messages = sp.getNetworkService().getInbox();
+        } else if (folder.equals("Sent")) {
+            messages = sp.getNetworkService().getOutbox();
+        }
+
+        // Disable buttons if no next/previous
+        if (messages.getPrevious(currentMessage) == null) {
+            Button btnPrev = (Button) findViewById(R.id.btnPrevious);
+            btnPrev.setEnabled(false);
+        }
+        if (messages.getNext(currentMessage) == null) {
+            Button btnNext = (Button) findViewById(R.id.btnNext);
+            btnNext.setEnabled(false);
+        }
         
-        // Fetch inbox messages, will be replaced by fetching messages from storage?
-        // TODO: Find if the user is in inbox or sent.. 
-        messages = sp.getNetworkService().getInbox();
-        updateViews();
-        
+        addButtonClickListeners();
+
+    }
+
+    // Add button click listeners
+    private void addButtonClickListeners() {
         // Add click listener to Previous button
         Button prev = (Button) findViewById(R.id.btnPrevious);
         prev.setOnClickListener(new View.OnClickListener() {
-
             public void onClick(View view) {
-                decreaseIndex();
-                updateViews(); 
-            }
-        });
-        
-        // Add click listener to Next button
-        Button next = (Button) findViewById(R.id.btnNext);
-        next.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View view) {
-                increaseIndex();
+                getPreviousMessage();
                 updateViews();
             }
         });
+
+        // Add click listener to Next button
+        Button next = (Button) findViewById(R.id.btnNext);
+        next.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                getNextMessage();
+                updateViews();
+            }
+        });
+
+        // Add click listener to Reply button
+        Button reply = (Button) findViewById(R.id.btnReply);
     }
 }
