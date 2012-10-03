@@ -6,4 +6,5 @@
     <color name="red">#ff0000</color>
     <color name="lightGray">#d0d0d0</color>
     <color name="darkGray">#404040</color>
+    <color name="buttonsBackground">#303030</color>
 </resources>
