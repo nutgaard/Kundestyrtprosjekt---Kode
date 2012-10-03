@@ -13,7 +13,7 @@ import javax.mail.internet.MimeMessage;
  *
  * @author Nicklas
  */
-public class XOMessage implements Comparable<XOMessage> {
+public class XOMessage implements Comparable<XOMessage>{
     private final String from;
     private final String to;
     private final String subject;
@@ -40,40 +40,50 @@ public class XOMessage implements Comparable<XOMessage> {
         this.type = type;
     }
 
+    
     public String getFrom() {
         return from;
     }
 
+    
     public String getTo() {
         return to;
     }
 
+    
     public String getSubject() {
         return subject;
     }
+    
     public void addAttachment(InputStream is) {
         this.attachments.add(is);
     }
+    
     public List<InputStream> getAttachments() {
         return attachments;
     }
 
+    
     public String getHtmlBody() {
         return htmlBody;
     }
 
+    
     public String getStrippedBody() {
         return strippedBody;
     }
 
+    
     public XOMessageSecurityLabel getGrading() {
         return grading;
     }
 
+    
     public XOMessagePriority getPriority() {
         return priority;
     }
 
+    
     public XOMessageType getType() {
         return type;
     }
@@ -82,11 +92,11 @@ public class XOMessage implements Comparable<XOMessage> {
         return 0;
     }
 
-    @Override
+    
     public String toString() {
         return "XOMessage{" + "from=" + from + ", to=" + to + ", subject=" + subject + ", strippedBody=" + strippedBody + '}';
     }
-    @Override
+    
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
