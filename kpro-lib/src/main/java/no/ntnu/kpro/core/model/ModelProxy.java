@@ -8,7 +8,7 @@ package no.ntnu.kpro.core.model;
  *
  * @author Nicklas
  */
-public class Interface {
+public class ModelProxy {
     public static interface IUser {
         public void setName(String name);
         public String getName();

@@ -4,7 +4,7 @@
  */
 package no.ntnu.kpro.core.model;
 
-import no.ntnu.kpro.core.model.Interface.IUser;
+import no.ntnu.kpro.core.model.ModelProxy.IUser;
 
 
 /**

@@ -5,7 +5,7 @@
 package no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWriteThroughStorage;
 
 import java.io.File;
-import no.ntnu.kpro.core.model.Interface.IUser;
+import no.ntnu.kpro.core.model.ModelProxy.IUser;
 import no.ntnu.kpro.core.model.User;
 import no.ntnu.kpro.core.service.interfaces.PersistencePostProcessor;
 
