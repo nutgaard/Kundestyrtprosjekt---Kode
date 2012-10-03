@@ -65,7 +65,7 @@ public class XOMessageAdapter extends ArrayAdapter {
         xoView.date.setText("01.01.2012 00:00");
         
         xoView.label.setText(message.getGrading().getShortValue());
-        xoView.priority.setText(message.getPriority().toString());
+        xoView.priority.setText(message.getPriority().getNumValue());
         
         String shortVal = message.getGrading().getShortValue();
         if (shortVal.equals("nu") || shortVal.equals("ug") || shortVal.equals("uc")){
