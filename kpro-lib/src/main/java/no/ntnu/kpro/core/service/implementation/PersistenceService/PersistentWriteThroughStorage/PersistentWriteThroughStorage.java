@@ -146,6 +146,10 @@ public class PersistentWriteThroughStorage {
     }
 
     public synchronized Object find(Class cls, int id) throws Exception {
+        //Create new user and proxy
+        if (id < 0){
+            return manage(cls.getConstructor().newInstance());
+        }
         File base = getBaseDir();
         //Will return null, an empty array, or one that maximum contains one element since duplicate directories are not allowed. 
         File[] dirList = base.listFiles(new DirectoryFilter(cls.getSimpleName()));

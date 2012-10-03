@@ -14,6 +14,7 @@ import no.ntnu.kpro.core.service.interfaces.PersistencePostProcessor;
  * @author Nicklas
  */
 public class PersistentWriteThroughStorageTest {
+
     public static void main(String[] args) throws Exception {
         PersistentWriteThroughStorage s = PersistentWriteThroughStorage.create(new User("test"), new PersistencePostProcessor() {
             public byte[] process(byte[] b) {
@@ -30,14 +31,21 @@ public class PersistentWriteThroughStorageTest {
                 return b;
             }
         }, new File("/"));
-        IUser d = (IUser)s.manage(new User("Nicklas"));
-        
-        d.setName("Ida");
-        d.setName("Aleksander");
-        
-        IUser dl = (IUser)s.find(User.class, 0);
-        dl.setName("Magnus");
-        
+//        User user = new User("Nicklas");
+//        IUser d = (IUser)s.manage(user);
+//        
+//        d.setName("Ida");
+//        d.setName("Aleksander");
+//        
+//        
+//        
+//        IUser dl = (IUser)s.find(User.class, -1);
+//        dl.setName("Magnus");
+
+        IUser user = (IUser) s.find(User.class, -1);
+        user.setName("ABCDEFGHIK");
+
+
 //        DummyInterface d = (DummyInterface) s.find(DummyObject.class, 0);
 //        System.out.println("D: "+d);
 //        System.out.println("Cls: "+d.getClass());

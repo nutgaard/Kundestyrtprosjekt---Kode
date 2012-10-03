@@ -15,7 +15,7 @@ public class User implements IUser {
 
     public String name;
 
-    User() {
+    public User() {
     }
 
     public User(String name) {
