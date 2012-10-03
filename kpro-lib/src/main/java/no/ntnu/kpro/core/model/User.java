@@ -4,24 +4,29 @@
  */
 package no.ntnu.kpro.core.model;
 
+import no.ntnu.kpro.core.model.Interface.IUser;
+
+
 /**
  *
  * @author Nicklas
  */
-public class User {
+public class User implements IUser {
+
     public String name;
 
     User() {
-        
     }
+
     public User(String name) {
         this.name = name;
     }
-        
+
     public String getName() {
         return this.name;
     }
-    public void setName(String name){
+
+    public void setName(String name) {
         this.name = name;
     }
 }

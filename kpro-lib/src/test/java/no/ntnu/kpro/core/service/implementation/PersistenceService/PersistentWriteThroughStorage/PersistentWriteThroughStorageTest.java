@@ -5,6 +5,7 @@
 package no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWriteThroughStorage;
 
 import java.io.File;
+import no.ntnu.kpro.core.model.Interface.IUser;
 import no.ntnu.kpro.core.model.User;
 import no.ntnu.kpro.core.service.interfaces.PersistencePostProcessor;
 
@@ -29,10 +30,14 @@ public class PersistentWriteThroughStorageTest {
                 return b;
             }
         }, new File("/"));
-////        IUser d = (IUser)s.manage(new User("Nicklas"));
-//        System.out.println("DDDD: "+d.getClass());
-//        d.setName("Ida");
-//        d.setName("Aleksander");
+        IUser d = (IUser)s.manage(new User("Nicklas"));
+        
+        d.setName("Ida");
+        d.setName("Aleksander");
+        
+        IUser dl = (IUser)s.find(User.class, 0);
+        dl.setName("Magnus");
+        
 //        DummyInterface d = (DummyInterface) s.find(DummyObject.class, 0);
 //        System.out.println("D: "+d);
 //        System.out.println("Cls: "+d.getClass());

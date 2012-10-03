@@ -53,9 +53,7 @@ public class PersistentWriteThroughStorage {
     public synchronized Object manage(Object o) throws Exception {
         Object p;
         if (!Proxy.isProxyClass(o.getClass())) {
-            System.out.println("Manage: " + o);
             p = TraceProxy.trace(o);
-            System.out.println("Managed: " + p);
         } else {
             p = o;
         }
@@ -69,17 +67,13 @@ public class PersistentWriteThroughStorage {
 
     public synchronized void save(Object object) throws Exception {
         if (!Proxy.isProxyClass(object.getClass())) {
-            System.out.println("Wasn't managed: " + object);
             manage(object);
             return;
         } else {
-            System.out.println("Was managed: " + object);
         }
 
         TraceProxy proxy = ((TraceProxy) Proxy.getInvocationHandler(object));
-        System.out.println("Proxy: " + proxy);
         String className = proxy.object.getClass().getSimpleName();
-
         File base = getBaseDir();
         File[] dirList = base.listFiles(new DirectoryFilter(className));
         if (dirList == null) {
@@ -106,7 +100,6 @@ public class PersistentWriteThroughStorage {
             currentIndex = proxy.id;
         }
         file = new File(classDir, String.valueOf(currentIndex));
-        //System.out.println("NewFile: "+file);
         if (!file.exists()) {
             file.createNewFile();
         }
@@ -117,7 +110,6 @@ public class PersistentWriteThroughStorage {
         os.write(data);
 
         saveIndex();
-
     }
 
     public synchronized Object[] findAll(Class cls) throws Exception {
@@ -161,7 +153,6 @@ public class PersistentWriteThroughStorage {
             return null;
         }
         File classDir = dirList[0];
-        System.out.println("In dir: "+classDir);
         File[] objectList = classDir.listFiles(new NameFilter(String.valueOf(id)));
         if (objectList == null || objectList.length == 0) {
             return null;
@@ -187,8 +178,6 @@ public class PersistentWriteThroughStorage {
     }
 
     private File getBaseDir() {
-//        System.out.println("User: " + user);
-//        System.out.println("UserName: " + user.getName());
         File base = new File(baseDir, "/" + postProcessor.process(user.getName()));
         if (!base.exists()) {
             base.mkdir();
@@ -202,9 +191,8 @@ public class PersistentWriteThroughStorage {
         File ind;
         if (indL == null || indL.length == 0) {
             //No index file found, create one
-            System.out.println("Base: " + base.getAbsolutePath());
             ind = new File(base, "index");
-            System.out.println("Index: " + ind.getAbsolutePath());
+
             ind.createNewFile();
         } else {
             ind = indL[0];
