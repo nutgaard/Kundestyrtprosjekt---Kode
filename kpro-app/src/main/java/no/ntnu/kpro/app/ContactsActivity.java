@@ -9,6 +9,7 @@ package no.ntnu.kpro.app;
  * @author Lars
  */
 
+import no.ntnu.kpro.app.activities.WrapperActivity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

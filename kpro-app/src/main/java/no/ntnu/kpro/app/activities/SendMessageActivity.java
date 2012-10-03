@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package no.ntnu.kpro.app;
+package no.ntnu.kpro.app.activities;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 import javax.mail.Address;
+import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.core.helpers.EnumHelper;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
@@ -109,6 +110,10 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
                 //Parse message type string
                 String selectedTypeString = (String) sprType.getSelectedItem();
                 XOMessageType selectedType = EnumHelper.getEnumValue(XOMessageType.class, selectedTypeString);                
+                
+                //TODO: Set default values (routine/operation)
+                //TODO: Check if security label picked
+                //TODO: Check other fields
                 
                 getServiceProvider().getNetworkService().sendMail(txtReceiver, txtSubject, txtMessage, selectedSecurity, selectedPriority, selectedType);
                 

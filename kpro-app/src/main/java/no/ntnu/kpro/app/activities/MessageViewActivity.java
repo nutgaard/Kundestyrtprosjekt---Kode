@@ -2,14 +2,16 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package no.ntnu.kpro.app;
+package no.ntnu.kpro.app.activities;
 
+import no.ntnu.kpro.app.activities.MessageOperationActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
@@ -22,6 +24,7 @@ import no.ntnu.kpro.core.service.ServiceProvider;
  * @author Kristin
  */
 public class MessageViewActivity extends WrapperActivity {
+
     Box messages;
     XOMessage currentMessage;
     String folder = "Inbox";
@@ -43,12 +46,12 @@ public class MessageViewActivity extends WrapperActivity {
         }
         // Get the selected message and update the view
         currentMessage = i.getParcelableExtra("message");
-        
+
         btnPrevious = (Button) findViewById(R.id.btnPrevious);
         btnNext = (Button) findViewById(R.id.btnNext);
         btnReply = (Button) findViewById(R.id.btnReply);
         btnForward = (Button) findViewById(R.id.btnForward);
-        
+
         updateViews();
         enableButtons();
     }
@@ -86,9 +89,15 @@ public class MessageViewActivity extends WrapperActivity {
     // Update the current message and the fields corresponding to the message
     private void updateViews() {
         // From
-        String from = currentMessage.getFrom();
-        TextView lblFrom = (TextView) findViewById(R.id.lblFrom);
-        lblFrom.setText(from);
+        if (folder.equals("Inbox")) {
+            String from = currentMessage.getFrom();
+            TextView lblFrom = (TextView) findViewById(R.id.lblFrom);
+            lblFrom.setText(from);
+        } else if (folder.equals("Sent")) {
+            String to = currentMessage.getTo();
+            TextView lblFrom = (TextView) findViewById(R.id.lblFrom);
+            lblFrom.setText(to);
+        }
 
         // Subject
         String subject = currentMessage.getSubject();
@@ -140,7 +149,7 @@ public class MessageViewActivity extends WrapperActivity {
         if (messages.getNext(currentMessage) == null) {
             btnNext.setEnabled(false);
         }
-        
+
         addButtonClickListeners();
 
     }
@@ -165,17 +174,21 @@ public class MessageViewActivity extends WrapperActivity {
 
         // Add click listener to Reply button
         btnReply.setOnClickListener(new View.OnClickListener() {
-
             public void onClick(View view) {
-                
+                Intent i = new Intent(getApplicationContext(), MessageOperationActivity.class);
+                i.putExtra("message", currentMessage);
+                i.putExtra("mode", "reply");
+                startActivity(i);
             }
         });
-        
+
         // Add click listener to Forward button
         btnForward.setOnClickListener(new View.OnClickListener() {
-
             public void onClick(View view) {
-                
+                Intent i = new Intent(getApplicationContext(), MessageOperationActivity.class);
+                i.putExtra("message", currentMessage);
+                i.putExtra("mode", "forward");
+                startActivity(i);
             }
         });
     }

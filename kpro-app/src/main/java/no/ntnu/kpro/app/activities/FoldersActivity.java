@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package no.ntnu.kpro.app;
+package no.ntnu.kpro.app.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import java.util.List;
 import javax.mail.Address;
+import no.ntnu.kpro.app.R;
+import no.ntnu.kpro.app.XOMessageAdapter;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
@@ -58,10 +60,12 @@ public class FoldersActivity extends WrapperActivity implements NetworkService.C
                 folderChoice = folder;
                 if (folder.equals("Inbox")) {
                     messages = spr.getNetworkService().getInbox();
+                    lstFolder.setAdapter(new XOMessageAdapter(FoldersActivity.this, messages, true));
                 } else if (folder.equals("Sent")) {
                     messages = spr.getNetworkService().getOutbox();
+                    lstFolder.setAdapter(new XOMessageAdapter(FoldersActivity.this, messages, false));
                 }
-                lstFolder.setAdapter(new XOMessageAdapter(FoldersActivity.this, messages));
+                
             }
 
             public void onNothingSelected(AdapterView<?> av) {

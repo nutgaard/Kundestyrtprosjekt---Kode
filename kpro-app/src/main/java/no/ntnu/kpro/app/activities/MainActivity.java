@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package no.ntnu.kpro.app;
+package no.ntnu.kpro.app.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import no.ntnu.kpro.app.R;
 
 /**
  *
@@ -44,7 +45,7 @@ public class MainActivity extends WrapperActivity {
 
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
                 try{
-                    Class newClass = Class.forName("no.ntnu.kpro.app." + av.getItemAtPosition(i) + "Activity");
+                    Class newClass = Class.forName("no.ntnu.kpro.app.activities." + av.getItemAtPosition(i) + "Activity");
                     Intent intent = new Intent(MainActivity.this, newClass);
                     startActivity(intent);
                 }
