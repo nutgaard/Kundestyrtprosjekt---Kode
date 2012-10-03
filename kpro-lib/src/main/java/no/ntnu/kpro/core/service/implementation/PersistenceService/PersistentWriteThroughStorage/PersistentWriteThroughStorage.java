@@ -64,14 +64,40 @@ public class PersistentWriteThroughStorage {
     public synchronized Object unmanage(Object o) {
         return TraceProxy.untrace(o);
     }
-
+    public synchronized void delete(Object object) {
+        if (!Proxy.isProxyClass(object.getClass())){
+            //Not a proxy, so cannot be saved nor deleted
+            return;
+        }
+        TraceProxy proxy = ((TraceProxy) Proxy.getInvocationHandler(object));
+        
+        if (proxy.id < 0){
+            //Object is not saved yet
+            return;
+        }
+        
+        String className = proxy.object.getClass().getSimpleName();
+        File base = getBaseDir();
+        File[] dirList = base.listFiles(new DirectoryFilter(className));
+        if (dirList == null || dirList.length == 0){
+            //No directory, hence the file cannot exist
+            return;
+        }
+        File dir = dirList[0];
+        File[] files = dir.listFiles(new NameFilter(String.valueOf(proxy.id)));
+        if (files == null || files.length == 0){
+            //Found no files matching this name in the directory
+            return;
+        }
+        for (File file : files){
+            file.delete();
+        }
+    }
     public synchronized void save(Object object) throws Exception {
         if (!Proxy.isProxyClass(object.getClass())) {
             manage(object);
             return;
-        } else {
         }
-
         TraceProxy proxy = ((TraceProxy) Proxy.getInvocationHandler(object));
         String className = proxy.object.getClass().getSimpleName();
         File base = getBaseDir();
