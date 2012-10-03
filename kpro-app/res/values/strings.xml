@@ -8,7 +8,7 @@
     <string name="messagePrioritySpinnerPrompt">Choose a message priority </string>
     <string name="messageTypeSpinnerPrompt">Choose a message type </string>
     <string name="forwardButtonString">Forward</string>
-    <string name="replyButtonString">Next</string>
+    <string name="replyButtonString">Reply</string>
     <string name="previousMessageString">^</string>
     <string name="nextMessageString">v</string>
     <string name="defaultDate">01.01.2012 00:00</string>
