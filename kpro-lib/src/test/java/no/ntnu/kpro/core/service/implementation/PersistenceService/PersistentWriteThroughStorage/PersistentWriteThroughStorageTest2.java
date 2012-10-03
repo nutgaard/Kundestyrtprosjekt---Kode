@@ -5,6 +5,7 @@
 package no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWriteThroughStorage;
 
 import java.io.File;
+import java.util.Arrays;
 import no.ntnu.kpro.core.model.ModelProxy.IUser;
 import no.ntnu.kpro.core.model.User;
 import no.ntnu.kpro.core.service.interfaces.PersistencePostProcessor;
@@ -13,7 +14,7 @@ import no.ntnu.kpro.core.service.interfaces.PersistencePostProcessor;
  *
  * @author Nicklas
  */
-public class PersistentWriteThroughStorageTest {
+public class PersistentWriteThroughStorageTest2 {
 
     public static void main(String[] args) throws Exception {
         PersistentWriteThroughStorage s = PersistentWriteThroughStorage.create(new User("test"), new PersistencePostProcessor() {
@@ -30,10 +31,10 @@ public class PersistentWriteThroughStorageTest {
 //                }
                 return b;
             }
-        }, new File("/"));
-//        User user = new User("Nicklas");
-//        IUser d = (IUser)s.manage(user);
-//        
+        }, new File("/test"));
+        User user = new User("Nicklas");
+        IUser d = (IUser)s.manage(user);
+        
 //        d.setName("Ida");
 //        d.setName("Aleksander");
 //        
@@ -42,9 +43,11 @@ public class PersistentWriteThroughStorageTest {
 //        IUser dl = (IUser)s.find(User.class, -1);
 //        dl.setName("Magnus");
 
-        IUser user = (IUser) s.find(User.class, -1);
-        user.setName("ABCDEFGHIK");
-
+        Object[] users = s.findAll(User.class);
+        IUser U = (IUser)users[0];
+        System.out.println("Users: "+users.getClass());
+        System.out.println("User: "+users);
+        IUser[] a = s.castTo(users, IUser[].class);
 
 //        DummyInterface d = (DummyInterface) s.find(DummyObject.class, 0);
 //        System.out.println("D: "+d);

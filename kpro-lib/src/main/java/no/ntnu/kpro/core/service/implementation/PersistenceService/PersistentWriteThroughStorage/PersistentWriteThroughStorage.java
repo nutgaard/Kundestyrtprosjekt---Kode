@@ -7,6 +7,7 @@ package no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWr
 import com.thoughtworks.xstream.XStream;
 import java.io.*;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import no.ntnu.kpro.core.model.User;
@@ -38,6 +39,18 @@ public class PersistentWriteThroughStorage {
         }
         return instance;
     }
+    public static void close(User user) {
+        if (instance != null && instance.user == user){
+            instance.user = null;
+            instance.postProcessor = null;
+            instance.xstream = null;
+            instance.index = null;
+            instance.baseDir = null;
+            instance = null;
+        }else {
+            throw new RuntimeException("Cannot close persistingunit which does not belong to you");
+        }
+    }
 
     private PersistentWriteThroughStorage(User user, PersistencePostProcessor postProcessor, File basedir) throws Exception {
         this.user = user;
@@ -49,7 +62,9 @@ public class PersistentWriteThroughStorage {
         }
         getIndex();
     }
-
+    public <T> T[] castTo(Object[] l, Class<? extends T[]> cls) {
+        return Arrays.copyOf(l, l.length, cls);
+    }
     public synchronized Object manage(Object o) throws Exception {
         Object p;
         if (!Proxy.isProxyClass(o.getClass())) {
@@ -90,7 +105,9 @@ public class PersistentWriteThroughStorage {
             return;
         }
         for (File file : files){
+            System.out.println("Deleting: "+file);
             file.delete();
+            System.gc();
         }
     }
     public synchronized void save(Object object) throws Exception {
@@ -134,14 +151,14 @@ public class PersistentWriteThroughStorage {
         data = postProcessor.process(data);
         OutputStream os = new FileOutputStream(file);
         os.write(data);
-
+        os.close();
         saveIndex();
     }
 
     public synchronized Object[] findAll(Class cls) throws Exception {
         File base = getBaseDir();
         //Will return null, an empty array, or one that maximum contains one element since duplicate directories are not allowed. 
-        File[] dirList = base.listFiles(new DirectoryFilter(cls.getName()));
+        File[] dirList = base.listFiles(new DirectoryFilter(cls.getSimpleName()));
         if (dirList == null || dirList.length == 0) {
             return null;
         } else {
@@ -156,10 +173,11 @@ public class PersistentWriteThroughStorage {
                 byte[] data = new byte[(int) file.length()];
                 //Read from file
                 is.read(data);
+                is.close();
                 //Unprocess raw data
                 data = postProcessor.unprocess(data);
                 //
-
+                
                 Object o = xstream.fromXML(new ByteArrayInputStream(data));
                 Object t = TraceProxy.trace(o);
                 ((TraceProxy) Proxy.getInvocationHandler(t)).id = Integer.parseInt(file.getName());
@@ -191,6 +209,7 @@ public class PersistentWriteThroughStorage {
             InputStream is = new FileInputStream(file);
             byte[] data = new byte[(int) file.length()];
             is.read(data);
+            is.close();
             data = postProcessor.unprocess(data);
             Object o = xstream.fromXML(new ByteArrayInputStream(data));
             Object t = TraceProxy.trace(o);
@@ -230,6 +249,7 @@ public class PersistentWriteThroughStorage {
         InputStream is = new FileInputStream(ind);
         byte[] data = new byte[(int) ind.length()];
         is.read(data);
+        is.close();
         data = postProcessor.unprocess(data);
         xstream.addImplicitCollection(ConcurrentHashMap.class, "classes");
         if (data.length == 0) {
@@ -254,6 +274,7 @@ public class PersistentWriteThroughStorage {
         byte[] data = xstream.toXML(this.index).getBytes();
         data = postProcessor.process(data);
         os.write(data);
+        os.close();
     }
 
     class DirectoryFilter implements FileFilter {
