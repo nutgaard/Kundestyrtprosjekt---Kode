@@ -138,6 +138,7 @@ public class FoldersActivity extends WrapperActivity implements NetworkService.C
 
     public void mailReceived(XOMessage message) {
         throw new UnsupportedOperationException("Not supported yet.");
+        //TODO: Update list
     }
 
     public void mailReceivedError() {
