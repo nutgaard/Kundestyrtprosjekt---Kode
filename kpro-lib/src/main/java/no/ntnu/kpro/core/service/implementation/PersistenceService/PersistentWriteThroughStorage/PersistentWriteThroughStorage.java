@@ -23,25 +23,30 @@ public class PersistentWriteThroughStorage {
     private PersistencePostProcessor postProcessor;
     private XStream xstream;
     private Map<String, Integer> index;
+    private File baseDir;
 
     public static PersistentWriteThroughStorage getInstance() {
         return instance;
     }
 
-    public static PersistentWriteThroughStorage create(User user, PersistencePostProcessor postProcessor) throws Exception {
+    public static PersistentWriteThroughStorage create(User user, PersistencePostProcessor postProcessor, File basedir) throws Exception {
         if (instance != null && instance.user != user) {
             throw new RuntimeException("Initalizing storage with changed user is not allowed.");
         }
         if (instance == null) {
-            instance = new PersistentWriteThroughStorage(user, postProcessor);
+            instance = new PersistentWriteThroughStorage(user, postProcessor, basedir);
         }
         return instance;
     }
 
-    private PersistentWriteThroughStorage(User user, PersistencePostProcessor postProcessor) throws Exception {
+    private PersistentWriteThroughStorage(User user, PersistencePostProcessor postProcessor, File basedir) throws Exception {
         this.user = user;
         this.postProcessor = postProcessor;
         this.xstream = new XStream();
+        this.baseDir = basedir;
+        if (!basedir.exists()){
+            basedir.mkdirs();
+        }
         getIndex();
     }
 
@@ -184,7 +189,7 @@ public class PersistentWriteThroughStorage {
     private File getBaseDir() {
 //        System.out.println("User: " + user);
 //        System.out.println("UserName: " + user.getName());
-        File base = new File("/" + postProcessor.process(user.getName()));
+        File base = new File(baseDir, "/" + postProcessor.process(user.getName()));
         if (!base.exists()) {
             base.mkdir();
         }
