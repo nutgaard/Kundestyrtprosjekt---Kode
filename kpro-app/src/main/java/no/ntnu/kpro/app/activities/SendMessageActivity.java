@@ -25,7 +25,7 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  *
  * @author Kristin
  */
-public class SendMessageActivity extends WrapperActivity implements NetworkService.Callback{
+public class SendMessageActivity extends MenuActivity implements NetworkService.Callback{
     
     private Spinner sprSecurityLabel;
     private Spinner sprPriority;

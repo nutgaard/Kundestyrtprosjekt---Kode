@@ -26,7 +26,7 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  *
  * @author Kristin
  */
-public class FoldersActivity extends WrapperActivity implements NetworkService.Callback {
+public class FoldersActivity extends MenuActivity implements NetworkService.Callback {
 
     List<XOMessage> messages;
     String folderChoice = "Inbox";
@@ -92,34 +92,6 @@ public class FoldersActivity extends WrapperActivity implements NetworkService.C
                 startActivity(i);
             }
         });
-    }
-
-    // Create "popup" menu (shows by pressing MENU button) based on layout
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.layout.menu_inbox, menu);
-        return true;
-    }
-
-    // Handler for pressing the popup menu
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.menu_new:
-                Intent i = new Intent(getApplicationContext(), SendMessageActivity.class);
-                startActivity(i);
-                return true;
-            case R.id.menu_sort:
-                //showHelp();
-                return true;
-            case R.id.menu_settings:
-                //showHelp();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     @Override
