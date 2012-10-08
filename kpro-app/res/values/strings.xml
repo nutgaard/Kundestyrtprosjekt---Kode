@@ -3,8 +3,7 @@
     <string name="hello">Hello World, ConfigureMorse!</string>
     <string name="app_name">XOMail</string>
     <string name="messageTextToFlash">Message text to morse via flash</string>
-    <string name="morseFlashNow">Morse/Flash the message now!</string>
-    <string-array name="views">
+    <string name="morseFlashNow">Morse/Flash the message now!</string>    
     <string name="securityLabelSpinnerPrompt">Choose a security label </string>
     <string name="messagePrioritySpinnerPrompt">Choose a message priority </string>
     <string name="messageTypeSpinnerPrompt">Choose a message type </string>
@@ -13,7 +12,7 @@
     <string name="previousMessageString">^</string>
     <string name="nextMessageString">v</string>
     <string name="defaultDate">01.01.2012 00:00</string>
-     <string-array name="views">
+    <string-array name="views">
         <item>InboxActivity</item>
         <item>SentActivity</item>
         <item>SendMessageActivity</item>
@@ -36,7 +35,6 @@
     <string name="invalidMessageReceiverError">The address is not valid. Please check again. </string>
     <string name="invalidSecurityLabelError">You have to set a security label on the message before it can be sent. </string>
     <string name="invalidMessageSubjectError">I´m sorry. The subject can not be empty. </string>
-    <string name="invalidMessageBodyError">Please add a message. </string>
-    
+    <string name="invalidMessageBodyError">Please add a message. </string>  
             
 </resources>
