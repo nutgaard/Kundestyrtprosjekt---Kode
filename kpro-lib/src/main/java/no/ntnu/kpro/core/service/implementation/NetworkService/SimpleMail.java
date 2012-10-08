@@ -12,6 +12,7 @@ import javax.mail.event.MessageCountEvent;
 import javax.mail.event.MessageCountListener;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
 import javax.mail.search.FlagTerm;
 import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.Box;
@@ -87,8 +88,9 @@ public class SimpleMail extends NetworkService {
             message.addHeader(PRIORITY, priority.name());
             message.addHeader(TYPE, type.name());
 
-            message.setSubject(subject);
-            message.setText(body);
+            message.setSubject(subject, "UTF-8");
+            message.setText(body, "UTF-8");
+            message.setHeader("Content-Type", "text/plain; charset=UTF-8");
 
             SMTPTransport t = (SMTPTransport) session.getTransport("smtps");
             t.connect(this.props.getProperty("mail.smtps.host"), this.mailAdr, this.password);
@@ -188,6 +190,7 @@ public class SimpleMail extends NetworkService {
                     from = m.getFrom()[0].toString();
                     to = mailAdr;
                     subject = m.getSubject();
+//                    m.getReceivedDate()
                     for (int i = 0; i < content.getCount(); i++) {
                         BodyPart bp = content.getBodyPart(i);
                         if (bp.getContentType().startsWith("TEXT/")) {
@@ -251,8 +254,8 @@ public class SimpleMail extends NetworkService {
                     if (m.getContentType().startsWith("multipart")) {
                         Multipart content = (Multipart) m.getContent();
 
-                        from = m.getFrom()[0].toString();
-                        to = mailAdr;
+                        from = MimeUtility.decodeText(m.getFrom()[0].toString());
+                        to = MimeUtility.decodeText(mailAdr);
                         subject = m.getSubject();
                         for (int i = 0; i < content.getCount(); i++) {
                             BodyPart bp = content.getBodyPart(i);
@@ -262,9 +265,9 @@ public class SimpleMail extends NetworkService {
                             }
                         }
                     } else {
-                        from = m.getHeader("From")[0];
-                        to = m.getHeader("To")[0];
-                        subject = m.getHeader("Subject")[0];
+                        from = MimeUtility.decodeText(m.getHeader("From")[0]);
+                        to = MimeUtility.decodeText(m.getHeader("To")[0]);
+                        subject = MimeUtility.decodeText(m.getHeader("Subject")[0]);
                         body = m.getContent().toString();
                     }
 //                Log.d("SimpleMail", Arrays.toString(m.getHeader(LABEL)));
