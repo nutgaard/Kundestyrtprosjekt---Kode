@@ -4,19 +4,17 @@
  */
 package no.ntnu.kpro.app.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import javax.mail.Address;
 import no.ntnu.kpro.app.R;
@@ -44,6 +42,22 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
         setContentView(R.layout.message_list);
         sprFolders = (Spinner) findViewById(R.id.sprFolders);
         lstFolder = (ListView) findViewById(R.id.lstFolder);
+        Button btnSort = (Button) findViewById(R.id.btnSort);
+        btnSort.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                AlertDialog alertDialog = new AlertDialog.Builder(getParent()).create();
+                alertDialog.setTitle("Sort by");
+                alertDialog.setMessage("Hallo");
+                alertDialog.setButton("Test", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface di, int i) {
+                        
+                    }
+                });
+                alertDialog.show();
+            }
+        });
     }
 
     // Populating spinner with folder choices

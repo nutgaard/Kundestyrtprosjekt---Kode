@@ -1,15 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" 
-    android:background="@color/darkGray"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:orientation="vertical" 
+              android:background="@color/darkGray"
 >
-    <Spinner 
-        android:id="@+id/sprFolders"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:layout_width="fill_parent"
+                  android:layout_height="50dp"
+                  android:orientation="horizontal" 
+                  android:background="@color/darkGray"
+                  android:weightSum="100"
+    >
+        <Spinner 
+            android:id="@+id/sprFolders"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="80"
     />
+        <Button
+            android:id="@+id/btnSort"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="20"
+            android:text="Sort"/>
+    </LinearLayout>
+        
     <ListView
         android:id="@+id/lstFolder"
         android:layout_width="fill_parent"
