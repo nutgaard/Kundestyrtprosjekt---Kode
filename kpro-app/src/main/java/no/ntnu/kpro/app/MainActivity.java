@@ -38,18 +38,15 @@ public class MainActivity extends WrapperActivity {
         String[] views = {"Folders", "SendMessage"};
         ListView lstMenuChoices = (ListView) findViewById(R.id.lstMenuChoices);
         lstMenuChoices.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, views));
-        
+
         // Add click listener to the menu list
         lstMenuChoices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
-                try{
+                try {
                     Class newClass = Class.forName("no.ntnu.kpro.app." + av.getItemAtPosition(i) + "Activity");
                     Intent intent = new Intent(MainActivity.this, newClass);
                     startActivity(intent);
-                }
-                catch(ClassNotFoundException e){
-                    
+                } catch (ClassNotFoundException e) {
                 }
             }
         });

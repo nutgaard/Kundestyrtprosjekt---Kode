@@ -11,6 +11,7 @@ package no.ntnu.kpro.core.model;
  * Unsure of which to keep as of now.
  */
 public enum XOMessageSecurityLabel {
+    CHOOSE_ONE("Choose Security Label", "I SHOULD NOT SHOW, BECAUSE I CANNOT BE CHOSEN"),
     UGRADERT("Ugradert", "ug"),
     BEGRENSET("Begrenset", "b"),
     KONFIDENSIELT("Kondfidensielt", "k"),

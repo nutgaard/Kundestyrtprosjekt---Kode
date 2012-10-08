@@ -42,7 +42,8 @@
             android:layout_marginTop="8dp"
             android:layout_below="@id/receiver_layout"
             android:singleLine="true"
-            android:hint="Subject"/>
+            android:hint="Subject"
+            android:imeOptions="actionDone"/>
     
         <!--MESSAGE SECURITY LABEL SPINNER-->
     
@@ -56,7 +57,7 @@
             android:id="@+id/sprSecurityLabel"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:prompt="@string/securityLabelSpinnerPrompt"
+            android:prompt="@string/messageSecurityLabelSpinnerPrompt"
             android:layout_below="@id/lblSecurityLabelInfo" />
     
         <!--MESSAGE PRIORITY SPINNER-->
