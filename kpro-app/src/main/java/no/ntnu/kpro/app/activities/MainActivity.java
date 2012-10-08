@@ -43,13 +43,8 @@ public class MainActivity extends WrapperActivity {
         // Add click listener to the menu list
         lstMenuChoices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
-<<<<<<< HEAD:kpro-app/src/main/java/no/ntnu/kpro/app/MainActivity.java
-                try {
-                    Class newClass = Class.forName("no.ntnu.kpro.app." + av.getItemAtPosition(i) + "Activity");
-=======
                 try{
                     Class newClass = Class.forName("no.ntnu.kpro.app.activities." + av.getItemAtPosition(i) + "Activity");
->>>>>>> c780bac6e87613ab3c4246d5a88634449d968328:kpro-app/src/main/java/no/ntnu/kpro/app/activities/MainActivity.java
                     Intent intent = new Intent(MainActivity.this, newClass);
                     startActivity(intent);
                 } catch (ClassNotFoundException e) {
