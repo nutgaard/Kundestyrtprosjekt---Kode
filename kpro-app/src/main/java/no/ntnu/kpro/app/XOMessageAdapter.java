@@ -22,12 +22,18 @@ import no.ntnu.kpro.core.model.XOMessage;
 public class XOMessageAdapter extends ArrayAdapter {
     private final Activity activity;
     private final List messages;
+    private boolean isInbox = true;
     
-     public XOMessageAdapter(Activity activity, List objects) {
+     public XOMessageAdapter(Activity activity, List objects, boolean isInbox) {
         super(activity, R.layout.message_list_item , objects);
         this.activity = activity;
         this.messages = objects;
+        this.isInbox = isInbox;
     }
+     
+     public void setIsInbox(boolean value){
+         this.isInbox = value;
+     }
      
      @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -60,12 +66,17 @@ public class XOMessageAdapter extends ArrayAdapter {
         // to the view objects
        
         XOMessage message = (XOMessage)messages.get(position);
-        xoView.address.setText(message.getFrom());
+        if(isInbox){
+            xoView.address.setText(message.getFrom());
+        }
+        else{
+            xoView.address.setText(message.getTo());
+        }
         xoView.subject.setText(message.getSubject());
         xoView.date.setText("01.01.2012 00:00");
         
         xoView.label.setText(message.getGrading().getShortValue());
-        xoView.priority.setText(message.getPriority().toString());
+        xoView.priority.setText(message.getPriority().getNumValue());
         
         String shortVal = message.getGrading().getShortValue();
         if (shortVal.equals("nu") || shortVal.equals("ug") || shortVal.equals("uc")){

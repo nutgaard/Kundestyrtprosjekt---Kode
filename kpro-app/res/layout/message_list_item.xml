@@ -1,34 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" 
                 android:background="@color/white"
 >
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/topLayout"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:weightSum="100"
+    >
+        <!-- From Label -->
+        <TextView
+            android:id="@+id/lblFrom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="80"
+            android:maxLines="1"
+            android:textColor="@color/black"
+            android:paddingTop="8dp"
+            android:paddingLeft="8dp"
+            android:paddingBottom="4dp"
+            android:textSize="14dp" />
  
-    <!-- From Label -->
-    <TextView
-        android:id="@+id/lblFrom"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:textColor="@color/black"
-        android:paddingTop="8dp"
-        android:paddingLeft="8dp"
-        android:paddingBottom="4dp"
-        android:textSize="14dp" />
+        <!-- Text for priority - will be replaced by icon later? -->
+        <TextView
+            android:id="@+id/imvPriority"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="10"
+            android:text="Override"
+            android:textColor="@color/black"
+        />
  
-    <!-- Text for label - will be replaced by icon later? -->
-    <TextView
-        android:id="@+id/imvLabel"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_toRightOf="@id/lblFrom"
-        android:text="nc"
-        android:textColor="@color/black"
+        <!-- Icon for priority 
+        <ImageView
+            android:id="@+id/imvPriority"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_toRightOf="@+id/lblFrom"
+            android:src="@drawable/icon"
+        />-->
+    
+        <!-- Text for label - will be replaced by icon later? -->
+        <TextView
+            android:id="@+id/imvLabel"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="10"
+            android:text="nc"
+            android:textColor="@color/black"
         />
     
-    <!-- Icon for label?
+        <!-- Icon for label?
     <ImageView
         android:id="@+id/imvLabel"
         android:layout_width="30dp"
@@ -36,45 +62,34 @@
         android:layout_toRightOf="@id/imvPriority"
         android:src="@drawable/icon"
         /> -->
-    
-    <!-- Text for priority - will be replaced by icon later? -->
-    <TextView
-        android:id="@+id/imvPriority"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_toRightOf="@id/imvLabel"
-        android:text="Override"
-        android:textColor="@color/black"
-        />
- 
-    <!-- Icon for priority 
-    <ImageView
-        android:id="@+id/imvPriority"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_toRightOf="@+id/lblFrom"
-        android:src="@drawable/icon"
-    />-->
-   
-    
-    
-    <!-- Mail Subject -->
-    <TextView android:id="@+id/lblSubject"
+        
+        
+    </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                   android:layout_width="fill_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal"
+                   android:weightSum="100"
+    >
+        <!-- Mail Subject -->
+        <TextView android:id="@+id/lblSubject"
               android:layout_height="wrap_content"
+              android:layout_weight="80"
               android:maxLines="1"
               android:layout_width="220dp"
               android:paddingLeft="8dp"
               android:paddingBottom="6dp"
               android:textSize="12dp"
-              android:textColor="@color/gray"
-              android:layout_below="@+id/lblFrom"/>
+              android:textColor="@color/gray"/>
  
-    <!-- Mail date -->
-    <TextView android:id="@+id/lblDate"
-              android:layout_below="@+id/lblFrom"
-              android:layout_toRightOf="@+id/lblSubject"
+        <!-- Mail date -->
+        <TextView android:id="@+id/lblDate"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
+              android:layout_weight="20"
+              android:textColor="@color/gray"
               android:textSize="12dp"/>
+    </LinearLayout>
+    
  
-</RelativeLayout>
+</LinearLayout>

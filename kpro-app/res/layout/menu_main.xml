@@ -3,15 +3,20 @@
     <!-- Single menu item
          Set id, icon and Title for each menu item
     -->
+    <item android:id="@+id/menu_folders"
+          android:icon="@drawable/icon"
+          android:title="Folders" />
     <item android:id="@+id/menu_new"
           android:icon="@drawable/icon"
           android:title="New" />
- 
-    <item android:id="@+id/menu_sort"
+    <item android:id="@+id/menu_new_instant"
           android:icon="@drawable/icon"
-          android:title="Sort" />
- 
+          android:title="Instant message" />
+    <item android:id="@+id/menu_contacts"
+          android:icon="@drawable/icon"
+          android:title="Contacts" />
     <item android:id="@+id/menu_settings"
           android:icon="@drawable/icon"
           android:title="Settings" />
+    
 </menu>

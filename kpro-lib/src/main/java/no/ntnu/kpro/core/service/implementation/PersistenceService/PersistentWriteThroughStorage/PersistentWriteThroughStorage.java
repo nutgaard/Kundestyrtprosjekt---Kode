@@ -7,6 +7,7 @@ package no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWr
 import com.thoughtworks.xstream.XStream;
 import java.io.*;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import no.ntnu.kpro.core.model.User;
@@ -23,34 +24,51 @@ public class PersistentWriteThroughStorage {
     private PersistencePostProcessor postProcessor;
     private XStream xstream;
     private Map<String, Integer> index;
+    private File baseDir;
 
     public static PersistentWriteThroughStorage getInstance() {
         return instance;
     }
 
-    public static PersistentWriteThroughStorage create(User user, PersistencePostProcessor postProcessor) throws Exception {
+    public static PersistentWriteThroughStorage create(User user, PersistencePostProcessor postProcessor, File basedir) throws Exception {
         if (instance != null && instance.user != user) {
             throw new RuntimeException("Initalizing storage with changed user is not allowed.");
         }
         if (instance == null) {
-            instance = new PersistentWriteThroughStorage(user, postProcessor);
+            instance = new PersistentWriteThroughStorage(user, postProcessor, basedir);
         }
         return instance;
     }
+    public static void close(User user) {
+        if (instance != null && instance.user == user){
+            instance.user = null;
+            instance.postProcessor = null;
+            instance.xstream = null;
+            instance.index = null;
+            instance.baseDir = null;
+            instance = null;
+        }else {
+            throw new RuntimeException("Cannot close persistingunit which does not belong to you");
+        }
+    }
 
-    private PersistentWriteThroughStorage(User user, PersistencePostProcessor postProcessor) throws Exception {
+    private PersistentWriteThroughStorage(User user, PersistencePostProcessor postProcessor, File basedir) throws Exception {
         this.user = user;
         this.postProcessor = postProcessor;
         this.xstream = new XStream();
+        this.baseDir = basedir;
+        if (!basedir.exists()){
+            basedir.mkdirs();
+        }
         getIndex();
     }
-
+    public <T> T[] castTo(Object[] l, Class<? extends T[]> cls) {
+        return Arrays.copyOf(l, l.length, cls);
+    }
     public synchronized Object manage(Object o) throws Exception {
         Object p;
         if (!Proxy.isProxyClass(o.getClass())) {
-            System.out.println("Manage: " + o);
             p = TraceProxy.trace(o);
-            System.out.println("Managed: " + p);
         } else {
             p = o;
         }
@@ -61,20 +79,44 @@ public class PersistentWriteThroughStorage {
     public synchronized Object unmanage(Object o) {
         return TraceProxy.untrace(o);
     }
-
+    public synchronized void delete(Object object) {
+        if (!Proxy.isProxyClass(object.getClass())){
+            //Not a proxy, so cannot be saved nor deleted
+            return;
+        }
+        TraceProxy proxy = ((TraceProxy) Proxy.getInvocationHandler(object));
+        
+        if (proxy.id < 0){
+            //Object is not saved yet
+            return;
+        }
+        
+        String className = proxy.object.getClass().getSimpleName();
+        File base = getBaseDir();
+        File[] dirList = base.listFiles(new DirectoryFilter(className));
+        if (dirList == null || dirList.length == 0){
+            //No directory, hence the file cannot exist
+            return;
+        }
+        File dir = dirList[0];
+        File[] files = dir.listFiles(new NameFilter(String.valueOf(proxy.id)));
+        if (files == null || files.length == 0){
+            //Found no files matching this name in the directory
+            return;
+        }
+        for (File file : files){
+            System.out.println("Deleting: "+file);
+            file.delete();
+            System.gc();
+        }
+    }
     public synchronized void save(Object object) throws Exception {
         if (!Proxy.isProxyClass(object.getClass())) {
-            System.out.println("Wasn't managed: " + object);
             manage(object);
             return;
-        } else {
-            System.out.println("Was managed: " + object);
         }
-
         TraceProxy proxy = ((TraceProxy) Proxy.getInvocationHandler(object));
-        System.out.println("Proxy: " + proxy);
         String className = proxy.object.getClass().getSimpleName();
-
         File base = getBaseDir();
         File[] dirList = base.listFiles(new DirectoryFilter(className));
         if (dirList == null) {
@@ -101,7 +143,6 @@ public class PersistentWriteThroughStorage {
             currentIndex = proxy.id;
         }
         file = new File(classDir, String.valueOf(currentIndex));
-        //System.out.println("NewFile: "+file);
         if (!file.exists()) {
             file.createNewFile();
         }
@@ -110,15 +151,14 @@ public class PersistentWriteThroughStorage {
         data = postProcessor.process(data);
         OutputStream os = new FileOutputStream(file);
         os.write(data);
-
+        os.close();
         saveIndex();
-
     }
 
     public synchronized Object[] findAll(Class cls) throws Exception {
         File base = getBaseDir();
         //Will return null, an empty array, or one that maximum contains one element since duplicate directories are not allowed. 
-        File[] dirList = base.listFiles(new DirectoryFilter(cls.getName()));
+        File[] dirList = base.listFiles(new DirectoryFilter(cls.getSimpleName()));
         if (dirList == null || dirList.length == 0) {
             return null;
         } else {
@@ -133,10 +173,11 @@ public class PersistentWriteThroughStorage {
                 byte[] data = new byte[(int) file.length()];
                 //Read from file
                 is.read(data);
+                is.close();
                 //Unprocess raw data
                 data = postProcessor.unprocess(data);
                 //
-
+                
                 Object o = xstream.fromXML(new ByteArrayInputStream(data));
                 Object t = TraceProxy.trace(o);
                 ((TraceProxy) Proxy.getInvocationHandler(t)).id = Integer.parseInt(file.getName());
@@ -149,6 +190,10 @@ public class PersistentWriteThroughStorage {
     }
 
     public synchronized Object find(Class cls, int id) throws Exception {
+        //Create new user and proxy
+        if (id < 0){
+            return manage(cls.getConstructor().newInstance());
+        }
         File base = getBaseDir();
         //Will return null, an empty array, or one that maximum contains one element since duplicate directories are not allowed. 
         File[] dirList = base.listFiles(new DirectoryFilter(cls.getSimpleName()));
@@ -156,7 +201,6 @@ public class PersistentWriteThroughStorage {
             return null;
         }
         File classDir = dirList[0];
-        System.out.println("In dir: "+classDir);
         File[] objectList = classDir.listFiles(new NameFilter(String.valueOf(id)));
         if (objectList == null || objectList.length == 0) {
             return null;
@@ -165,6 +209,7 @@ public class PersistentWriteThroughStorage {
             InputStream is = new FileInputStream(file);
             byte[] data = new byte[(int) file.length()];
             is.read(data);
+            is.close();
             data = postProcessor.unprocess(data);
             Object o = xstream.fromXML(new ByteArrayInputStream(data));
             Object t = TraceProxy.trace(o);
@@ -182,9 +227,7 @@ public class PersistentWriteThroughStorage {
     }
 
     private File getBaseDir() {
-//        System.out.println("User: " + user);
-//        System.out.println("UserName: " + user.getName());
-        File base = new File("/" + postProcessor.process(user.getName()));
+        File base = new File(baseDir, "/" + postProcessor.process(user.getName()));
         if (!base.exists()) {
             base.mkdir();
         }
@@ -197,9 +240,8 @@ public class PersistentWriteThroughStorage {
         File ind;
         if (indL == null || indL.length == 0) {
             //No index file found, create one
-            System.out.println("Base: " + base.getAbsolutePath());
             ind = new File(base, "index");
-            System.out.println("Index: " + ind.getAbsolutePath());
+
             ind.createNewFile();
         } else {
             ind = indL[0];
@@ -207,6 +249,7 @@ public class PersistentWriteThroughStorage {
         InputStream is = new FileInputStream(ind);
         byte[] data = new byte[(int) ind.length()];
         is.read(data);
+        is.close();
         data = postProcessor.unprocess(data);
         xstream.addImplicitCollection(ConcurrentHashMap.class, "classes");
         if (data.length == 0) {
@@ -231,6 +274,7 @@ public class PersistentWriteThroughStorage {
         byte[] data = xstream.toXML(this.index).getBytes();
         data = postProcessor.process(data);
         os.write(data);
+        os.close();
     }
 
     class DirectoryFilter implements FileFilter {

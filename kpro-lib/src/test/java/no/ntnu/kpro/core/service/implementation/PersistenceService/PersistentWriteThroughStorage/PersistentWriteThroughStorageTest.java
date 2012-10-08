@@ -4,40 +4,209 @@
  */
 package no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWriteThroughStorage;
 
+import java.io.File;
+import java.io.FileReader;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
+import no.ntnu.kpro.core.model.ModelProxy.IUser;
 import no.ntnu.kpro.core.model.User;
-import no.ntnu.kpro.core.service.interfaces.PersistencePostProcessor;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.xml.sax.InputSource;
 
 /**
  *
  * @author Nicklas
  */
 public class PersistentWriteThroughStorageTest {
-    public static void main(String[] args) throws Exception {
-        PersistentWriteThroughStorage s = PersistentWriteThroughStorage.create(new User("test"), new PersistencePostProcessor() {
-            public byte[] process(byte[] b) {
-                for (int i = 0;i < b.length; i++) {
-                    b[i]--;
-                }
-                return b;
-            }
 
-            public byte[] unprocess(byte[] b) {
-                for (int i = 0;i < b.length; i++) {
-                    b[i]++;
-                }
-                return b;
+    static User good = new User("GoodGuy");
+    static User bad = new User("BadGuy");
+    static PersistentWriteThroughStorage em;
+    static File baseDir;
+
+    public PersistentWriteThroughStorageTest() {
+        
+    }
+
+    @BeforeClass
+    public static void setUpClass() {
+        try {
+            baseDir = new File("/test");
+            System.out.println("Base: "+baseDir.getAbsolutePath());
+//            em = PersistentWriteThroughStorage.create(good, FileCryptoFactory.getProcessor(FileCryptoFactory.Crypto.NONE), baseDir);
+
+        } catch (Exception ex) {
+            Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+        delete(baseDir);
+    }
+
+    @Before
+    public void setUp() {
+        try {
+            good = new User(new BigInteger(130, new SecureRandom()).toString(32));
+            em = PersistentWriteThroughStorage.create(good, FileCryptoFactory.getProcessor(FileCryptoFactory.Crypto.NONE), baseDir);
+        } catch (Exception ex) {
+            Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @After
+    public void tearDown() {
+            em.close(good);
+            good = null;
+            delete(baseDir);
+    }
+    // TODO add test methods here.
+    // The methods must be annotated with annotation @Test. For example:
+    //
+    // @Test
+    // public void hello() {}
+
+    @Test
+    public void noSavingFile() {
+        System.out.println("Test:noSavingFile");
+        try {
+            User u = new User("GoodGuysFriend");
+
+            //Base dir not created, cannot be saved
+            Object[] users = em.findAll(User.class);
+            assertNull(users);
+        } catch (Exception ex) {
+            Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Test
+    public void savingUnmanagedObjects() {
+        System.out.println("Test:savingUnmanagedObjects");
+        try {
+            User u = new User("GoodGuysFriend");
+            em.save(u);
+            IUser[] users = em.castTo(em.findAll(User.class), IUser[].class);
+            assertEquals(1, users.length);
+            em.save(u);
+            users = em.castTo(em.findAll(User.class), IUser[].class);
+            assertEquals(1, users.length);
+        } catch (Exception ex) {
+            Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    @Test
+    public void verifiedSavedContent() {
+        System.out.println("Test:verifiedSavedContent");
+        try {
+            User u = new User("GoodGuysFriend");
+            em.save(u);
+            IUser[] users = em.castTo(em.findAll(User.class), IUser[].class);
+            assertEquals(1, users.length);
+            
+            XPath v = XPathFactory.newInstance().newXPath();
+            XPathExpression e = v.compile(User.class.getName()+"/name");
+            File f = new File(baseDir, "/"+good.getName()+"/"+User.class.getSimpleName()+"/0");
+            System.out.println("Reading from file: "+f.getAbsolutePath());
+            String result = e.evaluate(new InputSource(new FileReader(f)));
+            
+            assertEquals(result, u.getName());
+        } catch (Exception ex) {
+            Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    @Test
+    public void savingManagedObjects() {
+        try {
+            IUser u = (IUser) em.manage(new User("GoodGuysFriend"));
+            IUser[] users = em.castTo(em.findAll(User.class), IUser[].class);
+            assertEquals(1, users.length);
+            em.save(u);
+            users = em.castTo(em.findAll(User.class), IUser[].class);
+            assertEquals(1, users.length);
+        } catch (Exception ex) {
+            Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    @Test
+    public void fetchUnsaved() {
+        try {
+            IUser u = (IUser)em.find(User.class, Integer.MAX_VALUE);
+            assertNull(u);
+        } catch (Exception ex) {
+            Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+            
+    @Test
+    public void updatingFile() {
+        try {
+            IUser u = (IUser) em.manage(new User("GoodGuysFriend"));
+            String nowName = u.getName();
+            
+            u.setName("ABCDEFG");
+            XPath v = XPathFactory.newInstance().newXPath();
+            XPathExpression e = v.compile(User.class.getName()+"/name");
+            File f = new File(baseDir, "/"+good.getName()+"/"+User.class.getSimpleName()+"/0");
+            System.out.println("Reading from file: "+f.getAbsolutePath());
+            String result = e.evaluate(new InputSource(new FileReader(f)));
+            
+            assertEquals(result, u.getName());
+            
+        } catch (Exception e) {
+            Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+    }
+
+    @Test
+    public void readingFile() {
+        try {
+            User user = new User("Nicklas");
+            em.save(user);
+            IUser readUser = (IUser)em.find(User.class, 0);
+            assertEquals(user.getName(), readUser.getName());
+        } catch (Exception ex) {
+            Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Test
+    public void deleteFile() {
+        try {
+            User user = new User("Nicklas");
+            em.save(user);
+            IUser[] users = em.castTo(em.findAll(User.class), IUser[].class);
+            assertEquals(1, users.length);
+            em.delete(users[0]);
+            users = em.castTo(em.findAll(User.class), IUser[].class);
+            assertEquals(0, users.length);
+        } catch (Exception ex) {
+            Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
+    private static void delete(File f){
+        if (f.isFile()){
+            f.deleteOnExit();
+        }else {
+            for (File file : f.listFiles()){
+                delete(file);
             }
-        });
-//        DummyInterface d = (DummyInterface)s.manage(new DummyObject("Nicklas", 22, "student"));
-//        System.out.println("DDDD: "+d.getClass());
-//        d.setAge(23);
-//        d.setAge(24);
-        DummyInterface d = (DummyInterface) s.find(DummyObject.class, 0);
-        System.out.println("D: "+d);
-        System.out.println("Cls: "+d.getClass());
-        System.out.println("Name: "+d.getName());
-        System.out.println("Age: "+d.getAge());
-        System.out.println("Work: "+d.getWorkTitle());
-        d.setAge(30);
+            System.out.println("Deleting : "+f);
+            f.deleteOnExit();
+        }
     }
 }

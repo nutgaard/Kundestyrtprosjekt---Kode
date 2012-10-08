@@ -16,7 +16,6 @@ import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import no.ntnu.kpro.core.model.Settings;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
@@ -98,14 +97,14 @@ public class NetworkServiceImpTest {
 
         private GreenMail mailServer;
         private NetworkServiceImp mailClient;
-        private Settings props;
+        private Properties props;
         private GreenMailUser user;
         private boolean messageReceived = false;
 
         @Before
         public void setup() throws InterruptedException {
             Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory.class.getName());
-            this.props = new Settings();
+            this.props = new Properties();
             this.props.put("mail.imaps.host", LOCALHOST);
             this.props.put("mail.imaps.auth", "true");
             this.props.put("mail.imaps.port", ServerSetupTest.IMAPS.getPort());
@@ -114,7 +113,7 @@ public class NetworkServiceImpTest {
             this.mailServer.start();
             this.user = this.mailServer.setUser(EMAIL_USER_ADDRESS, USER_NAME, USER_PASSWORD);
             
-            this.mailClient = new NetworkServiceImp(USER_NAME, USER_PASSWORD, EMAIL_USER_ADDRESS, props.getProperties(), null);
+            this.mailClient = new NetworkServiceImp(USER_NAME, USER_PASSWORD, EMAIL_USER_ADDRESS, props, null);
             this.mailClient.startIMAPIdle();
             this.mailClient.addListener(null);
         }

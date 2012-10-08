@@ -9,6 +9,7 @@ package no.ntnu.kpro.app;
  * @author Lars
  */
 
+import no.ntnu.kpro.app.activities.WrapperActivity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,7 +33,7 @@ public class ContactsActivity extends WrapperActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
-                setContentView(R.layout.main);
+                setContentView(R.layout.contacts);
  
                 // elements
                 String s = "QWERTZUIOPASDFGHJKLYXCVBNM";
@@ -46,8 +47,8 @@ public class ContactsActivity extends WrapperActivity {
                 Collections.sort(elements); // Must be sorted!
  
                 // listview
-                myListView = (ListView) findViewById(R.layout.contacts);
-                myListView.setFastScrollEnabled(true);
+                myListView = (ListView) findViewById(R.id.lstContacts);
+                //myListView.setFastScrollEnabled(true);
                 MyIndexerAdapter<String> adapter = new MyIndexerAdapter<String>(
                                 getApplicationContext(), android.R.layout.simple_list_item_1,
                                 elements);

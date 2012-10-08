@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package no.ntnu.kpro.app;
+package no.ntnu.kpro.app.activities;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -23,6 +23,7 @@ import android.widget.Toast;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.Address;
+import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.core.helpers.EnumHelper;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
@@ -35,12 +36,13 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  *
  * @author Kristin
  */
-public class SendMessageActivity extends WrapperActivity implements NetworkService.Callback {
 
-    private EditText receiver;
+    
+public class SendMessageActivity extends MenuActivity implements NetworkService.Callback{
+	private EditText receiver;
     private EditText subject;
-    private EditText message;
-    private Spinner sprSecurityLabel;
+    private EditText message;    
+	private Spinner sprSecurityLabel;
     private Spinner sprPriority;
     private Spinner sprType;
     private Button btnAddAttachment;
@@ -161,7 +163,7 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
 
                 //Parse message type string
                 String selectedTypeString = (String) sprType.getSelectedItem();
-                XOMessageType selectedType = EnumHelper.getEnumValue(XOMessageType.class, selectedTypeString);
+				XOMessageType selectedType = EnumHelper.getEnumValue(XOMessageType.class, selectedTypeString);
 
                 if (isValidFields()) {
                     //getServiceProvider().getNetworkService().sendMail(txtReceiver, txtSubject, txtMessage, selectedSecurity, selectedPriority, selectedType);
@@ -171,7 +173,21 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
                     confirm.show();
                     finish();
                 }
-            }
+				XOMessageType selectedType = EnumHelper.getEnumValue(XOMessageType.class, selectedTypeString);                
+                
+                //TODO: Set default values (routine/operation)
+                //TODO: Check if security label picked
+                //TODO: Check other fields
+                
+                getServiceProvider().getNetworkService().sendMail(txtReceiver, txtSubject, txtMessage, selectedSecurity, selectedPriority, selectedType);
+                
+                
+                //Is not necessary to have this when callback is implemented, as mailSent() will be called
+                Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent.", Toast.LENGTH_SHORT);                
+                confirm.show();
+                
+                finish();
+			}
         });
     }
 

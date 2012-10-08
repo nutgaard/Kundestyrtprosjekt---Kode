@@ -2,8 +2,7 @@ package no.ntnu.kpro.core.service.implementation.NetworkService;
 
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.smtp.SMTPTransport;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,6 +11,7 @@ import javax.mail.event.MessageCountEvent;
 import javax.mail.event.MessageCountListener;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
 import javax.mail.search.FlagTerm;
 import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.Box;
@@ -87,15 +87,16 @@ public class SimpleMail extends NetworkService {
             message.addHeader(PRIORITY, priority.name());
             message.addHeader(TYPE, type.name());
 
-            message.setSubject(subject);
-            message.setText(body);
+            message.setSubject(subject, "UTF-8");
+            message.setText(body, "UTF-8");
+            message.setHeader("Content-Type", "text/plain; charset=UTF-8");
 
             SMTPTransport t = (SMTPTransport) session.getTransport("smtps");
             t.connect(this.props.getProperty("mail.smtps.host"), this.mailAdr, this.password);
             t.sendMessage(message, message.getAllRecipients());
 
             t.close();
-            this.outboxM.add(new XOMessage(mailAdr, recipient, subject, body, label, priority, type));
+            this.outboxM.add(new XOMessage(mailAdr, recipient, subject, body, label, priority, type, new Date()));
             return true;
         } catch (MessagingException ex) {
             Logger.getLogger(SimpleMail.class.getName()).log(Level.SEVERE, null, ex);
@@ -181,13 +182,15 @@ public class SimpleMail extends NetworkService {
                 XOMessageSecurityLabel label = XOMessageSecurityLabel.UGRADERT;
                 XOMessagePriority priority = XOMessagePriority.ROUTINE;
                 XOMessageType type = XOMessageType.OPERATION;
-
+                Date date = new Date();
+                
                 if (m.getContentType().startsWith("multipart")) {
                     Multipart content = (Multipart) m.getContent();
 
                     from = m.getFrom()[0].toString();
                     to = mailAdr;
                     subject = m.getSubject();
+                    date = m.getReceivedDate();
                     for (int i = 0; i < content.getCount(); i++) {
                         BodyPart bp = content.getBodyPart(i);
                         if (bp.getContentType().startsWith("TEXT/")) {
@@ -200,6 +203,7 @@ public class SimpleMail extends NetworkService {
                     to = m.getHeader("To")[0];
                     subject = m.getHeader("Subject")[0];
                     body = m.getContent().toString();
+                    date = m.getReceivedDate();
                 }
 //                Log.d("SimpleMail", Arrays.toString(m.getHeader(LABEL)));
 //                Log.d("SimpleMail", Arrays.toString(m.getHeader(PRIORITY)));
@@ -217,7 +221,7 @@ public class SimpleMail extends NetworkService {
                 if (typeString != null) {
                     type = XOMessageType.valueOf(typeString);
                 }
-                inboxM.add(new XOMessage(from, to, subject, body, label, priority, type));
+                inboxM.add(new XOMessage(from, to, subject, body, label, priority, type, date));
             }
         } catch (Exception ex) {
             Logger.getLogger(SimpleMail.class.getName()).log(Level.SEVERE, null, ex);
@@ -247,13 +251,15 @@ public class SimpleMail extends NetworkService {
                     XOMessageSecurityLabel label = XOMessageSecurityLabel.UGRADERT;
                     XOMessagePriority priority = XOMessagePriority.ROUTINE;
                     XOMessageType type = XOMessageType.OPERATION;
+                    Date date = new Date();
 
                     if (m.getContentType().startsWith("multipart")) {
                         Multipart content = (Multipart) m.getContent();
 
-                        from = m.getFrom()[0].toString();
-                        to = mailAdr;
+                        from = MimeUtility.decodeText(m.getFrom()[0].toString());
+                        to = MimeUtility.decodeText(mailAdr);
                         subject = m.getSubject();
+                        date = m.getReceivedDate();
                         for (int i = 0; i < content.getCount(); i++) {
                             BodyPart bp = content.getBodyPart(i);
                             if (bp.getContentType().startsWith("TEXT/")) {
@@ -262,10 +268,11 @@ public class SimpleMail extends NetworkService {
                             }
                         }
                     } else {
-                        from = m.getHeader("From")[0];
-                        to = m.getHeader("To")[0];
-                        subject = m.getHeader("Subject")[0];
+                        from = MimeUtility.decodeText(m.getHeader("From")[0]);
+                        to = MimeUtility.decodeText(m.getHeader("To")[0]);
+                        subject = MimeUtility.decodeText(m.getHeader("Subject")[0]);
                         body = m.getContent().toString();
+                        date = m.getReceivedDate();
                     }
 //                Log.d("SimpleMail", Arrays.toString(m.getHeader(LABEL)));
 //                Log.d("SimpleMail", Arrays.toString(m.getHeader(PRIORITY)));
@@ -283,7 +290,7 @@ public class SimpleMail extends NetworkService {
                     if (typeString != null) {
                         type = XOMessageType.valueOf(typeString);
                     }
-                    inboxM.add(new XOMessage(from, to, subject, body, label, priority, type));
+                    inboxM.add(new XOMessage(from, to, subject, body, label, priority, type, date));
                 }
                 NOF_received++;
 

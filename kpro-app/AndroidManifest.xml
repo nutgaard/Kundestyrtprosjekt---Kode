@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="8" android:versionName="1.0-SNAPSHOT" package="no.ntnu.kpro.app">
     <application android:debuggable="true" android:label="@string/app_name">
-        <activity android:label="@string/app_name" android:name=".MainActivity">
+        <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:label="@string/app_name" android:name=".SendMessageActivity">
-            <action android:name="no.ntnu.kpro.app.SendMessageActivity"/>
+        <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.activities.SendMessageActivity">
+            <action android:name="no.ntnu.kpro.app.activities.SendMessageActivity"/>
         </activity>
-        <activity android:label="@string/app_name" android:name=".FoldersActivity">
-            <action android:name="no.ntnu.kpro.app.FoldersActivity"/>
+        <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.activities.FoldersActivity">
+            <action android:name="no.ntnu.kpro.app.activities.FoldersActivity"/>
         </activity>
-        <activity android:label="@string/app_name" android:name=".MessageViewActivity">
+        <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.activities.MessageViewActivity">
         </activity>
-	<service android:name="no.ntnu.kpro.core.service.ServiceProvider">
-		<intent-filter>
-        		<action android:name="no.ntnu.kpro.core.service.ServiceProvider"/>
-		</intent-filter>
-	</service>
+        <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.activities.MessageOperationActivity">
+        </activity>
+        <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.activities.MainTabActivity">
+        </activity>
+        <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.ContactsActivity">
+        </activity>
+        <service android:name="no.ntnu.kpro.core.service.ServiceProvider">
+            <intent-filter>
+                <action android:name="no.ntnu.kpro.core.service.ServiceProvider"/>
+            </intent-filter>
+        </service>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

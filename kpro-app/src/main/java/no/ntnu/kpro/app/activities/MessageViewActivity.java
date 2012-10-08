@@ -2,14 +2,16 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package no.ntnu.kpro.app;
+package no.ntnu.kpro.app.activities;
 
+import no.ntnu.kpro.app.activities.MessageOperationActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
@@ -26,6 +28,10 @@ public class MessageViewActivity extends WrapperActivity {
     Box messages;
     XOMessage currentMessage;
     String folder = "Inbox";
+    Button btnPrevious;
+    Button btnNext;
+    Button btnReply;
+    Button btnForward;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,13 +41,17 @@ public class MessageViewActivity extends WrapperActivity {
         folder = i.getStringExtra("folder");
         if (folder.equals("Inbox")) {
             setContentView(R.layout.message_item_in);
-        } else if (folder.equals("Outbox")) {
-            setContentView(null);//TODO:
         } else if (folder.equals("Sent")) {
             setContentView(R.layout.message_item_out);
         }
         // Get the selected message and update the view
         currentMessage = i.getParcelableExtra("message");
+
+        btnPrevious = (Button) findViewById(R.id.btnPrevious);
+        btnNext = (Button) findViewById(R.id.btnNext);
+        btnReply = (Button) findViewById(R.id.btnReply);
+        btnForward = (Button) findViewById(R.id.btnForward);
+
         updateViews();
         enableButtons();
     }
@@ -52,9 +62,8 @@ public class MessageViewActivity extends WrapperActivity {
         if (messages.getPrevious(currentMessage) != null) {
             XOMessage newM = (XOMessage) messages.getPrevious(currentMessage);
             currentMessage = newM;
-            Button btnPrev = (Button) findViewById(R.id.btnPrevious);
             if (messages.getPrevious(currentMessage) == null) {
-                btnPrev.setEnabled(false);
+                btnPrevious.setEnabled(false);
             }
         }
     }
@@ -65,7 +74,6 @@ public class MessageViewActivity extends WrapperActivity {
         if (messages.getNext(currentMessage) != null) {
             XOMessage newM = (XOMessage) messages.getNext(currentMessage);
             currentMessage = newM;
-            Button btnNext = (Button) findViewById(R.id.btnNext);
             if (messages.getNext(currentMessage) == null) {
                 btnNext.setEnabled(false);
             }
@@ -74,18 +82,22 @@ public class MessageViewActivity extends WrapperActivity {
 
     // Enable the prev/next buttons
     private void enableButtons() {
-        Button btnNext = (Button) findViewById(R.id.btnNext);
-        Button btnPrev = (Button) findViewById(R.id.btnPrevious);
         btnNext.setEnabled(true);
-        btnPrev.setEnabled(true);
+        btnPrevious.setEnabled(true);
     }
 
     // Update the current message and the fields corresponding to the message
     private void updateViews() {
         // From
-        String from = currentMessage.getFrom();
-        TextView lblFrom = (TextView) findViewById(R.id.lblFrom);
-        lblFrom.setText(from);
+        if (folder.equals("Inbox")) {
+            String from = currentMessage.getFrom();
+            TextView lblFrom = (TextView) findViewById(R.id.lblFrom);
+            lblFrom.setText(from);
+        } else if (folder.equals("Sent")) {
+            String to = currentMessage.getTo();
+            TextView lblFrom = (TextView) findViewById(R.id.lblFrom);
+            lblFrom.setText(to);
+        }
 
         // Subject
         String subject = currentMessage.getSubject();
@@ -132,14 +144,12 @@ public class MessageViewActivity extends WrapperActivity {
 
         // Disable buttons if no next/previous
         if (messages.getPrevious(currentMessage) == null) {
-            Button btnPrev = (Button) findViewById(R.id.btnPrevious);
-            btnPrev.setEnabled(false);
+            btnPrevious.setEnabled(false);
         }
         if (messages.getNext(currentMessage) == null) {
-            Button btnNext = (Button) findViewById(R.id.btnNext);
             btnNext.setEnabled(false);
         }
-        
+
         addButtonClickListeners();
 
     }
@@ -147,8 +157,7 @@ public class MessageViewActivity extends WrapperActivity {
     // Add button click listeners
     private void addButtonClickListeners() {
         // Add click listener to Previous button
-        Button prev = (Button) findViewById(R.id.btnPrevious);
-        prev.setOnClickListener(new View.OnClickListener() {
+        btnPrevious.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 getPreviousMessage();
                 updateViews();
@@ -156,8 +165,7 @@ public class MessageViewActivity extends WrapperActivity {
         });
 
         // Add click listener to Next button
-        Button next = (Button) findViewById(R.id.btnNext);
-        next.setOnClickListener(new View.OnClickListener() {
+        btnNext.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 getNextMessage();
                 updateViews();
@@ -165,6 +173,23 @@ public class MessageViewActivity extends WrapperActivity {
         });
 
         // Add click listener to Reply button
-        Button reply = (Button) findViewById(R.id.btnReply);
+        btnReply.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), MessageOperationActivity.class);
+                i.putExtra("message", currentMessage);
+                i.putExtra("mode", "reply");
+                startActivity(i);
+            }
+        });
+
+        // Add click listener to Forward button
+        btnForward.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), MessageOperationActivity.class);
+                i.putExtra("message", currentMessage);
+                i.putExtra("mode", "forward");
+                startActivity(i);
+            }
+        });
     }
 }

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package no.ntnu.kpro.app;
+package no.ntnu.kpro.app.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import no.ntnu.kpro.app.R;
 
 /**
  *
@@ -35,15 +36,20 @@ public class MainActivity extends WrapperActivity {
         Log.i(TAG, "No errors, service should be running");
 
         // Create simple list of the menu choices
-        String[] views = {"Folders", "SendMessage"};
+        String[] views = {"Folders", "SendMessage", "MainTab"};
         ListView lstMenuChoices = (ListView) findViewById(R.id.lstMenuChoices);
         lstMenuChoices.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, views));
 
         // Add click listener to the menu list
         lstMenuChoices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
+<<<<<<< HEAD:kpro-app/src/main/java/no/ntnu/kpro/app/MainActivity.java
                 try {
                     Class newClass = Class.forName("no.ntnu.kpro.app." + av.getItemAtPosition(i) + "Activity");
+=======
+                try{
+                    Class newClass = Class.forName("no.ntnu.kpro.app.activities." + av.getItemAtPosition(i) + "Activity");
+>>>>>>> c780bac6e87613ab3c4246d5a88634449d968328:kpro-app/src/main/java/no/ntnu/kpro/app/activities/MainActivity.java
                     Intent intent = new Intent(MainActivity.this, newClass);
                     startActivity(intent);
                 } catch (ClassNotFoundException e) {

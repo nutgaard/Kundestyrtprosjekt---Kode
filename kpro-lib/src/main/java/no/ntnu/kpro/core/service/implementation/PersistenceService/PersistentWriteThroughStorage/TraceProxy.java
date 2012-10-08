@@ -23,12 +23,10 @@ public class TraceProxy implements InvocationHandler {
     int id = -1;
 
     private TraceProxy(Object object) {
-        System.out.println("Creating new Proxy: " + this);
         this.object = object;
     }
 
     public static Object trace(Object object) {
-        System.out.println("Tracing: " + object);
         if (map.containsKey(object)) {
             return map.get(object);
         } else {
@@ -55,7 +53,6 @@ public class TraceProxy implements InvocationHandler {
             //All changeable methods should start with set
             result = method.invoke(object, args);
             if (method.getName().startsWith("set")) {
-                System.out.println("Detected set method by : " + object);
                 PersistentWriteThroughStorage.getInstance().save(map.get(object));
             }
         } catch (InvocationTargetException e) {
