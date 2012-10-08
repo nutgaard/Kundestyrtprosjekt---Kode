@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import javax.mail.Authenticator;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
 import javax.mail.event.TransportEvent;
 import javax.mail.event.TransportListener;
 import javax.mail.internet.MimeMessage;
@@ -25,12 +28,24 @@ public class SMTPS {
     private NetworkServiceImp imp;
     private List<XOMessage> msgList;
     private SMTPSender sender;
+    private Authenticator auth;
+    private Session session;
+    private final String username, password;
 
-    public SMTPS(NetworkServiceImp imp) {
+    public SMTPS(NetworkServiceImp imp, final String username, final String password) {
         this.imp = imp;
         this.msgList = Collections.synchronizedList(new ArrayList<XOMessage>());
         this.sender = new SMTPSender();
         System.out.println("SenderCOnst: " + sender);
+        this.username = username;
+        this.password = password;
+        this.auth = new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        };
+        this.session = Session.getInstance(imp.getSettings(), auth);
         new Thread(this.sender).start();
     }
 
@@ -59,13 +74,13 @@ public class SMTPS {
                 XOMessage msg = null;
                 System.out.println("Running");
                 try {
-                    while (imp.getSession() == null) {
+                    while (session == null) {
 //                        System.out.println("Yield");
                         Thread.yield();
                     }
                     System.out.println("Fetching socket");
                     System.out.println("IMP: " + imp);
-                    System.out.println("SESSION: " + imp.getSession());
+                    System.out.println("SESSION: " + session);
 
                     System.out.println("Props");
                     for (Map.Entry<Object, Object> s : imp.getSettings().entrySet()) {
@@ -73,7 +88,7 @@ public class SMTPS {
                     }
 
 
-                    SMTPTransport transport = (SMTPSSLTransport) imp.getSession().getTransport("smtps");
+                    SMTPTransport transport = (SMTPSSLTransport) session.getTransport("smtps");
                     System.out.println("Transport " + transport);
                     System.out.println("Adding listeners");
                     transport.removeTransportListener(listener);
@@ -90,8 +105,8 @@ public class SMTPS {
                     MimeMessage message = NetworkServiceImp.convertToMime(msg);
 //                  transport.connect(imp.getSettings().getAttribute("mail.smtps.host"), imp.getUsername(), imp.getPassword());
                     if (!transport.isConnected()) {
-                        System.out.println("Connection " + imp.getSettings().getProperty("mail.smtps.host") + " " + imp.getUserMail() + " " + imp.getPassword());
-                        transport.connect(imp.getSettings().getProperty("mail.smtps.host"), imp.getUserMail(), imp.getPassword());
+                        System.out.println("Connection " + imp.getSettings().getProperty("mail.smtps.host") + " " + imp.getUserMail() + " ");
+                        transport.connect(imp.getSettings().getProperty("mail.smtps.host"), imp.getUserMail(), password);
 //                        transport.connect();
                         System.out.println("Connected: " + transport.isConnected());
                     }
