@@ -39,10 +39,10 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
     
 public class SendMessageActivity extends MenuActivity implements NetworkService.Callback{
-	private EditText receiver;
+    private EditText receiver;
     private EditText subject;
     private EditText message;    
-	private Spinner sprSecurityLabel;
+    private Spinner sprSecurityLabel;
     private Spinner sprPriority;
     private Spinner sprType;
     private Button btnAddAttachment;
@@ -163,7 +163,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
                 //Parse message type string
                 String selectedTypeString = (String) sprType.getSelectedItem();
-				XOMessageType selectedType = EnumHelper.getEnumValue(XOMessageType.class, selectedTypeString);
+                XOMessageType selectedType = EnumHelper.getEnumValue(XOMessageType.class, selectedTypeString);
 
                 if (isValidFields()) {
                     //getServiceProvider().getNetworkService().sendMail(txtReceiver, txtSubject, txtMessage, selectedSecurity, selectedPriority, selectedType);
@@ -173,13 +173,12 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                     confirm.show();
                     finish();
                 }
-				XOMessageType selectedType = EnumHelper.getEnumValue(XOMessageType.class, selectedTypeString);                
                 
                 //TODO: Set default values (routine/operation)
                 //TODO: Check if security label picked
                 //TODO: Check other fields
                 
-                getServiceProvider().getNetworkService().sendMail(txtReceiver, txtSubject, txtMessage, selectedSecurity, selectedPriority, selectedType);
+                getServiceProvider().getNetworkService().sendMail(receiver.getText().toString(), subject.getText().toString(), message.getText().toString(), selectedSecurity, selectedPriority, selectedType);
                 
                 
                 //Is not necessary to have this when callback is implemented, as mailSent() will be called
@@ -226,8 +225,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             inputFieldsError = getString(R.string.invalidInputFieldsError);
             Toast invalidFieldErrorToast = Toast.makeText(SendMessageActivity.this, inputFieldsError, Toast.LENGTH_LONG);
         }
-
-
 
         if (isValidEmail && isValidSubject && isValidMessage && !isValidSecurityLabel) {
             String securityLabelError = "";
