@@ -5,6 +5,7 @@
 package no.ntnu.kpro.core.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.ListIterator;
 
 /**
@@ -28,4 +29,6 @@ public class Box<T> extends ArrayList<T> {
         }
         return null;
     }  
+    
+    
 }

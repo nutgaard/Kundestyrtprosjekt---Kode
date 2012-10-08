@@ -14,6 +14,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javax.mail.Address;
 import no.ntnu.kpro.app.R;
@@ -33,6 +36,7 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
     String[] folderChoices = {"Inbox", "Sent"};
     Spinner sprFolders;
     ListView lstFolder;
+    SortCondition sortCon = SortCondition.DATE_DESC;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,10 +64,10 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
                 folderChoice = folder;
                 if (folder.equals("Inbox")) {
                     messages = spr.getNetworkService().getInbox();
-                    lstFolder.setAdapter(new XOMessageAdapter(FoldersActivity.this, messages, true));
+                    lstFolder.setAdapter(new XOMessageAdapter(FoldersActivity.this, messages, true, getResources()));
                 } else if (folder.equals("Sent")) {
                     messages = spr.getNetworkService().getOutbox();
-                    lstFolder.setAdapter(new XOMessageAdapter(FoldersActivity.this, messages, false));
+                    lstFolder.setAdapter(new XOMessageAdapter(FoldersActivity.this, messages, false, getResources()));
                 }
                 
             }
@@ -99,7 +103,9 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
         super.onServiceConnected(sp);
         populateSprFolders();
         messages = sp.getNetworkService().getInbox(); // Default is inbox messages
-
+        Collections.sort(messages, XOMessage.XOMessageSorter.getDateComparator(true));
+        
+        
         addSprFoldersClickListener(sp);
         addLstFolderClickListener();
     }
@@ -119,5 +125,20 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
 
     public void mailReceivedError() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    public enum SortCondition{
+        DATE_DESC,
+        DATE_ASC,
+        SUBJECT_DESC,
+        SUBJECT_ASC,
+        PRIORITY_DESC,
+        PRIORITY_ASC,
+        LABEL_DESC,
+        LABEL_ASC,
+        TYPE_DESC,
+        TYPE_ASC,
+        SENDER_DESC,
+        SENDER_ASC;
     }
 }

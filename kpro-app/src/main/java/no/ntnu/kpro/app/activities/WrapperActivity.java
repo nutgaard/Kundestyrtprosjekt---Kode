@@ -39,7 +39,7 @@ public class WrapperActivity extends Activity {
         super.onCreate(savedInstanceState);
         //Needs some intent to bind to serice
         mConnection = newServiceConnection();
-        bindService(new Intent(this, ServiceProvider.class), mConnection, Service.BIND_AUTO_CREATE);
+        getApplicationContext().bindService(new Intent(this, ServiceProvider.class), mConnection, Service.BIND_AUTO_CREATE);
     }
 
     public void onServiceConnected(ServiceProvider serviceProvider) {
@@ -55,7 +55,7 @@ public class WrapperActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unbindService(mConnection);
+        getApplicationContext().unbindService(mConnection);
         onServiceDisconnected(mServiceProvider);
         super.onDestroy();
     }
