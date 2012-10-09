@@ -4,16 +4,17 @@
  */
 package no.ntnu.kpro.app.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
+import java.util.Collections;
 import java.util.List;
 import javax.mail.Address;
 import no.ntnu.kpro.app.R;
@@ -33,6 +34,7 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
     String[] folderChoices = {"Inbox", "Sent"};
     Spinner sprFolders;
     ListView lstFolder;
+    SortCondition sortCon = SortCondition.DATE_DESC;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,22 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
         setContentView(R.layout.message_list);
         sprFolders = (Spinner) findViewById(R.id.sprFolders);
         lstFolder = (ListView) findViewById(R.id.lstFolder);
+        Button btnSort = (Button) findViewById(R.id.btnSort);
+        btnSort.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                AlertDialog alertDialog = new AlertDialog.Builder(getParent()).create();
+                alertDialog.setTitle("Sort by");
+                alertDialog.setMessage("Hallo");
+                alertDialog.setButton("Test", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface di, int i) {
+                        
+                    }
+                });
+                alertDialog.show();
+            }
+        });
     }
 
     // Populating spinner with folder choices
@@ -60,10 +78,10 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
                 folderChoice = folder;
                 if (folder.equals("Inbox")) {
                     messages = spr.getNetworkService().getInbox();
-                    lstFolder.setAdapter(new XOMessageAdapter(FoldersActivity.this, messages, true));
+                    lstFolder.setAdapter(new XOMessageAdapter(FoldersActivity.this, messages, true, getResources()));
                 } else if (folder.equals("Sent")) {
                     messages = spr.getNetworkService().getOutbox();
-                    lstFolder.setAdapter(new XOMessageAdapter(FoldersActivity.this, messages, false));
+                    lstFolder.setAdapter(new XOMessageAdapter(FoldersActivity.this, messages, false, getResources()));
                 }
                 
             }
@@ -99,7 +117,9 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
         super.onServiceConnected(sp);
         populateSprFolders();
         messages = sp.getNetworkService().getInbox(); // Default is inbox messages
-
+        Collections.sort(messages, XOMessage.XOMessageSorter.getDateComparator(true));
+        
+        
         addSprFoldersClickListener(sp);
         addLstFolderClickListener();
     }
@@ -119,5 +139,20 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
 
     public void mailReceivedError() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    public enum SortCondition{
+        DATE_DESC,
+        DATE_ASC,
+        SUBJECT_DESC,
+        SUBJECT_ASC,
+        PRIORITY_DESC,
+        PRIORITY_ASC,
+        LABEL_DESC,
+        LABEL_ASC,
+        TYPE_DESC,
+        TYPE_ASC,
+        SENDER_DESC,
+        SENDER_ASC;
     }
 }

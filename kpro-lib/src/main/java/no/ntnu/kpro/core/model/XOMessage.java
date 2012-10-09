@@ -8,11 +8,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import no.ntnu.kpro.core.helpers.EnumHelper;
@@ -22,6 +21,7 @@ import no.ntnu.kpro.core.helpers.EnumHelper;
  * @author Nicklas
  */
 public class XOMessage implements Comparable<XOMessage>, Parcelable {
+
     private final String from;
     private final String to;
     private final String subject;
@@ -43,7 +43,7 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         this.subject = subject;
         this.attachments = new LinkedList<InputStream>();
         this.htmlBody = body;
-        this.strippedBody = body.replaceAll("\\<.*?>","");
+        this.strippedBody = body.replaceAll("\\<.*?>", "");
         this.grading = grading;
         this.priority = priority;
         this.type = type;
@@ -51,56 +51,49 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
     }
 
     public XOMessage(Parcel in) throws ParseException {
-        this(in.readString(), in.readString(), in.readString(), in.readString(), 
-                EnumHelper.getEnumValue(XOMessageSecurityLabel.class, in.readString()), 
+        this(in.readString(), in.readString(), in.readString(), in.readString(),
+                EnumHelper.getEnumValue(XOMessageSecurityLabel.class, in.readString()),
                 EnumHelper.getEnumValue(XOMessagePriority.class, in.readString()),
                 EnumHelper.getEnumValue(XOMessageType.class, in.readString()),
-                new SimpleDateFormat("dow mon dd hh:mm:ss zzz yyyy", Locale.getDefault()).parse(in.readString()));
+                new Date(in.readLong()));
     }
-    
+
     public String getFrom() {
         return from;
     }
 
-    
     public String getTo() {
         return to;
     }
 
-    
     public String getSubject() {
         return subject;
     }
-    
+
     public void addAttachment(InputStream is) {
         this.attachments.add(is);
     }
-    
+
     public List<InputStream> getAttachments() {
         return attachments;
     }
 
-    
     public String getHtmlBody() {
         return htmlBody;
     }
 
-    
     public String getStrippedBody() {
         return strippedBody;
     }
 
-    
     public XOMessageSecurityLabel getGrading() {
         return grading;
     }
 
-    
     public XOMessagePriority getPriority() {
         return priority;
     }
 
-    
     public XOMessageType getType() {
         return type;
     }
@@ -109,11 +102,10 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         return 0;
     }
 
-    
     public String toString() {
         return "XOMessage{" + "from=" + from + ", to=" + to + ", subject=" + subject + ", strippedBody=" + strippedBody + '}';
     }
-    
+
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -145,9 +137,13 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         }
         return true;
     }
-    
+
     public int describeContents() {
         return 0;
+    }
+
+    public Date getDate() {
+        return date;
     }
 
     public void writeToParcel(Parcel parcel, int i) {
@@ -160,11 +156,9 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         parcel.writeString(grading.toString());
         parcel.writeString(priority.toString());
         parcel.writeString(type.toString());
-        parcel.writeString(date.toString());
+        parcel.writeLong(date.getTime());
     }
-    
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-
         public XOMessage createFromParcel(Parcel parcel) {
             try {
                 return new XOMessage(parcel);
@@ -178,5 +172,55 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
             return new XOMessage[i];
         }
     };
-    
+
+    public static class XOMessageSorter {
+
+        public static Comparator<XOMessage> getDateComparator(final boolean descending) {
+            return new Comparator<XOMessage>() {
+                public int compare(XOMessage o1, XOMessage o2) {
+                    return descending ? o2.date.compareTo(o1.date) : o1.date.compareTo(o2.date);
+                }
+            };
+        }
+        public static Comparator<XOMessage> getSenderComparator(final boolean descending){
+            return new Comparator<XOMessage>() {
+
+                public int compare(XOMessage o1, XOMessage o2) {
+                    return descending ? o2.from.compareToIgnoreCase(o1.from) : o1.from.compareTo(o2.from);
+                }
+            };
+        }
+        public static Comparator<XOMessage> getPriorityComparator(final boolean descending){
+            return new Comparator<XOMessage>() {
+
+                public int compare(XOMessage o1, XOMessage o2) {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+            };
+        }
+        public static Comparator<XOMessage> getLabelComparator(boolean descending){
+            return new Comparator<XOMessage>() {
+
+                public int compare(XOMessage o1, XOMessage o2) {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+            };
+        }
+        public static Comparator<XOMessage> getTypeComparator(boolean descending){
+            return new Comparator<XOMessage>() {
+
+                public int compare(XOMessage o1, XOMessage o2) {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+            };
+        }
+        public static Comparator<XOMessage> getSubjectComparator(final boolean descending){
+            return new Comparator<XOMessage>() {
+
+                public int compare(XOMessage o1, XOMessage o2) {
+                    return descending ? o2.subject.compareToIgnoreCase(o1.subject) : o1.subject.compareTo(o2.subject);
+                }
+            };
+        }
+    }
 }

@@ -4,13 +4,13 @@
  */
 package no.ntnu.kpro.app.activities;
 
-import no.ntnu.kpro.app.activities.MessageOperationActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.XOMessage;
@@ -104,6 +104,12 @@ public class MessageViewActivity extends WrapperActivity {
         TextView lblSubject = (TextView) findViewById(R.id.lblSubject);
         lblSubject.setText(subject);
 
+        // Date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
+        Date date = currentMessage.getDate();
+        TextView lblDate = (TextView) findViewById(R.id.lblDate);
+        lblDate.setText(dateFormat.format(date));
+        
         // Text
         String text = currentMessage.getStrippedBody();
         TextView lblText = (TextView) findViewById(R.id.lblText);
@@ -115,9 +121,9 @@ public class MessageViewActivity extends WrapperActivity {
         lblSecurityLabel.setText(label.toString());
 
         if (label.equals(XOMessageSecurityLabel.UGRADERT) || label.equals(XOMessageSecurityLabel.UNCLASSIFIED) || label.equals(XOMessageSecurityLabel.NATO_UNCLASSIFIED)) {
-            lblSecurityLabel.setTextColor(getResources().getColor(R.color.black));
+            lblSecurityLabel.setTextColor(getResources().getColor(R.color.SIOLabelBlack));
         } else {
-            lblSecurityLabel.setTextColor(getResources().getColor(R.color.red));
+            lblSecurityLabel.setTextColor(getResources().getColor(R.color.SIOLabelRed));
         }
 
         // Priority

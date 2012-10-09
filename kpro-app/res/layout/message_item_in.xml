@@ -65,7 +65,7 @@
             <!-- Mail Subject -->
             <TextView android:id="@+id/lblSubject"
                       android:layout_height="wrap_content"
-                      android:layout_width="fill_parent"
+                      android:layout_width="200dp"
                       android:paddingLeft="8dp"
                       android:lines="1"
                       android:maxLines="1"  

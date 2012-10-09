@@ -5,14 +5,15 @@
 package no.ntnu.kpro.app;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-import javax.mail.Quota;
 import no.ntnu.kpro.core.model.XOMessage;
 
 /**
@@ -23,12 +24,14 @@ public class XOMessageAdapter extends ArrayAdapter {
     private final Activity activity;
     private final List messages;
     private boolean isInbox = true;
+    private Resources resources;
     
-     public XOMessageAdapter(Activity activity, List objects, boolean isInbox) {
+     public XOMessageAdapter(Activity activity, List objects, boolean isInbox, Resources res) {
         super(activity, R.layout.message_list_item , objects);
         this.activity = activity;
         this.messages = objects;
         this.isInbox = isInbox;
+        this.resources = res;
     }
      
      public void setIsInbox(boolean value){
@@ -73,17 +76,20 @@ public class XOMessageAdapter extends ArrayAdapter {
             xoView.address.setText(message.getTo());
         }
         xoView.subject.setText(message.getSubject());
-        xoView.date.setText("01.01.2012 00:00");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
+        Date date = message.getDate();
+        
+        xoView.date.setText(dateFormat.format(date));
         
         xoView.label.setText(message.getGrading().getShortValue());
         xoView.priority.setText(message.getPriority().getNumValue());
         
         String shortVal = message.getGrading().getShortValue();
         if (shortVal.equals("nu") || shortVal.equals("ug") || shortVal.equals("uc")){
-            xoView.label.setTextColor(android.graphics.Color.BLACK);
+            xoView.label.setTextColor(resources.getColor(R.color.SIOLabelBlack));
         }
         else{
-            xoView.label.setTextColor(android.graphics.Color.RED);
+            xoView.label.setTextColor(resources.getColor(R.color.SIOLabelRed));
         }
         
         return rowView;
