@@ -8,10 +8,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.Authenticator;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 
 /**
  *
@@ -29,7 +28,9 @@ public class SMTP {
         this.sender = new SMTPSender(username, password, mailAdr, props, auth);
         this.pusher.start();
     }
-
+    public SMTPSender getSender() {
+        return this.sender;
+    }
     public void send(XOMessage msg) {
         if (!pusher.run) {
             this.pusher.start();
