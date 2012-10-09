@@ -205,7 +205,6 @@ public class PersistentWriteThroughStorageTest {
             for (File file : f.listFiles()){
                 delete(file);
             }
-            System.out.println("Deleting : "+f);
             f.deleteOnExit();
         }
     }
