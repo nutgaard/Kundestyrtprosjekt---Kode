@@ -23,9 +23,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
+//@RunWith(Suite.class)
 //@Suite.SuiteClasses({SimpleMailTest.SMTPSMock.class, SimpleMailTest.IMAPSMock.class, SimpleMailTest.SMTPSReal.class, SimpleMailTest.IMAPSReal.class})
-@Suite.SuiteClasses({SimpleMailTest.SMTPSMock.class, SimpleMailTest.IMAPSMock.class})
+//@Suite.SuiteClasses({SimpleMailTest.SMTPSMock.class})
 public class SimpleMailTest {
 
     private static final String USER_PASSWORD = "kprothales2012";
@@ -50,6 +50,7 @@ public class SimpleMailTest {
             this.props = new Properties();
             this.props.put("mail.smtps.host", LOCALHOST);
             this.props.put("mail.smtps.auth", "true");
+            this.props.put("mail.debug", "false");
             this.props.put("mail.smtps.port", ServerSetupTest.SMTPS.getPort());
 
             this.mailServer = new GreenMail(ServerSetupTest.SMTPS);

@@ -42,9 +42,9 @@ public class NetworkServiceImp extends NetworkService {
     }
     public NetworkServiceImp(final String username, final String password, final String mailAdr, Properties properties, Authenticator authenticator) {
         try {
-            this.smtps = new SMTPS(this, username, password);
-            this.imaps = new IMAPS(this, username, password);
             this.props = properties;
+            this.smtps = new SMTPS(mailAdr, password, properties, authenticator, listeners);
+            this.imaps = new IMAPS(password, props, authenticator, listeners);
 //            this.settings.readFromFile(new FileInputStream("settings.xml"));
             this.username = username;
 //            this.password = password;
@@ -54,9 +54,10 @@ public class NetworkServiceImp extends NetworkService {
         } catch (Exception ex) {
             Logger.getLogger(NetworkServiceImp.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
+        } finally {
+            System.out.println("Network constructed");
         }
     }
-
     public void send(XOMessage msg) {
         this.smtps.send(msg);
     }

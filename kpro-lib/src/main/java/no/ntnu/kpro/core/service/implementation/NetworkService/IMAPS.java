@@ -5,9 +5,10 @@
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
 import com.sun.mail.imap.IMAPFolder;
+import java.util.List;
+import java.util.Properties;
 import javax.mail.Authenticator;
 import javax.mail.Folder;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.event.MessageCountEvent;
@@ -15,6 +16,7 @@ import javax.mail.event.MessageCountListener;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.service.interfaces.NetworkService.Callback;
 
 /**
@@ -24,19 +26,16 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService.Callback;
 public class IMAPS {
 
     private IMAPSIdle imapsIdle;
-    private NetworkServiceImp imp;
+    private Properties props;
     private Authenticator auth;
     private Session session;
+    private List<NetworkService.Callback> listener;
 
-    public IMAPS(NetworkServiceImp imp, final String username, final String password) {
-        this.imp = imp;
-        this.auth = new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        };
-        this.session = Session.getInstance(imp.getSettings(), auth);
+    public IMAPS(final String password, final Properties props, final Authenticator auth, final List<NetworkService.Callback> listeners) {
+        this.props = props;
+        this.auth = auth;
+        this.session = Session.getInstance(props, auth);
+        this.listener = listeners;
     }
 
     void startIMAPIdle() {
@@ -63,12 +62,12 @@ public class IMAPS {
             MimeMessage[] messages = (MimeMessage[]) inbox.search(searchterm);
             for (int i = 0; i < messages.length; i++) {
                 XOMessage message = NetworkServiceImp.convertToXO(messages[i]);
-                for (Callback c : imp.getListeners()) {
+                for (Callback c : listener) {
                     c.mailReceived(message);
                 }
             }
         } catch (Exception e) {
-            for (Callback c : imp.getListeners()) {
+            for (Callback c : listener) {
                 c.mailReceivedError();
             }
         }
@@ -80,7 +79,7 @@ public class IMAPS {
         private Session session;
         
         public IMAPSIdle(Authenticator auth) {
-            this.session = Session.getInstance(imp.getSettings(), auth);
+            this.session = Session.getInstance(props, auth);
         }
 
         public void run() {
@@ -110,7 +109,7 @@ public class IMAPS {
         public void messagesAdded(MessageCountEvent mce) {
             MimeMessage[] messages = (MimeMessage[]) mce.getMessages();
             for (MimeMessage msg : messages) {
-                for (Callback c : imp.getListeners()) {
+                for (Callback c : listener) {
                     c.mailReceived(NetworkServiceImp.convertToXO(msg));
                 }
             }

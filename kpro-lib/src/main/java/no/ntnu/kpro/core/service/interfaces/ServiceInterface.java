@@ -12,7 +12,7 @@ import java.util.List;
  * @author Nicklas
  */
 public abstract class ServiceInterface<T> {
-    private List<T> listeners;
+    protected List<T> listeners;
     
     public ServiceInterface() {
         this.listeners = new LinkedList<T>();
