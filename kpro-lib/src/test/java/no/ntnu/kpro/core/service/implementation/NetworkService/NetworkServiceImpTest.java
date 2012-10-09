@@ -10,6 +10,7 @@ import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import java.security.Security;
+import java.util.LinkedList;
 import java.util.Properties;
 import javax.mail.Address;
 import javax.mail.Message;
@@ -33,7 +34,9 @@ import org.junit.runners.Suite;
  * @author Nicklas
  */
 //@RunWith(Suite.class)
-//@Suite.SuiteClasses({SimpleMailTest.SMTPSMock.class, SimpleMailTest.IMAPSMock.class, SimpleMailTest.SMTPSReal.class, SimpleMailTest.IMAPSReal.class})
+//@Suite.SuiteClasses({NetworkServiceImpTest.SMTPSMock.class, NetworkServiceImpTest.IMAPSMock.class, NetworkServiceImpTest.SMTPSReal.class, NetworkServiceImpTest.IMAPSReal.class})
+//@Suite.SuiteClasses({NetworkServiceImpTest.SMTPSMock.class, NetworkServiceImpTest.IMAPSMock.class})
+//@Suite.SuiteClasses({NetworkServiceImpTest.SMTPSMock.class})
 //@Suite.SuiteClasses({NetworkServiceImpTest.SMTPSMock.class, NetworkServiceImpTest.IMAPSMock.class})
 public class NetworkServiceImpTest {
     
@@ -42,30 +45,30 @@ public class NetworkServiceImpTest {
     private static final String EMAIL_USER_ADDRESS = "kprothales@gmail.com";
     private static final String EMAIL_TO = "kprothales@gmail.com";
     private static final String EMAIL_SUBJECT = "Test E-Mail";
-    private static final String EMAIL_TEXT = "This is a test e-mail.";
+    private static final String EMAIL_TEXT = "This is a test e-mail from NetworkServiceImpTest.";
     private static final String LOCALHOST = "127.0.0.1";
-
-    ;
 
     public static class SMTPSMock {
 
         private GreenMail mailServer;
-        private NetworkServiceImp mailClient;
+//        private NetworkServiceImp mailClient;
+        private SMTPS mailClient;
         private Properties props;
 
         @Before
         public void setup() {
             Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory.class.getName());
             this.props = new Properties();
+            this.props.put("mail.debug", "false");
             this.props.put("mail.smtps.host", LOCALHOST);
             this.props.put("mail.smtps.auth", "true");
             this.props.put("mail.smtps.port", ServerSetupTest.SMTPS.getPort());
-
+            System.out.println("Setting up on port: "+ServerSetupTest.SMTPS.getPort());
             this.mailServer = new GreenMail(ServerSetupTest.SMTPS);
             this.mailServer.start();
             this.mailServer.setUser(EMAIL_USER_ADDRESS, USER_NAME, USER_PASSWORD);
-            this.mailClient = new NetworkServiceImp(USER_NAME, USER_PASSWORD,EMAIL_USER_ADDRESS, props, null);
-//            System.out.println("Setup complete");
+            this.mailClient = new SMTPS(EMAIL_USER_ADDRESS, USER_NAME, USER_PASSWORD, props, null);
+            System.out.println("Setup complete");
         }
 
         @After
@@ -77,7 +80,7 @@ public class NetworkServiceImpTest {
 
         @Test
         public void sendMail_Mock() throws Exception {
-//            System.out.println("Test: getMails");
+            System.out.println("Test: getMails");
             XOMessage xoMessage = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.BEGRENSET);
             mailClient.send(xoMessage);
 //            System.out.println("B: " + b);
@@ -89,7 +92,7 @@ public class NetworkServiceImpTest {
             assertEquals(EMAIL_SUBJECT, message.getSubject());
             assertTrue(String.valueOf(message.getContent()).contains(EMAIL_TEXT));
             assertEquals(EMAIL_USER_ADDRESS, message.getFrom()[0].toString());
-//            System.out.println("Test: getMails Complete");
+            System.out.println("Test: getMails Complete");
         }
     }
 
@@ -107,6 +110,7 @@ public class NetworkServiceImpTest {
             this.props = new Properties();
             this.props.put("mail.imaps.host", LOCALHOST);
             this.props.put("mail.imaps.auth", "true");
+            this.props.put("mail.debug", "true");
             this.props.put("mail.imaps.port", ServerSetupTest.IMAPS.getPort());
             
             this.mailServer = new GreenMail(ServerSetup.IMAPS);
@@ -137,6 +141,7 @@ public class NetworkServiceImpTest {
             this.user.deliver(message);
             Thread.sleep(2000);
             assertTrue(messageReceived);
+            System.out.println("IMAP MOCK: complete");
         }
 
         public void mailSent(XOMessage message, Address[] invalidAddress) {
@@ -176,6 +181,7 @@ public class NetworkServiceImpTest {
         public void sendMail_Real() {
             boolean b = mailClient.sendMail(EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.BEGRENSET, XOMessagePriority.DEFERRED, XOMessageType.DRILL);
             assertTrue(b);
+            System.out.println("SMTPReal: complete");
         }
     }
 
@@ -191,6 +197,7 @@ public class NetworkServiceImpTest {
 
         @Test
         public void fetchMail_Real() {
+            System.out.println("IMAPReal: complete");
         }
     }
 }

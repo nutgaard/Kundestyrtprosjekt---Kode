@@ -2,7 +2,10 @@ package no.ntnu.kpro.core.service.implementation.NetworkService;
 
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.smtp.SMTPTransport;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -75,8 +78,19 @@ public class SimpleMail extends NetworkService {
     }
 
     public boolean sendMail(final String recipient, final String subject, final String body, XOMessageSecurityLabel label, XOMessagePriority priority, XOMessageType type) {
+        System.out.println("SimpleContructor");
+        System.out.println("Address: " + mailAdr);
+        System.out.println("Password: " + password);
+        System.out.println("Properties: ");
+        for (Map.Entry<Object, Object> s : props.entrySet()) {
+            System.out.println("    " + s.getKey().toString() + ": " + s.getValue().toString());
+        }
+        System.out.println("Authenticator: " + auth);
+        System.out.println("Sendmail-.-.-.-.-.-.-.-.");
+        System.out.println("reci");
         try {
             Session session = Session.getInstance(this.props, this.auth);
+            System.out.println("Session: "+session);
 
             MimeMessage message = new MimeMessage(session);
 
@@ -92,6 +106,14 @@ public class SimpleMail extends NetworkService {
             message.setHeader("Content-Type", "text/plain; charset=UTF-8");
 
             SMTPTransport t = (SMTPTransport) session.getTransport("smtps");
+            System.out.println("Transport: "+t.toString());
+            System.out.println("Mime: ");
+            try {
+                message.writeTo(System.out);
+            } catch (IOException ex) {
+                Logger.getLogger(SimpleMail.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println("");
             t.connect(this.props.getProperty("mail.smtps.host"), this.mailAdr, this.password);
             t.sendMessage(message, message.getAllRecipients());
 
@@ -183,7 +205,7 @@ public class SimpleMail extends NetworkService {
                 XOMessagePriority priority = XOMessagePriority.ROUTINE;
                 XOMessageType type = XOMessageType.OPERATION;
                 Date date = new Date();
-                
+
                 if (m.getContentType().startsWith("multipart")) {
                     Multipart content = (Multipart) m.getContent();
 

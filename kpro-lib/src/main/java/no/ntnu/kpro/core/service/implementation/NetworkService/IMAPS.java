@@ -5,6 +5,9 @@
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
 import com.sun.mail.imap.IMAPFolder;
+import java.util.List;
+import java.util.Properties;
+import javax.mail.Authenticator;
 import javax.mail.Folder;
 import javax.mail.Session;
 import javax.mail.Store;
@@ -13,6 +16,7 @@ import javax.mail.event.MessageCountListener;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.service.interfaces.NetworkService.Callback;
 
 /**
@@ -22,29 +26,35 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService.Callback;
 public class IMAPS {
 
     private IMAPSIdle imapsIdle;
-    private NetworkServiceImp imp;
+    private Properties props;
+    private Authenticator auth;
+    private Session session;
+    private List<NetworkService.Callback> listener;
 
-    public IMAPS(NetworkServiceImp imp) {
-        this.imp = imp;
+    public IMAPS(final String password, final Properties props, final Authenticator auth, final List<NetworkService.Callback> listeners) {
+        this.props = props;
+        this.auth = auth;
+        this.session = Session.getInstance(props, auth);
+        this.listener = listeners;
     }
 
     void startIMAPIdle() {
         if (this.imapsIdle != null && this.imapsIdle.isRunning()) {
             this.stopIMAPIdle();
         }
-        this.imapsIdle = new IMAPSIdle();
+        this.imapsIdle = new IMAPSIdle(auth);
         new Thread(this.imapsIdle).start();
     }
 
     void stopIMAPIdle() {
         if (this.imapsIdle != null) {
             this.imapsIdle.stop();
+            this.imapsIdle = null;
         }
     }
 
     public void getMessages(SearchTerm searchterm) {
         try {
-            Session session = imp.getSession();
             Store store = session.getStore("imaps");
             store.connect();
             IMAPFolder inbox = (IMAPFolder) store.getFolder("Inbox");
@@ -52,12 +62,12 @@ public class IMAPS {
             MimeMessage[] messages = (MimeMessage[]) inbox.search(searchterm);
             for (int i = 0; i < messages.length; i++) {
                 XOMessage message = NetworkServiceImp.convertToXO(messages[i]);
-                for (Callback c : imp.getListeners()) {
+                for (Callback c : listener) {
                     c.mailReceived(message);
                 }
             }
         } catch (Exception e) {
-            for (Callback c : imp.getListeners()) {
+            for (Callback c : listener) {
                 c.mailReceivedError();
             }
         }
@@ -66,20 +76,24 @@ public class IMAPS {
     public class IMAPSIdle implements Runnable, MessageCountListener {
 
         private boolean run = true;
+        private Session session;
+        
+        public IMAPSIdle(Authenticator auth) {
+            this.session = Session.getInstance(props, auth);
+        }
 
         public void run() {
             try {
-                Session session = imp.getSession();
                 Store store = session.getStore("imaps");
                 store.connect();
-                IMAPFolder inbox = (IMAPFolder)store.getFolder("Inbox");
+                IMAPFolder inbox = (IMAPFolder) store.getFolder("Inbox");
                 inbox.open(Folder.READ_ONLY);
                 inbox.addMessageCountListener(this);
-                
-                while(run){
+
+                while (run) {
                     inbox.idle();
                 }
-                
+
             } catch (Exception e) {
             }
         }
@@ -93,9 +107,9 @@ public class IMAPS {
         }
 
         public void messagesAdded(MessageCountEvent mce) {
-            MimeMessage[] messages = (MimeMessage[])mce.getMessages();
-            for (MimeMessage msg : messages){
-                for (Callback c : imp.getListeners()){
+            MimeMessage[] messages = (MimeMessage[]) mce.getMessages();
+            for (MimeMessage msg : messages) {
+                for (Callback c : listener) {
                     c.mailReceived(NetworkServiceImp.convertToXO(msg));
                 }
             }

@@ -28,9 +28,9 @@ public class NetworkServiceImp extends NetworkService {
     private SMTPS smtps;
     private IMAPS imaps;
     private Properties props;
-    private Authenticator authenticator;
-    private String username, password, mailAdr;
-    private Session session;
+//    private Authenticator authenticator;
+    private String username, mailAdr;
+//    private Session session;
 
     public NetworkServiceImp(final String username, final String password, final String mailAdr) {
         this(username, password, mailAdr, new Properties(), new Authenticator() {
@@ -42,21 +42,22 @@ public class NetworkServiceImp extends NetworkService {
     }
     public NetworkServiceImp(final String username, final String password, final String mailAdr, Properties properties, Authenticator authenticator) {
         try {
-            this.smtps = new SMTPS(this);
-            this.imaps = new IMAPS(this);
             this.props = properties;
+//            this.smtps = new SMTPS(mailAdr, password, properties, authenticator, listeners);
+            this.imaps = new IMAPS(password, props, authenticator, listeners);
 //            this.settings.readFromFile(new FileInputStream("settings.xml"));
             this.username = username;
-            this.password = password;
+//            this.password = password;
             this.mailAdr = mailAdr;
-            this.authenticator = authenticator;
-            this.session = Session.getInstance(this.props, this.authenticator);
+//            this.authenticator = authenticator;
+//            this.session = Session.getInstance(this.props, this.authenticator);
         } catch (Exception ex) {
             Logger.getLogger(NetworkServiceImp.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
+        } finally {
+            System.out.println("Network constructed");
         }
     }
-
     public void send(XOMessage msg) {
         this.smtps.send(msg);
     }
@@ -86,18 +87,18 @@ public class NetworkServiceImp extends NetworkService {
     }
 
     //Don't make public to everybody
-    Session getSession() {
-        return this.session;
-    }
+//    Session getSession() {
+//        return this.session;
+//    }
     Properties getSettings() {
         return this.props;
     }
     String getUsername() {
         return this.username;
     }
-    String getPassword() {
-        return this.password;
-    }
+//    String getPassword() {
+//        return this.password;
+//    }
 
     String getUserMail() {
         return this.mailAdr;
