@@ -32,48 +32,47 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  */
 public class SendMessageActivity extends MenuActivity implements NetworkService.Callback {
 
-    private EditText receiver;
-    private EditText subject;
-    private EditText message;
+    private EditText txtReceiver;
+    private EditText txtSubject;
+    private EditText txtMessageBody;
     private Spinner sprSecurityLabel;
     private Spinner sprPriority;
     private Spinner sprType;
     private Button btnAddAttachment;
     private Button btnSend;
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-
     boolean textEnteredInReceiver = false;
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.send_message);
 
         //Find all textFields
-        receiver = (EditText) findViewById(R.id.txtMessageReceiver);
-        subject = (EditText) findViewById(R.id.txtSubject);
-        message = (EditText) findViewById(R.id.txtMessage);
+        txtReceiver = (EditText) findViewById(R.id.txtMessageReceiver);
+        txtSubject = (EditText) findViewById(R.id.txtSubject);
+        txtMessageBody = (EditText) findViewById(R.id.txtMessage);
 
         //Find all buttons and spinners
         sprSecurityLabel = (Spinner) findViewById(R.id.sprSecurityLabel);
         sprPriority = (Spinner) findViewById(R.id.sprPriority);
         sprType = (Spinner) findViewById(R.id.sprType);
 
+        //Add listeners to spinners, this is so that we can for example evaluate
+        //fields when a spinner item is selected. 
         addSpinnerListeners();
-       
+
         btnAddAttachment = (Button) findViewById(R.id.btnAddAttachment);
         btnSend = (Button) findViewById(R.id.btnSend);
 
-        //Add listener to receiver field, so that we can check if field has been written to.
+        //Add text changed listeners to all fields, so that we can check if fields has been written to.
         //If not, we just dont evaluate fields
-        addReceiverListener(receiver);
-        
+        addTextChangedListeners();
+
         //Add listener to the send button.
         addBtnSendClickListener(btnSend);
-        addReceiverOnFocusChangedListener(receiver);
-        addSubjectOnFocusChangedListener(subject);
-
-
+        addReceiverOnFocusChangedListener(txtReceiver);
+        addSubjectOnFocusChangedListener(txtSubject);
 
         //Fill all spinners with data values
         populateSpinners();
@@ -114,8 +113,8 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         receiver.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {                    
-                    isValidFields();
+                if (!hasFocus) {
+                    doIntermediateValidation();
                 }
             }
         });
@@ -127,7 +126,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    isValidFields();
+                    doIntermediateValidation();
 
                 }
             }
@@ -157,27 +156,19 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                 String selectedTypeString = (String) sprType.getSelectedItem();
                 XOMessageType selectedType = EnumHelper.getEnumValue(XOMessageType.class, selectedTypeString);
 
-                if (isValidFields()) {
-                    //getServiceProvider().getNetworkService().sendMail(txtReceiver, txtSubject, txtMessage, selectedSecurity, selectedPriority, selectedType);
+                if (doIntermediateValidation()) {
+                    if (doSendButtonValidation()) {
+                        //getServiceProvider().getNetworkService().sendMail(receiver.getText().toString(), subject.getText().toString(), message.getText().toString(), selectedSecurity, selectedPriority, selectedType);
 
-                    //Is not necessary to have this when callback is implemented, as mailSent() will be called
-                    Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent.", Toast.LENGTH_SHORT);
-                    confirm.show();
-                    finish();
+
+                        //Is not necessary to have this when callback is implemented, as mailSent() will be called
+                        Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent.", Toast.LENGTH_SHORT);
+                        confirm.show();
+                        finish();
+                    }
                 }
 
-                //TODO: Set default values (routine/operation)
-                //TODO: Check if security label picked
-                //TODO: Check other fields
 
-                getServiceProvider().getNetworkService().sendMail(receiver.getText().toString(), subject.getText().toString(), message.getText().toString(), selectedSecurity, selectedPriority, selectedType);
-
-
-                //Is not necessary to have this when callback is implemented, as mailSent() will be called
-                Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent.", Toast.LENGTH_SHORT);
-                confirm.show();
-
-                finish();
             }
         });
     }
@@ -185,55 +176,79 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private boolean isValidInputField(String input) {
         return !input.equals("");
     }
-    
-    
-    private boolean isValidFields() {
+
+    /**
+     * Shows all relevant error messages, if necessary.
+     *
+     * @return true if all intermediate validation is okay.
+     */
+    private boolean doIntermediateValidation() {
 
         //Find all relevant text strings to validate
-        String txtReceiver = receiver.getText().toString();
-        String txtSubject = subject.getText().toString();
-        String txtMessage = message.getText().toString();
+        String txtReceiverString = txtReceiver.getText().toString();
+        String txtSubjectString = txtSubject.getText().toString();
+        String txtMessageString = txtMessageBody.getText().toString();
 
         //Validate all fields
-        boolean isValidEmail = isValidEmail(txtReceiver.trim());
-        boolean isValidSubject = isValidInputField(txtSubject);
-        boolean isValidMessage = isValidInputField(txtMessage);
-        boolean isValidSecurityLabel = sprSecurityLabel.getSelectedItemPosition() != 0;
+        boolean isValidEmail = isValidEmail(txtReceiverString.trim());
+        boolean isValidSubject = isValidInputField(txtSubjectString);
+        boolean isValidMessage = isValidInputField(txtMessageString);
+
+        //If text never has been entered in receiver field, we should not show validations.
+        if (!textEnteredInReceiver) {
+            return false;
+        }
 
         //Validate email
-        if (!isValidEmail || textEnteredInReceiver) {
-            receiver.setError(getString(R.string.invalidMessageReceiverError)); 
+        if (!isValidEmail) {
+            txtReceiver.setError(getString(R.string.invalidMessageReceiverError));
             return false;
         }
 
-        if (!isValidSubject && !subject.hasFocus()) {
-            subject.setError(getString(R.string.invalidMessageSubjectError));
+        if (!isValidSubject && !txtSubject.hasFocus()) {
+            txtSubject.setError(getString(R.string.invalidMessageSubjectError));
             return false;
         }
 
-        if (!isValidMessage) {
-            message.setError(getString(R.string.invalidMessageBodyError));
+        if (!isValidMessage && txtMessageBody.hasFocus()) {
+            txtMessageBody.setError(getString(R.string.invalidMessageBodyError));
             return false;
         }
+
+        return isValidEmail && isValidSubject && isValidMessage;
+
+    }
+
+    private boolean doSendButtonValidation() {
+
+       //Find all relevant text strings to validate
+        String txtReceiverString = txtReceiver.getText().toString();
+        String txtSubjectString = txtSubject.getText().toString();
+        String txtMessageString = txtMessageBody.getText().toString();
+
+        //Validate all fields
+        boolean isValidEmail = isValidEmail(txtReceiverString.trim());
+        boolean isValidSubject = isValidInputField(txtSubjectString);
+        boolean isValidMessage = isValidInputField(txtMessageString);
+
+        boolean isValidSecurityLabel = sprSecurityLabel.getSelectedItemPosition() != 0;
 
         String inputFieldsError = "";
         if (!isValidEmail || !isValidSubject || !isValidMessage) {
             inputFieldsError = getString(R.string.invalidInputFieldsError);
-            Toast invalidFieldErrorToast = Toast.makeText(SendMessageActivity.this, inputFieldsError, Toast.LENGTH_LONG);
         }
+
 
         if (!isValidSecurityLabel) {
-            String securityLabelError = "";
-            if (!isValidSecurityLabel) {
-                securityLabelError = getString(R.string.invalidSecurityLabelError);
-            }
-
-            Toast sendMessageError = Toast.makeText(SendMessageActivity.this, securityLabelError, Toast.LENGTH_LONG);
-            sendMessageError.show();
+            inputFieldsError += getString(R.string.invalidSecurityLabelError);
         }
 
-        return isValidEmail && isValidSubject && isValidMessage && isValidSecurityLabel;
+        Toast sendMessageError = Toast.makeText(SendMessageActivity.this, inputFieldsError, Toast.LENGTH_LONG);
+        sendMessageError.getView().setBackgroundColor(getResources().getColor(R.color.red));
+        sendMessageError.show();
 
+
+        return false;
     }
 
     /**
@@ -293,16 +308,29 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
     }
 
-    private void addReceiverListener(EditText receiver) {
-        receiver.addTextChangedListener(new TextWatcher() {
-
+    private void addTextChangedListeners() {
+        txtReceiver.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence cs, int i, int i1, int i2) {
-                SendMessageActivity.this.textEnteredInReceiver = true;                
+                SendMessageActivity.this.textEnteredInReceiver = true;
             }
-            
-            public void beforeTextChanged(CharSequence cs, int i, int i1, int i2) {}
-            public void afterTextChanged(Editable edtbl) {}
-            
+
+            public void beforeTextChanged(CharSequence cs, int i, int i1, int i2) {
+            }
+
+            public void afterTextChanged(Editable edtbl) {
+            }
         });
+        
+        
+        
+        
+        txtMessageBody.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence cs, int i, int i1, int i2) {}
+            public void onTextChanged(CharSequence cs, int i, int i1, int i2) {}
+            public void afterTextChanged(Editable edtbl) {
+                 doIntermediateValidation();
+            }
+        });
+        
     }
 }
