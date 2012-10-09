@@ -183,7 +183,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     }
 
     private boolean isValidInputField(String input) {
-        return !input.isEmpty();
+        return !input.equals("");
     }
     
     
