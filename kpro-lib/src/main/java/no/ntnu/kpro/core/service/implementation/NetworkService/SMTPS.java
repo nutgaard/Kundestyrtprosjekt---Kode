@@ -76,40 +76,22 @@ public class SMTPS {
                 XOMessage msg = null;
                 try {
                     Session session = Session.getInstance(props, auth);
-                    while (session == null) {
-                        Thread.yield();
-                    }
-
                     SMTPTransport transport = (SMTPSSLTransport) session.getTransport("smtps");
 
-                    transport.connect(props.getProperty("mail.smtps.host"), address, password);
-                    System.out.println("CONNNNNNNNNNNNNECTED");
-
-                    System.out.println("Transport: " + transport);
                     transport.removeTransportListener(listener);
                     transport.addTransportListener(listener);
-//                    System.out.println("Queue: " + msgList.size());
+                    transport.connect(props.getProperty("mail.smtps.host"), address, password);
                     while (msgList.isEmpty()) {
                         synchronized (this) {
                             this.wait();
-//                            System.out.println("Waiting");
                         }
                     }
-//                    System.out.println("Sending");
                     msg = msgList.remove(0);
 
                     MimeMessage message = NetworkServiceImp.convertToMime(msg);
-//                  transport.connect(imp.getSettings().getAttribute("mail.smtps.host"), imp.getUsername(), imp.getPassword());
-//                    if (!transport.isConnected()) {
-//                        System.out.println("Connection " + imp.getSettings().getProperty("mail.smtps.host") + " " + imp.getUserMail() + " ");
                     transport.connect(props.getProperty("mail.smtps.host"), address, password);
-//                        transport.connect();
-//                        System.out.println("Connected: " + transport.isConnected());
-//                    }
                     transport.sendMessage(message, message.getAllRecipients());
                     if (msgList.isEmpty()) {
-//                        transport.close();
-//                        System.out.println("Closing");
                         synchronized (this) {
                             this.wait();
                         }
@@ -117,7 +99,6 @@ public class SMTPS {
                     if (!run) {
                         transport.close();
                     }
-
                 } catch (Exception ex) {
                     for (NetworkService.Callback c : listeners) {
                         if (msg == null) {
@@ -127,7 +108,6 @@ public class SMTPS {
                     }
                     throw new RuntimeException(ex);
                 }
-
             }
         }
 
