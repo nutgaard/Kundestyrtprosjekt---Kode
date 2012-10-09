@@ -43,7 +43,7 @@ public class NetworkServiceImp extends NetworkService {
     public NetworkServiceImp(final String username, final String password, final String mailAdr, Properties properties, Authenticator authenticator) {
         try {
             this.props = properties;
-            this.smtps = new SMTPS(mailAdr, password, properties, authenticator, listeners);
+//            this.smtps = new SMTPS(mailAdr, password, properties, authenticator, listeners);
             this.imaps = new IMAPS(password, props, authenticator, listeners);
 //            this.settings.readFromFile(new FileInputStream("settings.xml"));
             this.username = username;

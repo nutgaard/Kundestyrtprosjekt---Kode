@@ -9,12 +9,9 @@ import com.sun.mail.smtp.SMTPTransport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.Authenticator;
-import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.event.TransportEvent;
 import javax.mail.event.TransportListener;
@@ -29,96 +26,66 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
 public class SMTPS {
 
     private List<XOMessage> msgList;
-    private SMTPSender sender;
-    private final String address, password;
+    private final SMTPSender sender;
     private final List<NetworkService.Callback> listeners;
 
-    public SMTPS(final String address, final String password, final Properties properties, final Authenticator auth, final List<NetworkService.Callback> callback) {
+    public SMTPS(final String address, final String username, final String password, final Properties properties, final List<NetworkService.Callback> callback) {
         this.msgList = Collections.synchronizedList(new ArrayList<XOMessage>());
-        this.sender = new SMTPSender(properties, auth);
-//        System.out.println("SenderCOnst: " + sender);
-        this.address = address;
-        this.password = password;
+        this.sender = new SMTPSender(properties, address, username, password);
         this.listeners = callback;
-//        System.out.println("Instance: "+imp);
-//        System.out.println("Settings: "+imp.getSettings());
-//        System.out.println("Instace: "+imp.getSettings().toString());
-        new Thread(this.sender).start();
-        System.out.println("SMTPS constructor");
-        System.out.println("Address: " + address);
-        System.out.println("Password: " + password);
-        System.out.println("Properties: ");
-        for (Entry<Object, Object> s : properties.entrySet()) {
-            System.out.println("    " + s.getKey().toString() + ": " + s.getValue().toString());
-        }
-        System.out.println("Authenticator: " + auth);
-        System.out.println("Callback: ");
-        if (callback != null) {
-            for (NetworkService.Callback cb : callback) {
-                System.out.println("    " + cb.toString());
-            }
-        }
     }
 
     void send(XOMessage msg) {
-        System.out.println("SEND -.-.-.-.-.-.-.-.-.");
+        if (!sender.isRunning()) {
+            sender.run = true;
+            new Thread(this.sender).start();
+        }
         int index = Collections.binarySearch(msgList, msg);
-//        System.out.println("Message Index: " + index);
         if (index < 0) {
-            //Not found, so add it to queue
             msgList.add(~index, msg);
-//            System.out.println("SenderSend: " + sender);
             synchronized (sender) {
                 sender.notifyAll();
-//                System.out.println("Notify");
-
-
             }
         }
     }
 
     private class SMTPSender implements Runnable {
+
         private final Properties props;
         private final Authenticator auth;
-        private boolean run = true;
+        private boolean run = false;
         private TransportConnectionListener listener = new TransportConnectionListener();
-        
-        public SMTPSender(Properties props, Authenticator auth) {
+        private final String address, username, password;
+
+        public SMTPSender(Properties props, final String address, final String username, final String password) {
             this.props = props;
-            this.auth = auth;
+            this.address = address;
+            this.username = username;
+            this.password = password;
+            this.auth = new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(username, password);
+                }
+            };
         }
 
         @Override
         public void run() {
-            Session session = Session.getInstance(props, auth);
-            System.out.println("Session: "+session);
             while (run) {
                 XOMessage msg = null;
-//                System.out.println("Running");
                 try {
+                    Session session = Session.getInstance(props, auth);
                     while (session == null) {
-//                        System.out.println("Yield");
                         Thread.yield();
                     }
-//                    System.out.println("Fetching socket");
-//                    System.out.println("IMP: " + imp);
-//                    System.out.println("SESSION: " + session);
 
-//                    System.out.println("Props");
-//                    for (Map.Entry<Object, Object> s : imp.getSettings().entrySet()) {
-//                        System.out.println("    " + s.getKey().toString() + ": " + s.getValue().toString());
-//                    }
-                    
                     SMTPTransport transport = (SMTPSSLTransport) session.getTransport("smtps");
-                    try {
-                        transport.connect(props.getProperty("mail.smtps.host"), address, password);
-                        System.out.println("CONNNNNNNNNNNNNECTED");
-                    }catch (MessagingException ex){
-                        Logger.getLogger(SMTPS.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    System.out.println("Transport: "+transport);
-//                    System.out.println("Transport " + transport);
-//                    System.out.println("Adding listeners");
+
+                    transport.connect(props.getProperty("mail.smtps.host"), address, password);
+                    System.out.println("CONNNNNNNNNNNNNECTED");
+
+                    System.out.println("Transport: " + transport);
                     transport.removeTransportListener(listener);
                     transport.addTransportListener(listener);
 //                    System.out.println("Queue: " + msgList.size());
@@ -130,7 +97,7 @@ public class SMTPS {
                     }
 //                    System.out.println("Sending");
                     msg = msgList.remove(0);
-                    
+
                     MimeMessage message = NetworkServiceImp.convertToMime(msg);
 //                  transport.connect(imp.getSettings().getAttribute("mail.smtps.host"), imp.getUsername(), imp.getPassword());
 //                    if (!transport.isConnected()) {

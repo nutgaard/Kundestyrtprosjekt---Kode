@@ -33,10 +33,10 @@ import org.junit.runners.Suite;
  *
  * @author Nicklas
  */
-//@RunWith(Suite.class)
+@RunWith(Suite.class)
 //@Suite.SuiteClasses({NetworkServiceImpTest.SMTPSMock.class, NetworkServiceImpTest.IMAPSMock.class, NetworkServiceImpTest.SMTPSReal.class, NetworkServiceImpTest.IMAPSReal.class})
 //@Suite.SuiteClasses({NetworkServiceImpTest.SMTPSMock.class, NetworkServiceImpTest.IMAPSMock.class})
-//@Suite.SuiteClasses({NetworkServiceImpTest.SMTPSMock.class})
+@Suite.SuiteClasses({NetworkServiceImpTest.SMTPSMock.class})
 //@Suite.SuiteClasses({NetworkServiceImpTest.SMTPSMock.class, NetworkServiceImpTest.IMAPSMock.class})
 public class NetworkServiceImpTest {
     
