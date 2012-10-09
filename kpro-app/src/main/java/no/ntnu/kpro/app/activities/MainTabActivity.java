@@ -29,20 +29,20 @@ public class MainTabActivity extends WrapperTabActivity{
         // Tab for Photos
         TabSpec photospec = tabHost.newTabSpec("Folders");
         // setting Title and Icon for the Tab
-        photospec.setIndicator("Folders", getResources().getDrawable(R.drawable.icon));
+        photospec.setIndicator("Folders", getResources().getDrawable(R.drawable.ic_tab_folder));
         Intent photosIntent = new Intent().setClass(this, FoldersActivity.class);
         photospec.setContent(photosIntent);
  
         // Tab for Songs
         TabSpec songspec = tabHost.newTabSpec("New message");
-        songspec.setIndicator("New message", getResources().getDrawable(R.drawable.icon));
+        songspec.setIndicator("New message", getResources().getDrawable(R.drawable.ic_tab_new));
         Intent songsIntent = new Intent(this, SendMessageActivity.class);
         songspec.setContent(songsIntent);
         
  
         // Tab for Videos
         TabSpec videospec = tabHost.newTabSpec("Contacts");
-        videospec.setIndicator("Contacts", getResources().getDrawable(R.drawable.icon));
+        videospec.setIndicator("Contacts", getResources().getDrawable(R.drawable.ic_tab_contact));
         Intent videosIntent = new Intent(this, ContactsActivity.class);
         videospec.setContent(videosIntent);
  

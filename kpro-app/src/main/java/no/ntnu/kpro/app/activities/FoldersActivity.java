@@ -5,20 +5,24 @@
 package no.ntnu.kpro.app.activities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 import java.util.Collections;
 import java.util.List;
 import javax.mail.Address;
 import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.app.XOMessageAdapter;
+import no.ntnu.kpro.core.helpers.EnumHelper;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
@@ -27,7 +31,7 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  *
  * @author Kristin
  */
-public class FoldersActivity extends MenuActivity implements NetworkService.Callback {
+public class FoldersActivity extends MenuActivity implements NetworkService.Callback, View.OnClickListener {
 
     List<XOMessage> messages;
     String folderChoice = "Inbox";
@@ -35,36 +39,24 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
     Spinner sprFolders;
     ListView lstFolder;
     SortCondition sortCon = SortCondition.DATE_DESC;
+    Context mContext;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = this;
         setContentView(R.layout.message_list);
         sprFolders = (Spinner) findViewById(R.id.sprFolders);
         lstFolder = (ListView) findViewById(R.id.lstFolder);
         Button btnSort = (Button) findViewById(R.id.btnSort);
-        btnSort.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View view) {
-                AlertDialog alertDialog = new AlertDialog.Builder(getParent()).create();
-                alertDialog.setTitle("Sort by");
-                alertDialog.setMessage("Hallo");
-                alertDialog.setButton("Test", new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface di, int i) {
-                        
-                    }
-                });
-                alertDialog.show();
-            }
-        });
+        btnSort.setOnClickListener(this);
     }
 
     // Populating spinner with folder choices
     private void populateSprFolders() {
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, folderChoices);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                R.layout.spinner_textview, folderChoices);
+        dataAdapter.setDropDownViewResource(R.layout.spinner_dropdown);
         sprFolders.setAdapter(dataAdapter);
     }
 
@@ -83,7 +75,7 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
                     messages = spr.getNetworkService().getOutbox();
                     lstFolder.setAdapter(new XOMessageAdapter(FoldersActivity.this, messages, false, getResources()));
                 }
-                
+
             }
 
             public void onNothingSelected(AdapterView<?> av) {
@@ -91,10 +83,10 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
             }
         });
     }
-    
+
     // Populate list (inbox/sent/etc) and add click listener for viewing a single message
     private void addLstFolderClickListener() {
-        
+
         lstFolder.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
@@ -118,8 +110,8 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
         populateSprFolders();
         messages = sp.getNetworkService().getInbox(); // Default is inbox messages
         Collections.sort(messages, XOMessage.XOMessageSorter.getDateComparator(true));
-        
-        
+
+
         addSprFoldersClickListener(sp);
         addLstFolderClickListener();
     }
@@ -140,19 +132,62 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
     public void mailReceivedError() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    public enum SortCondition{
-        DATE_DESC,
-        DATE_ASC,
-        SUBJECT_DESC,
-        SUBJECT_ASC,
-        PRIORITY_DESC,
-        PRIORITY_ASC,
-        LABEL_DESC,
-        LABEL_ASC,
-        TYPE_DESC,
-        TYPE_ASC,
-        SENDER_DESC,
-        SENDER_ASC;
+
+    public void onClick(View view) {
+        if (view.equals((Button) findViewById(R.id.btnSort))) {
+            showDialogButtonClick();
+        }
+    }
+
+    private void showDialogButtonClick() {
+
+        Log.i("KPRO", "show Dialog ButtonClick");
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Sort by");
+        final CharSequence[] choiceList = {"Date (newest)", "Date (oldest)", "Sender (A to Z)", "Sender (Z to A)", "Subject (A to Z)", "Subject (Z to A)", "Priority (highest)", "Priority (lowest)"};
+        int selected = -1; // does not select anything
+        builder.setSingleChoiceItems(choiceList, selected, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(
+                    DialogInterface dialog,
+                    int which) {
+                
+                sortCon = EnumHelper.getEnumValue(SortCondition.class, choiceList[which].toString());
+                Toast.makeText(
+                        mContext,
+                        "Selected " + sortCon.toString(),
+                        Toast.LENGTH_SHORT)
+                        .show();
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    public enum SortCondition {
+
+        DATE_DESC("Date (newest)"),
+        DATE_ASC("Date (oldest)"),
+        SUBJECT_DESC("Subject (Z to A)"),
+        SUBJECT_ASC("Subject (A to Z)"),
+        PRIORITY_DESC("Priority (highest)"),
+        PRIORITY_ASC("Priority (lowest)"),
+        LABEL_DESC("Label (Z to A)"),
+        LABEL_ASC("Label (A to Z)"),
+        TYPE_DESC("Type (Z to A)"),
+        TYPE_ASC("Type (A to Z)"),
+        SENDER_DESC("Sender (Z to A)"),
+        SENDER_ASC("Sender (A to Z)");
+        private String val;
+
+        private SortCondition(String value) {
+            this.val = value;
+        }
+
+        @Override
+        public String toString() {
+            return this.val;
+        }
     }
 }
