@@ -67,7 +67,7 @@ public class NetworkServiceImpTest {
             this.mailServer = new GreenMail(ServerSetupTest.SMTPS);
             this.mailServer.start();
             this.mailServer.setUser(EMAIL_USER_ADDRESS, USER_NAME, USER_PASSWORD);
-            this.mailClient = new SMTPS(EMAIL_USER_ADDRESS, USER_NAME, USER_PASSWORD, props, null);
+            this.mailClient = new SMTPS(EMAIL_USER_ADDRESS, USER_NAME, USER_PASSWORD, props, new LinkedList<NetworkService.Callback>());
             System.out.println("Setup complete");
         }
 

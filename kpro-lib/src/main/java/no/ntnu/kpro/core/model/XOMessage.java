@@ -14,6 +14,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import no.ntnu.kpro.core.helpers.EnumHelper;
 
 /**
@@ -99,7 +103,12 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
     }
 
     public int compareTo(XOMessage o) {
-        return 0;
+        if (this == o) {
+            System.out.println("Was equals");
+            return 0;
+        } else {
+            return -1;
+        }
     }
 
     public String toString() {
@@ -173,6 +182,21 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         }
     };
 
+    public static MimeMessage convertToMime(Session session, XOMessage message) throws Exception {
+        MimeMessage mm = new MimeMessage(session);
+        mm.setFrom(new InternetAddress(message.getFrom()));
+        mm.setRecipients(Message.RecipientType.TO, InternetAddress.parse(message.getTo()));
+
+        mm.setSubject(message.getSubject(), "UTF-8");
+        mm.setText(message.getStrippedBody(), "UTF-8");
+        mm.setHeader("Content-Type", "text/plain; charset=UTF-8");
+        return mm;
+    }
+
+    public static XOMessage convertToXO(MimeMessage message) {
+        return null;
+    }
+
     public static class XOMessageSorter {
 
         public static Comparator<XOMessage> getDateComparator(final boolean descending) {
@@ -182,41 +206,41 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
                 }
             };
         }
-        public static Comparator<XOMessage> getSenderComparator(final boolean descending){
-            return new Comparator<XOMessage>() {
 
+        public static Comparator<XOMessage> getSenderComparator(final boolean descending) {
+            return new Comparator<XOMessage>() {
                 public int compare(XOMessage o1, XOMessage o2) {
                     return descending ? o2.from.compareToIgnoreCase(o1.from) : o1.from.compareTo(o2.from);
                 }
             };
         }
-        public static Comparator<XOMessage> getPriorityComparator(final boolean descending){
-            return new Comparator<XOMessage>() {
 
+        public static Comparator<XOMessage> getPriorityComparator(final boolean descending) {
+            return new Comparator<XOMessage>() {
                 public int compare(XOMessage o1, XOMessage o2) {
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
             };
         }
-        public static Comparator<XOMessage> getLabelComparator(boolean descending){
-            return new Comparator<XOMessage>() {
 
+        public static Comparator<XOMessage> getLabelComparator(boolean descending) {
+            return new Comparator<XOMessage>() {
                 public int compare(XOMessage o1, XOMessage o2) {
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
             };
         }
-        public static Comparator<XOMessage> getTypeComparator(boolean descending){
-            return new Comparator<XOMessage>() {
 
+        public static Comparator<XOMessage> getTypeComparator(boolean descending) {
+            return new Comparator<XOMessage>() {
                 public int compare(XOMessage o1, XOMessage o2) {
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
             };
         }
-        public static Comparator<XOMessage> getSubjectComparator(final boolean descending){
-            return new Comparator<XOMessage>() {
 
+        public static Comparator<XOMessage> getSubjectComparator(final boolean descending) {
+            return new Comparator<XOMessage>() {
                 public int compare(XOMessage o1, XOMessage o2) {
                     return descending ? o2.subject.compareToIgnoreCase(o1.subject) : o1.subject.compareTo(o2.subject);
                 }

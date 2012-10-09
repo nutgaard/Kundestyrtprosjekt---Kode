@@ -4,10 +4,10 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
-import com.sun.mail.smtp.SMTPSSLTransport;
 import com.sun.mail.smtp.SMTPTransport;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import javax.mail.Authenticator;
@@ -25,12 +25,10 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  */
 public class SMTPS {
 
-    private List<XOMessage> msgList;
     private final SMTPSender sender;
     private final List<NetworkService.Callback> listeners;
 
     public SMTPS(final String address, final String username, final String password, final Properties properties, final List<NetworkService.Callback> callback) {
-        this.msgList = Collections.synchronizedList(new ArrayList<XOMessage>());
         this.sender = new SMTPSender(properties, address, username, password);
         this.listeners = callback;
     }
@@ -40,17 +38,21 @@ public class SMTPS {
             sender.run = true;
             new Thread(this.sender).start();
         }
-        int index = Collections.binarySearch(msgList, msg);
+        int index = Collections.binarySearch(sender.msgList, msg);
         if (index < 0) {
-            msgList.add(~index, msg);
+            sender.msgList.add(~index, msg);
             synchronized (sender) {
                 sender.notifyAll();
             }
         }
     }
 
-    private class SMTPSender implements Runnable {
+    SMTPSender getSender() {
+        return sender;
+    }
 
+    public class SMTPSender implements Runnable {
+         List<XOMessage> msgList;
         private final Properties props;
         private final Authenticator auth;
         private boolean run = false;
@@ -62,6 +64,7 @@ public class SMTPS {
             this.address = address;
             this.username = username;
             this.password = password;
+            this.msgList = Collections.synchronizedList(new LinkedList<XOMessage>());
             this.auth = new Authenticator() {
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
@@ -73,41 +76,47 @@ public class SMTPS {
         @Override
         public void run() {
             while (run) {
-                XOMessage msg = null;
-                try {
-                    Session session = Session.getInstance(props, auth);
-                    SMTPTransport transport = (SMTPSSLTransport) session.getTransport("smtps");
+//                pullAndSend();
+                Thread.yield();
+            }
+        }
 
-                    transport.removeTransportListener(listener);
-                    transport.addTransportListener(listener);
-                    transport.connect(props.getProperty("mail.smtps.host"), address, password);
-                    while (msgList.isEmpty()) {
-                        synchronized (this) {
-                            this.wait();
-                        }
+        public void pullAndSend() {
+            XOMessage msg = null;
+            try {
+                while (msgList.isEmpty()) {
+                    synchronized (this) {
+                        this.wait();
                     }
-                    msg = msgList.remove(0);
-
-                    MimeMessage message = NetworkServiceImp.convertToMime(msg);
-                    transport.connect(props.getProperty("mail.smtps.host"), address, password);
-                    transport.sendMessage(message, message.getAllRecipients());
-                    if (msgList.isEmpty()) {
-                        synchronized (this) {
-                            this.wait();
-                        }
-                    }
-                    if (!run) {
-                        transport.close();
-                    }
-                } catch (Exception ex) {
-                    for (NetworkService.Callback c : listeners) {
-                        if (msg == null) {
-                            break;
-                        }
-                        c.mailSentError(msg);
-                    }
-                    throw new RuntimeException(ex);
                 }
+                Session session = Session.getInstance(props, auth);
+                SMTPTransport transport = (SMTPTransport) session.getTransport("smtps");
+
+//                    transport.removeTransportListener(listener);
+//                    transport.addTransportListener(listener);
+                System.out.println("Connection to host: ");
+                transport.connect(props.getProperty("mail.smtps.host"), address, password);
+                msg = msgList.remove(0);
+
+                MimeMessage message = XOMessage.convertToMime(session, msg);
+                transport.connect(props.getProperty("mail.smtps.host"), address, password);
+                transport.sendMessage(message, message.getAllRecipients());
+                if (msgList.isEmpty()) {
+                    synchronized (this) {
+                        this.wait();
+                    }
+                }
+                if (!run) {
+                    transport.close();
+                }
+            } catch (Exception ex) {
+                for (NetworkService.Callback c : listeners) {
+                    if (msg == null) {
+                        break;
+                    }
+                    c.mailSentError(msg);
+                }
+                throw new RuntimeException(ex);
             }
         }
 
@@ -124,12 +133,12 @@ public class SMTPS {
             public void messageDelivered(TransportEvent te) {
                 //Callback
                 for (NetworkService.Callback c : listeners) {
-                    c.mailSent(NetworkServiceImp.convertToXO((MimeMessage) te.getMessage()), te.getInvalidAddresses());
+                    c.mailSent(XOMessage.convertToXO((MimeMessage) te.getMessage()), te.getInvalidAddresses());
                 }
             }
 
             public void messageNotDelivered(TransportEvent te) {
-                XOMessage msg = NetworkServiceImp.convertToXO((MimeMessage) te.getMessage());
+                XOMessage msg = XOMessage.convertToXO((MimeMessage) te.getMessage());
                 //Retry sending
                 send(msg);
                 for (NetworkService.Callback c : listeners) {

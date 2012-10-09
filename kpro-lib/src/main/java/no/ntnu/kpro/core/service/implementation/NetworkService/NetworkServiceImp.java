@@ -8,8 +8,10 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.Authenticator;
+import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.Box;
@@ -76,14 +78,6 @@ public class NetworkServiceImp extends NetworkService {
 
     public void getAllMessages() {
         this.imaps.getMessages(null);
-    }
-
-    public static MimeMessage convertToMime(XOMessage message) {
-        return null;
-    }
-
-    public static XOMessage convertToXO(MimeMessage message) {
-        return null;
     }
 
     //Don't make public to everybody
