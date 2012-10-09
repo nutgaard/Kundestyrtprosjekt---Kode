@@ -4,21 +4,15 @@
  */
 package no.ntnu.kpro.app.activities;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,12 +30,11 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  *
  * @author Kristin
  */
+public class SendMessageActivity extends MenuActivity implements NetworkService.Callback {
 
-    
-public class SendMessageActivity extends MenuActivity implements NetworkService.Callback{
     private EditText receiver;
     private EditText subject;
-    private EditText message;    
+    private EditText message;
     private Spinner sprSecurityLabel;
     private Spinner sprPriority;
     private Spinner sprType;
@@ -49,6 +42,8 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private Button btnSend;
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
+    boolean textEnteredInReceiver = false;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,18 +59,15 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         sprPriority = (Spinner) findViewById(R.id.sprPriority);
         sprType = (Spinner) findViewById(R.id.sprType);
 
-        addSpinnerStuff();
-        
-        //Make spinners focusable, so that usability is improved
-        sprSecurityLabel.setFocusable(true);
-        sprPriority.setFocusable(true);
-        sprType.setFocusable(true);
-
-
-
+        addSpinnerListeners();
+       
         btnAddAttachment = (Button) findViewById(R.id.btnAddAttachment);
         btnSend = (Button) findViewById(R.id.btnSend);
 
+        //Add listener to receiver field, so that we can check if field has been written to.
+        //If not, we just dont evaluate fields
+        addReceiverListener(receiver);
+        
         //Add listener to the send button.
         addBtnSendClickListener(btnSend);
         addReceiverOnFocusChangedListener(receiver);
@@ -122,7 +114,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         receiver.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
+                if (!hasFocus) {                    
                     isValidFields();
                 }
             }
@@ -173,27 +165,28 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                     confirm.show();
                     finish();
                 }
-                
+
                 //TODO: Set default values (routine/operation)
                 //TODO: Check if security label picked
                 //TODO: Check other fields
-                
+
                 getServiceProvider().getNetworkService().sendMail(receiver.getText().toString(), subject.getText().toString(), message.getText().toString(), selectedSecurity, selectedPriority, selectedType);
-                
-                
+
+
                 //Is not necessary to have this when callback is implemented, as mailSent() will be called
-                Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent.", Toast.LENGTH_SHORT);                
+                Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent.", Toast.LENGTH_SHORT);
                 confirm.show();
-                
+
                 finish();
-			}
+            }
         });
     }
 
     private boolean isValidInputField(String input) {
         return !input.isEmpty();
     }
-
+    
+    
     private boolean isValidFields() {
 
         //Find all relevant text strings to validate
@@ -208,16 +201,19 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         boolean isValidSecurityLabel = sprSecurityLabel.getSelectedItemPosition() != 0;
 
         //Validate email
-        if (!isValidEmail) {
-            receiver.setError(getString(R.string.invalidMessageReceiverError));
+        if (!isValidEmail || textEnteredInReceiver) {
+            receiver.setError(getString(R.string.invalidMessageReceiverError)); 
+            return false;
         }
 
-        if (isValidEmail && !isValidSubject && !subject.hasFocus()) {
+        if (!isValidSubject && !subject.hasFocus()) {
             subject.setError(getString(R.string.invalidMessageSubjectError));
+            return false;
         }
 
-        if (isValidEmail && isValidSubject && !isValidMessage) {
+        if (!isValidMessage) {
             message.setError(getString(R.string.invalidMessageBodyError));
+            return false;
         }
 
         String inputFieldsError = "";
@@ -226,7 +222,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             Toast invalidFieldErrorToast = Toast.makeText(SendMessageActivity.this, inputFieldsError, Toast.LENGTH_LONG);
         }
 
-        if (isValidEmail && isValidSubject && isValidMessage && !isValidSecurityLabel) {
+        if (!isValidSecurityLabel) {
             String securityLabelError = "";
             if (!isValidSecurityLabel) {
                 securityLabelError = getString(R.string.invalidSecurityLabelError);
@@ -249,10 +245,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         return matcher.matches();
     }
 
-    private void addValidatorCheckToSpinners() {
-    }
-
-    private void addSpinnerStuff() {
+    private void addSpinnerListeners() {
         sprSecurityLabel.post(new Runnable() {
             public void run() {
                 sprSecurityLabel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -298,5 +291,18 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         });
 
 
+    }
+
+    private void addReceiverListener(EditText receiver) {
+        receiver.addTextChangedListener(new TextWatcher() {
+
+            public void onTextChanged(CharSequence cs, int i, int i1, int i2) {
+                SendMessageActivity.this.textEnteredInReceiver = true;                
+            }
+            
+            public void beforeTextChanged(CharSequence cs, int i, int i1, int i2) {}
+            public void afterTextChanged(Editable edtbl) {}
+            
+        });
     }
 }
