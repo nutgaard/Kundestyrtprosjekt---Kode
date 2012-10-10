@@ -3,7 +3,7 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:orientation="vertical" 
-              android:background="@color/darkGray"
+              style="@style/backgroundStyle"
 >
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="fill_parent"
@@ -15,8 +15,8 @@
         <Spinner 
             android:id="@+id/sprFolders"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="80"
+            style="@style/spinnerStyle"
+            android:layout_weight="40"
     />
         <Button
             android:id="@+id/btnSort"

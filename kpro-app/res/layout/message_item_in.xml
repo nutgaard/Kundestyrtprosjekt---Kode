@@ -3,96 +3,104 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:orientation="vertical"
-              android:background="@color/darkGray"
+              style="@style/backgroundStyle"
               android:weightSum="100"
 >
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="fill_parent" 
                 android:layout_height="0dp"
                 android:layout_weight="85">
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:orientation="vertical" 
-                        android:background="@color/darkGray"
-        >
- 
-            <!-- From Label -->
-            <TextView
-                android:id="@+id/lblFrom"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:paddingTop="8dp"
-                android:paddingLeft="8dp"
-                android:textSize="14dp"
-                android:maxLines="1"
-                android:lines="1"
-                android:textStyle="bold" />
-            <!-- Security label -->
-            <TextView
-                android:id="@+id/lblSecurityLabel"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:textSize="12dp"
-                android:layout_alignParentRight="true"
-                android:background="@color/white"
-                android:textColor="@color/black"
-    />
-            <!-- Priority -->
-            <TextView
-                android:id="@+id/lblPriority"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:textSize="12dp"
-                android:layout_alignParentRight="true"
-                android:textColor="@color/black"
-                android:background="@color/white"
-                android:layout_below="@id/lblSecurityLabel"
-    />
-            <!-- Type -->
-            <TextView
-                android:id="@+id/lblType"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:textSize="12dp"
-                android:layout_alignParentRight="true"
-                android:textColor="@color/black"
-                android:background="@color/white"
-                android:layout_below="@id/lblPriority"
-    />
-    
-            <!-- Mail Subject -->
-            <TextView android:id="@+id/lblSubject"
-                      android:layout_height="wrap_content"
-                      android:layout_width="200dp"
-                      android:paddingLeft="8dp"
-                      android:lines="1"
-                      android:maxLines="1"  
-                      android:textSize="12dp"
-                      android:textColor="@color/white"
-                      android:layout_below="@id/lblFrom"/>
- 
-            <!-- Mail date -->
-            <TextView android:id="@+id/lblDate"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:text="@string/defaultDate"
-                      android:textColor="@color/white"
-                      android:paddingLeft="8dp"
-                      android:textSize="12dp"
-                      android:layout_below="@id/lblSubject"/>
-            <!-- Mail body -->
-            <TextView android:id="@+id/lblText"
-                      android:layout_marginTop="20dp"
-                      android:background="@color/white"
-                      android:layout_below="@id/lblDate"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                       android:layout_width="fill_parent"
                       android:layout_height="fill_parent"
+                      android:orientation="vertical" 
+                      android:weightSum="100"
+            >
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                            android:layout_width="fill_parent"
+                            android:layout_height="100dp"
+                            android:orientation="vertical" 
+                            android:background="@drawable/btn_black"
+            >
+            
+                <!-- From Label -->
+                <TextView
+                    android:id="@+id/lblFrom"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:paddingTop="8dp"
+                    android:paddingLeft="8dp"
+                    android:textSize="14dp"
+                    android:maxLines="1"
+                    android:lines="1"
+                    android:textStyle="bold" />
+                <!-- Security label -->
+                <TextView
+                    android:id="@+id/lblSecurityLabel"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="12dp"
+                    android:layout_alignParentRight="true"
+                    android:background="@color/white"
+                    android:textColor="@color/black"
+    />
+                <!-- Priority -->
+                <TextView
+                    android:id="@+id/lblPriority"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="12dp"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@color/black"
+                    android:background="@color/white"
+                    android:layout_below="@id/lblSecurityLabel"
+    />
+                <!-- Type -->
+                <TextView
+                    android:id="@+id/lblType"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="12dp"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@color/black"
+                    android:background="@color/white"
+                    android:layout_below="@id/lblPriority"
+    />
+    
+                <!-- Mail Subject -->
+                <TextView android:id="@+id/lblSubject"
+                          android:layout_height="wrap_content"
+                          android:layout_width="200dp"
+                          android:paddingLeft="8dp"
+                          android:lines="1"
+                          android:maxLines="1"  
+                          android:textSize="12dp"
+                          android:textColor="@color/white"
+                          android:layout_below="@id/lblFrom"/>
+ 
+                <!-- Mail date -->
+                <TextView android:id="@+id/lblDate"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:text="@string/defaultDate"
+                          android:textColor="@color/white"
+                          android:paddingLeft="8dp"
+                          android:textSize="12dp"
+                          android:layout_below="@id/lblSubject"/>
+                
+            </RelativeLayout>
+            <!-- Mail body -->
+            <TextView android:id="@+id/lblText"
+                      android:background="@color/white"
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
                       android:textColor="@color/black"
                       android:textSize="14dp"
                       android:padding="8dp"/>
-        </RelativeLayout>
+        </LinearLayout>
+        
+        
     </ScrollView>
     <!-- Horizontal layout for the bottom buttons -->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -109,29 +117,33 @@
         <!-- Previous button -->
         <Button
             android:id="@+id/btnPrevious"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/buttonStyle"
+            android:background="@drawable/btn_black"
+            android:textColor="@drawable/button_text_color"
             android:text="@string/previousMessageString" />
         
         <!-- Reply button -->
         <Button
             android:id="@+id/btnReply"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            style="@style/buttonStyle"
+            android:background="@drawable/btn_black"
+            android:textColor="@drawable/button_text_color"
             android:text="@string/replyButtonString"/>
         
         <Button
             android:id="@+id/btnForward"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            style="@style/buttonStyle"
+            android:background="@drawable/btn_black"
+            android:textColor="@drawable/button_text_color"
             android:text="@string/forwardButtonString"
         />
         
         <!-- Next button -->
         <Button
             android:id="@+id/btnNext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/buttonStyle"
+            android:background="@drawable/btn_black"
+            android:textColor="@drawable/button_text_color"
             android:text="@string/nextMessageString"/>
     </LinearLayout>
 </LinearLayout>

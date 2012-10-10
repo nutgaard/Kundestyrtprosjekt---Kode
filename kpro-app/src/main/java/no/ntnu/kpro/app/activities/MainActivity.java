@@ -36,7 +36,7 @@ public class MainActivity extends WrapperActivity {
         Log.i(TAG, "No errors, service should be running");
 
         // Create simple list of the menu choices
-        String[] views = {"Folders", "SendMessage", "MainTab"};
+        String[] views = {"Folders", "SendMessage", "MainTab","Login"};
         ListView lstMenuChoices = (ListView) findViewById(R.id.lstMenuChoices);
         lstMenuChoices.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, views));
 
