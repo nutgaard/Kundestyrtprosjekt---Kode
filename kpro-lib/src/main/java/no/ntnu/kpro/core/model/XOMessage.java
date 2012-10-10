@@ -6,6 +6,7 @@ package no.ntnu.kpro.core.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.sun.mail.imap.IMAPMessage;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.Comparator;
@@ -14,17 +15,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.Address;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import no.ntnu.kpro.core.helpers.EnumHelper;
+import no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWriteThroughStorage.PersistentWriteThroughStorage;
 
 /**
  *
  * @author Nicklas
  */
 public class XOMessage implements Comparable<XOMessage>, Parcelable {
+    public static String LABEL = "XOMailLabel";
+    public static String PRIORITY = "XOMailPriority";
+    public static String TYPE = "XOMailType";
 
     private final String from;
     private final String to;
@@ -193,11 +200,47 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         return mm;
     }
 
-    public static XOMessage convertToXO(MimeMessage message) {
-        return null;
+    public static XOMessage convertToXO(Message message) throws Exception {
+        String from, to, subject, body;
+        XOMessagePriority priority;
+        XOMessageSecurityLabel label;
+        XOMessageType type;
+        Date date;
+        if (message instanceof IMAPMessage) {
+            IMAPMessage m = (IMAPMessage) message;
+            from = convertAddressArray(m.getFrom());
+            to = convertAddressArray(m.getRecipients(Message.RecipientType.TO));
+            subject = m.getSubject();
+            body = m.getContent().toString();
+            priority = EnumHelper.getEnumValue(XOMessagePriority.class, m.getHeader(PRIORITY))[0];
+            label = EnumHelper.getEnumValue(XOMessageSecurityLabel.class, m.getHeader(LABEL))[0];
+            type = EnumHelper.getEnumValue(XOMessageType.class, m.getHeader(TYPE))[0];
+            date = m.getReceivedDate();
+            
+            return (XOMessage)PersistentWriteThroughStorage.getInstance().manage(new XOMessage(from, to, subject, body, label, priority, type, date));
+        }
+        return null;    
+//        return new XOMessage(from, to, subject, body, label, priority, type, date);
+    }
+
+    private static String convertAddressArray(Address[] al) {
+        StringBuilder sb = new StringBuilder();
+        for (Address a : al) {
+            sb.append(a.toString()).append(", ");
+        }
+        return sb.toString();
     }
 
     public static class XOMessageSorter {
+
+        public static Comparator<XOMessage> getSendingPriority() {
+            return new Comparator<XOMessage>() {
+                public int compare(XOMessage o1, XOMessage o2) {
+                    int p = o1.priority.compareTo(o2.priority);
+                    return p == 0 ? o2.date.compareTo(o1.date) : p;
+                }
+            };
+        }
 
         public static Comparator<XOMessage> getDateComparator(final boolean descending) {
             return new Comparator<XOMessage>() {

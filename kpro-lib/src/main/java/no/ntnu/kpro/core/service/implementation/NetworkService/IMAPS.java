@@ -68,7 +68,7 @@ public class IMAPS {
             }
         } catch (Exception e) {
             for (Callback c : listener) {
-                c.mailReceivedError();
+                c.mailReceivedError(e);
             }
         }
     }
@@ -110,7 +110,7 @@ public class IMAPS {
             MimeMessage[] messages = (MimeMessage[]) mce.getMessages();
             for (MimeMessage msg : messages) {
                 for (Callback c : listener) {
-                    c.mailReceived(XOMessage.convertToXO(msg));
+//                    c.mailReceived(XOMessage.convertToXO(msg));
                 }
             }
         }

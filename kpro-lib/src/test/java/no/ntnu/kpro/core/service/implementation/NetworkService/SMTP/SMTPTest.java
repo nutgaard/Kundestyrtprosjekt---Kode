@@ -115,7 +115,7 @@ public class SMTPTest {
         @Test
         public void multipleMail_Mock() throws Exception {
             System.out.println("MultipleMail_Mock");
-            int n = 100;
+            int n = 10;
             XOMessage[] m = new XOMessage[n];
             for (int i = 0;i < n; i++){
                 m[i] = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT+i, XOMessageSecurityLabel.CONFIDENTIAL, XOMessagePriority.IMMEDIATE, XOMessageType.DRILL, new Date());

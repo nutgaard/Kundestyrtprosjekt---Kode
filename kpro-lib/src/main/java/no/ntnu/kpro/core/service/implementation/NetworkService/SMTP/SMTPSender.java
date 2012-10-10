@@ -26,23 +26,25 @@ public class SMTPSender {
     private List<NetworkService.Callback> listeners;
 
     public SMTPSender(final String username, final String password, final String mailAdr, final Properties props, final Authenticator auth) {
-        this.props = new Properties();
         this.password = password;
         this.mailAdr = mailAdr;
         this.props = props;
         this.auth = auth;
         this.listeners = Collections.synchronizedList(new LinkedList<NetworkService.Callback>());
     }
+
     public void addCallback(NetworkService.Callback l) {
-        if (!listeners.contains(l)){
+        if (!listeners.contains(l)) {
             this.listeners.add(l);
         }
     }
+
     public void removeCallback(NetworkService.Callback l) {
-        if (listeners.contains(l)){
+        if (listeners.contains(l)) {
             this.listeners.remove(l);
         }
     }
+
     public boolean sendMail(XOMessage msg) {
         try {
             Session session = Session.getInstance(this.props, this.auth);
@@ -66,16 +68,25 @@ public class SMTPSender {
         public void messageDelivered(TransportEvent te) {
             //Callback
             for (NetworkService.Callback c : listeners) {
-                c.mailSent(XOMessage.convertToXO((MimeMessage) te.getMessage()), te.getInvalidAddresses());
+                try {
+                    c.mailSent(XOMessage.convertToXO(te.getMessage()), te.getInvalidAddresses());
+                } catch (Exception ex) {
+                    Logger.getLogger(SMTPSender.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
 
         public void messageNotDelivered(TransportEvent te) {
-            XOMessage msg = XOMessage.convertToXO((MimeMessage) te.getMessage());
-            //Retry sending
-            sendMail(msg);
-            for (NetworkService.Callback c : listeners) {
-                c.mailSentError(msg);
+            XOMessage msg;
+            try {
+                msg = XOMessage.convertToXO(te.getMessage());
+                sendMail(msg);
+                //Retry sending
+                for (NetworkService.Callback c : listeners) {
+                    c.mailSentError(msg, new Exception("I dont know"));
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(SMTPSender.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
