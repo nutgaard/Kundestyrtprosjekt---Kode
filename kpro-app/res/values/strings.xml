@@ -32,6 +32,6 @@
     <string name="invalidMessageReceiverError">The address is not valid. Please check again. </string>
     <string name="invalidSecurityLabelError">You have to set a security label on the message before it can be sent. </string>
     <string name="invalidMessageSubjectError">I´m sorry. The subject can not be empty. </string>
-    <string name="invalidMessageBodyError">Please add a message. </string>  
+    <string name="invalidMessageBodyError">Please add a message body. </string>  
             
 </resources>
