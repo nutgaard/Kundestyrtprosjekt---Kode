@@ -80,7 +80,7 @@ public class WrapperTabActivity extends ActivityGroup implements NetworkService.
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void mailSentError(XOMessage message) {
+    public void mailSentError(XOMessage message, Exception ex) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -88,7 +88,7 @@ public class WrapperTabActivity extends ActivityGroup implements NetworkService.
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void mailReceivedError() {
+    public void mailReceivedError(Exception ex) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

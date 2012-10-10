@@ -116,22 +116,6 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
         addLstFolderClickListener();
     }
 
-    public void mailSent(XOMessage message, Address[] invalidAddress) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void mailSentError(XOMessage message) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void mailReceived(XOMessage message) {
-        throw new UnsupportedOperationException("Not supported yet.");
-        //TODO: Update list
-    }
-
-    public void mailReceivedError() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
     public void onClick(View view) {
         if (view.equals((Button) findViewById(R.id.btnSort))) {
@@ -163,6 +147,22 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
         });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    public void mailSent(XOMessage message, Address[] invalidAddress) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void mailSentError(XOMessage message, Exception ex) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void mailReceived(XOMessage message) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void mailReceivedError(Exception ex) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public enum SortCondition {

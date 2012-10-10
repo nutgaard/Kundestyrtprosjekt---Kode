@@ -10,11 +10,11 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.Address;
@@ -125,7 +125,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         confirm.show();
     }
 
-    public void mailSentError(XOMessage message) {
+    public void mailSentError(XOMessage message, Exception ex) {
         Toast errorMess = Toast.makeText(SendMessageActivity.this, "Something went wrong", Toast.LENGTH_SHORT);
         errorMess.show();
     }
@@ -134,7 +134,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void mailReceivedError() {
+    public void mailReceivedError(Exception ex) {
         throw new UnsupportedOperationException("Not supported yet.");
     }    
 
@@ -164,7 +164,9 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         //Do all validation, both intermediate validation and send validation.
                         if (doIntermediateValidation()) {
                             if (doSendButtonValidation()) {
-                                getServiceProvider().getNetworkService().sendMail(txtReceiver.getText().toString(), txtSubject.getText().toString(), txtMessageBody.getText().toString(), selectedSecurity, selectedPriority, selectedType);
+                                XOMessage m = new XOMessage("MyMailAddress@gmail.com", txtReceiver.getText().toString(), txtSubject.getText().toString(), txtMessageBody.getText().toString(), selectedSecurity, selectedPriority, selectedType, new Date());
+//                                getServiceProvider().getNetworkService().sendMail(txtReceiver.getText().toString(), txtSubject.getText().toString(), txtMessageBody.getText().toString(), selectedSecurity, selectedPriority, selectedType);
+                                getServiceProvider().getNetworkService().send(m);
 
                                 //Is not necessary to have this when callback is implemented, as mailSent() will be called
                                 Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent.", Toast.LENGTH_SHORT);
