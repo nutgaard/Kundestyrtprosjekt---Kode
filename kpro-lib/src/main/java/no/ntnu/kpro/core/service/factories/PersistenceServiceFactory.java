@@ -14,4 +14,7 @@ public class PersistenceServiceFactory {
     public static PersistenceService createService() {
         return null;
     }
+    public static PersistenceService createLoginService() {
+        return null;
+    }
 }

@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  *
@@ -17,7 +18,7 @@ import java.util.Map;
  */
 public class TraceProxy implements InvocationHandler {
 
-    static Map<Object, Object> map = new HashMap<Object, Object>();
+    static Map<PersistentWriteThroughStorage, Map<Object, Object>> globalMap = new HashMap<PersistentWriteThroughStorage, Map<Object, Object>>();
     Object object;
     Object proxy;
     int id = -1;
@@ -26,7 +27,11 @@ public class TraceProxy implements InvocationHandler {
         this.object = object;
     }
 
-    public static Object trace(Object object) {
+    public static Object trace(PersistentWriteThroughStorage storage, Object object) {
+        if (!globalMap.containsKey(storage)) {
+            globalMap.put(storage, new HashMap<Object, Object>());
+        }
+        Map<Object, Object> map = globalMap.get(storage);
         if (map.containsKey(object)) {
             return map.get(object);
         } else {
@@ -39,8 +44,12 @@ public class TraceProxy implements InvocationHandler {
         }
     }
 
-    public static Object untrace(Object object) {
-        if (map.containsKey(object)){
+    public static Object untrace(PersistentWriteThroughStorage storage, Object object) {
+        if (!globalMap.containsKey(storage)) {
+            return null;
+        }
+        Map<Object, Object> map = globalMap.get(storage);
+        if (map.containsKey(object)) {
             map.remove(object);
             return ((TraceProxy) Proxy.getInvocationHandler(object)).object;
         }
@@ -53,7 +62,10 @@ public class TraceProxy implements InvocationHandler {
             //All changeable methods should start with set
             result = method.invoke(object, args);
             if (method.getName().startsWith("set")) {
-                PersistentWriteThroughStorage.getInstance().save(map.get(object));
+                for (Entry<PersistentWriteThroughStorage, Map<Object, Object>> e : globalMap.entrySet()) {
+                    e.getKey().save(e.getValue().get(object));
+//                    PersistentWriteThroughStorage.getInstance().save(map.get(object));
+                }
             }
         } catch (InvocationTargetException e) {
             throw e.getTargetException();

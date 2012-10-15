@@ -61,14 +61,14 @@ public class IMAPS {
             inbox.open(Folder.READ_ONLY);
             MimeMessage[] messages = (MimeMessage[]) inbox.search(searchterm);
             for (int i = 0; i < messages.length; i++) {
-                XOMessage message = NetworkServiceImp.convertToXO(messages[i]);
+                XOMessage message = XOMessage.convertToXO(messages[i]);
                 for (Callback c : listener) {
                     c.mailReceived(message);
                 }
             }
         } catch (Exception e) {
             for (Callback c : listener) {
-                c.mailReceivedError();
+                c.mailReceivedError(e);
             }
         }
     }
@@ -110,7 +110,7 @@ public class IMAPS {
             MimeMessage[] messages = (MimeMessage[]) mce.getMessages();
             for (MimeMessage msg : messages) {
                 for (Callback c : listener) {
-                    c.mailReceived(NetworkServiceImp.convertToXO(msg));
+//                    c.mailReceived(XOMessage.convertToXO(msg));
                 }
             }
         }
