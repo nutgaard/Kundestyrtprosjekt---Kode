@@ -4,8 +4,10 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService.crypto;
 
+import java.security.Security;
 import javax.mail.internet.MimeMessage;
 import no.ntnu.kpro.core.model.XOMessage;
+//import org.spongycastle.mail.smime.SMIMESigned;
 
 /**
  * This class should ideally be able to take in a XOMessage and spit out a 
@@ -16,6 +18,10 @@ import no.ntnu.kpro.core.model.XOMessage;
  * @author magnus
  */
 public class CryptoHandler {
+    	
+    static {
+        //Security.addProvider(new BouncyCastleProvider());
+    }
     public MimeMessage prepareToSend(XOMessage mail){
         return null;
     }
