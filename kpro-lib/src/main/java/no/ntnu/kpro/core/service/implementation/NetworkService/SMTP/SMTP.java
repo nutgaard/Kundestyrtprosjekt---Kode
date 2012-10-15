@@ -15,18 +15,19 @@ import no.ntnu.kpro.core.model.XOMessage;
  *
  * @author Nicklas
  */
-public class SMTP {
+public class SMTP extends Thread {
 
     private final List<XOMessage> queue;
-    private final PushToSend pusher;
     private final SMTPSender sender;
 
     public SMTP(final String username, final String password, final String mailAdr, final Properties props, final Authenticator auth) {
-//        this.queue = Collections.synchronizedList(new LinkedList<XOMessage>());
+        this(new SMTPSender(username, password, mailAdr, props, auth));
+    }
+
+    public SMTP(SMTPSender sender) {
         this.queue = new LinkedList<XOMessage>();
-        this.pusher = new PushToSend();
-        this.sender = new SMTPSender(username, password, mailAdr, props, auth);
-        this.pusher.start();
+        this.sender = sender;
+        start();
     }
 
     public SMTPSender getSender() {
@@ -35,8 +36,8 @@ public class SMTP {
 
     public void send(XOMessage msg) {
         System.out.println("Adding message");
-        if (!pusher.run) {
-            this.pusher.start();
+        if (!run) {
+            start();
         }
 //        int index = Collections.binarySearch(queue, msg, XOMessage.XOMessageSorter.getSendingPriority());
 //        System.out.println("Insert at "+index);
@@ -50,38 +51,37 @@ public class SMTP {
         System.out.println("Message added to queue, queuesize: " + queue.size());
 //        }
     }
+    boolean run = false;
 
-    class PushToSend extends Thread {
-
-        boolean run = false;
-
-        @Override
-        public void start() {
-            this.run = true;
-            super.start();
+    @Override
+    public void start() {
+        if (run) {
+            return;
         }
+        this.run = true;
+        super.start();
+    }
 
-        @Override
-        public void run() {
-            super.run();
+    @Override
+    public void run() {
+        super.run();
 //            System.out.println("Running: "+run);
-            while (run) {
-                while (queue.isEmpty()) {
-                    PushToSend.yield();
-                }
-//                System.out.println("Pusher waked");
-                XOMessage msg;
-                synchronized (queue) {
-                    msg = queue.remove(0);
-                }
-                System.out.println("Message removed from queue, queuesize: " + queue.size());
-                sender.sendMail(msg);
-                System.out.println("Pusher ready, queuesize: " + queue.size());
+        while (run) {
+            while (queue.isEmpty()) {
+                SMTP.yield();
             }
+//                System.out.println("Pusher waked");
+            XOMessage msg;
+            synchronized (queue) {
+                msg = queue.remove(0);
+            }
+            System.out.println("Message removed from queue, queuesize: " + queue.size());
+            sender.sendMail(msg);
+            System.out.println("Pusher ready, queuesize: " + queue.size());
         }
+    }
 
-        public void halt() {
-            this.run = false;
-        }
+    public void halt() {
+        this.run = false;
     }
 }

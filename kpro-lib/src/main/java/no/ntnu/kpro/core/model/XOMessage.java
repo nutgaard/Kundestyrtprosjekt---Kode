@@ -197,6 +197,10 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         mm.setSubject(message.getSubject(), "UTF-8");
         mm.setText(message.getStrippedBody(), "UTF-8");
         mm.setHeader("Content-Type", "text/plain; charset=UTF-8");
+        mm.addHeader(PRIORITY, message.priority.toString());
+        mm.addHeader(LABEL, message.grading.toString());
+        mm.addHeader(TYPE, message.type.toString());
+        mm.setSentDate(message.date);
         return mm;
     }
 
@@ -206,8 +210,8 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         XOMessageSecurityLabel label;
         XOMessageType type;
         Date date;
-        if (message instanceof IMAPMessage) {
-            IMAPMessage m = (IMAPMessage) message;
+        if (message instanceof MimeMessage) {
+            MimeMessage m = (MimeMessage) message;
             from = convertAddressArray(m.getFrom());
             to = convertAddressArray(m.getRecipients(Message.RecipientType.TO));
             subject = m.getSubject();
@@ -217,7 +221,7 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
             type = EnumHelper.getEnumValue(XOMessageType.class, m.getHeader(TYPE))[0];
             date = m.getReceivedDate();
             
-            return (XOMessage)PersistentWriteThroughStorage.getInstance().manage(new XOMessage(from, to, subject, body, label, priority, type, date));
+            return new XOMessage(from, to, subject, body, label, priority, type, date);
         }
         return null;    
 //        return new XOMessage(from, to, subject, body, label, priority, type, date);
@@ -226,8 +230,9 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
     private static String convertAddressArray(Address[] al) {
         StringBuilder sb = new StringBuilder();
         for (Address a : al) {
-            sb.append(a.toString()).append(", ");
+            sb.append(a.toString()).append(",");
         }
+        sb.deleteCharAt(sb.length()-1);
         return sb.toString();
     }
 
