@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -349,48 +350,95 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                     }
                 });
     }
-    private int RESULT_LOAD_IMAGE = 1;
+    private Uri mImageCaptureUri;
+    private Uri soundRecordingUri;
+    private ImageView mImageView;
+    private static final int PICK_IMAGE_FROM_CAMERA = 0;
+    private static final int PICK_IMAGE_FROM_FILE = 1;
+    private static final int PICK_VOICE_RECORDING = 2;
+    private static final int PICK_GPS_COORDINATES = 3;
 
     private void addClickListener(Button btnAddAttachment) {
+        //A LOT OF DEBUG / TEST CODE HERE. DO NOT RELY ON THIS!!!
 
-        final String[] items = new String[]{"From Camera", "From SD Card"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, items);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        btnAddAttachment.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                String[] items = new String[]{"From Camera", "From SD Card", "Voice Recording", "GPS Coordinates"};
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(SendMessageActivity.this, android.R.layout.select_dialog_item, items);
+                AlertDialog.Builder builder = new AlertDialog.Builder(SendMessageActivity.this);
 
-        builder.setTitle("Select Content");
-        builder.setAdapter(adapter, null);
-        AlertDialog dialog = builder.create();
-        dialog.show();
+                builder.setTitle("Select Content");
+                builder.setAdapter(adapter, null);
+
+                builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (item == PICK_IMAGE_FROM_CAMERA) {
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            File file = new File(Environment.getExternalStorageDirectory(), "tmp_avatar_" + String.valueOf(System.currentTimeMillis()) + ".jpg");
+                            mImageCaptureUri = Uri.fromFile(file);
+                            txtMessageBody.setText(mImageCaptureUri.toString());
+
+                            try {
+                                intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+                                intent.putExtra("return-data", true);
+                                startActivityForResult(intent, PICK_IMAGE_FROM_CAMERA);
+                            } catch (Exception e) {
+                                throw new IllegalArgumentException("Could not get image.");
+                            }
+
+                            //dialog.cancel();
+                        } else if (item == PICK_IMAGE_FROM_FILE) {
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+
+                            startActivityForResult(Intent.createChooser(intent, "Complete action using"), PICK_IMAGE_FROM_FILE);
+                        } else if (item == PICK_VOICE_RECORDING) {
+                            Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+                            startActivityForResult(intent, PICK_VOICE_RECORDING);
+
+                        } else if (item == PICK_GPS_COORDINATES) {
+                            //Pick locations using code from: 
+                            //AS soon as we are ready to implement it. A lot of fiddlig work, perhaps, so waiting with it.
+                        }
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
 
 
-
-        //CODE FOR FETCHING IMAGE
-//        btnAddAttachment.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View view) {
-//                Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                startActivityForResult(i, RESULT_LOAD_IMAGE);
-//
-//            }
-//        });
+            }
+        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
-            Uri selectedImage = data.getData();
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();
-
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
-
-            // String picturePath contains the path of selected Image                        
+        if (resultCode != RESULT_OK || data == null) {
+            return;
         }
+
+        if (requestCode == PICK_VOICE_RECORDING) {
+            soundRecordingUri = data.getData();            
+            Toast.makeText(SendMessageActivity.this, "Saved: " + soundRecordingUri.getPath(), Toast.LENGTH_LONG).show();
+        }
+
+
+//        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+//            Uri selectedImage = data.getData();
+//            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+//
+//            Cursor cursor = getContentResolver().query(selectedImage,
+//                    filePathColumn, null, null, null);
+//            cursor.moveToFirst();
+//
+//            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+//            String picturePath = cursor.getString(columnIndex);
+//            cursor.close();
+//
+//            // String picturePath contains the path of selected Image                        
+//        }
     }
 }
