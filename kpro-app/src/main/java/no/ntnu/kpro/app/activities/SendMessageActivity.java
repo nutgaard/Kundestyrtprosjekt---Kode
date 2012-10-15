@@ -4,6 +4,8 @@
  */
 package no.ntnu.kpro.app.activities;
 
+import android.app.Activity;
+import android.app.TabActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -171,7 +173,16 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                                 //Is not necessary to have this when callback is implemented, as mailSent() will be called
                                 Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent.", Toast.LENGTH_SHORT);
                                 confirm.show();
-                                finish();
+                                resetFields();
+//                                try{
+//                                    resetFields();
+//                                    MainTabActivity act;
+//                                    act = (MainTabActivity) getParent();
+//                                    act.switchTab(0);
+//                                }
+//                                catch(Exception e){
+//                                    Log.i("KPRO", "Tab change failed");
+//                                }
                             }
                         }
 
@@ -180,6 +191,14 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                 });
     }
 
+    private void resetFields(){
+        txtReceiver.setText("");
+        txtSubject.setText("");
+        txtMessageBody.setText("");
+        sprSecurityLabel.setSelection(0);
+        setDefaultSpinnerValues();
+    }
+    
     private boolean isValidInputField(String input) {
         return !input.equals("");
     }
