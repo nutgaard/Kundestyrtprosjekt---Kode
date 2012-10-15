@@ -59,7 +59,8 @@ public class PersistentWriteThroughStorageTest {
     public void setUp() {
         try {
             good = new User(new BigInteger(130, new SecureRandom()).toString(32));
-            em = PersistentWriteThroughStorage.create(good, FileCryptoFactory.getProcessor(FileCryptoFactory.Crypto.NONE), baseDir);
+            em = new PersistentWriteThroughStorage(good, FileCryptoFactory.getProcessor(FileCryptoFactory.Crypto.NONE), baseDir);
+//            em = PersistentWriteThroughStorage.create(good, FileCryptoFactory.getProcessor(FileCryptoFactory.Crypto.NONE), baseDir);
         } catch (Exception ex) {
             Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -67,7 +68,7 @@ public class PersistentWriteThroughStorageTest {
 
     @After
     public void tearDown() {
-            em.close(good);
+            em.close();
             good = null;
             delete(baseDir);
     }

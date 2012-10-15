@@ -114,6 +114,7 @@ public class SimpleMail extends NetworkService {
                 Logger.getLogger(SimpleMail.class.getName()).log(Level.SEVERE, null, ex);
             }
             System.out.println("");
+            System.out.println("Connecting");
             t.connect(this.props.getProperty("mail.smtps.host"), this.mailAdr, this.password);
             t.sendMessage(message, message.getAllRecipients());
 

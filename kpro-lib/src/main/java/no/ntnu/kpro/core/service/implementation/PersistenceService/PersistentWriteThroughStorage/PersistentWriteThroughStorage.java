@@ -19,56 +19,39 @@ import no.ntnu.kpro.core.service.interfaces.PersistencePostProcessor;
  */
 public class PersistentWriteThroughStorage {
 
-    private static PersistentWriteThroughStorage instance;
     private User user;
     private PersistencePostProcessor postProcessor;
     private XStream xstream;
     private Map<String, Integer> index;
     private File baseDir;
 
-    public static PersistentWriteThroughStorage getInstance() {
-        return instance;
+    public void close() {
+        this.user = null;
+        this.postProcessor = null;
+        this.xstream = null;
+        this.index = null;
+        this.baseDir = null;
     }
 
-    public static PersistentWriteThroughStorage create(User user, PersistencePostProcessor postProcessor, File basedir) throws Exception {
-        if (instance != null && instance.user != user) {
-            throw new RuntimeException("Initalizing storage with changed user is not allowed.");
-        }
-        if (instance == null) {
-            instance = new PersistentWriteThroughStorage(user, postProcessor, basedir);
-        }
-        return instance;
-    }
-    public static void close(User user) {
-        if (instance != null && instance.user == user){
-            instance.user = null;
-            instance.postProcessor = null;
-            instance.xstream = null;
-            instance.index = null;
-            instance.baseDir = null;
-            instance = null;
-        }else {
-            throw new RuntimeException("Cannot close persistingunit which does not belong to you");
-        }
-    }
-
-    private PersistentWriteThroughStorage(User user, PersistencePostProcessor postProcessor, File basedir) throws Exception {
+    public PersistentWriteThroughStorage(User user, PersistencePostProcessor postProcessor, File basedir) throws Exception {
         this.user = user;
         this.postProcessor = postProcessor;
         this.xstream = new XStream();
         this.baseDir = basedir;
-        if (!basedir.exists()){
+        if (!basedir.exists()) {
             basedir.mkdirs();
         }
         getIndex();
     }
+
     public <T> T[] castTo(Object[] l, Class<? extends T[]> cls) {
         return Arrays.copyOf(l, l.length, cls);
     }
+
     public synchronized Object manage(Object o) throws Exception {
         Object p;
         if (!Proxy.isProxyClass(o.getClass())) {
-            p = TraceProxy.trace(o);
+            p = TraceProxy.trace(this, o);
         } else {
             p = o;
         }
@@ -77,40 +60,45 @@ public class PersistentWriteThroughStorage {
     }
 
     public synchronized Object unmanage(Object o) {
-        return TraceProxy.untrace(o);
+        return TraceProxy.untrace(this, o);
     }
+
     public synchronized void delete(Object object) {
-        if (!Proxy.isProxyClass(object.getClass())){
+        if (!Proxy.isProxyClass(object.getClass())) {
             //Not a proxy, so cannot be saved nor deleted
             return;
         }
         TraceProxy proxy = ((TraceProxy) Proxy.getInvocationHandler(object));
-        
-        if (proxy.id < 0){
+
+        if (proxy.id < 0) {
             //Object is not saved yet
             return;
         }
-        
+
         String className = proxy.object.getClass().getSimpleName();
         File base = getBaseDir();
         File[] dirList = base.listFiles(new DirectoryFilter(className));
-        if (dirList == null || dirList.length == 0){
+        if (dirList == null || dirList.length == 0) {
             //No directory, hence the file cannot exist
             return;
         }
         File dir = dirList[0];
         File[] files = dir.listFiles(new NameFilter(String.valueOf(proxy.id)));
-        if (files == null || files.length == 0){
+        if (files == null || files.length == 0) {
             //Found no files matching this name in the directory
             return;
         }
-        for (File file : files){
-            System.out.println("Deleting: "+file);
+        for (File file : files) {
+            System.out.println("Deleting: " + file);
             file.delete();
             System.gc();
         }
     }
+
     public synchronized void save(Object object) throws Exception {
+        if (object == null) {
+            return;
+        }
         if (!Proxy.isProxyClass(object.getClass())) {
             manage(object);
             return;
@@ -177,9 +165,9 @@ public class PersistentWriteThroughStorage {
                 //Unprocess raw data
                 data = postProcessor.unprocess(data);
                 //
-                
+
                 Object o = xstream.fromXML(new ByteArrayInputStream(data));
-                Object t = TraceProxy.trace(o);
+                Object t = TraceProxy.trace(this, o);
                 ((TraceProxy) Proxy.getInvocationHandler(t)).id = Integer.parseInt(file.getName());
 
                 savedObjects[parsedCounter] = t;
@@ -191,7 +179,7 @@ public class PersistentWriteThroughStorage {
 
     public synchronized Object find(Class cls, int id) throws Exception {
         //Create new user and proxy
-        if (id < 0){
+        if (id < 0) {
             return manage(cls.getConstructor().newInstance());
         }
         File base = getBaseDir();
@@ -212,7 +200,7 @@ public class PersistentWriteThroughStorage {
             is.close();
             data = postProcessor.unprocess(data);
             Object o = xstream.fromXML(new ByteArrayInputStream(data));
-            Object t = TraceProxy.trace(o);
+            Object t = TraceProxy.trace(this, o);
             ((TraceProxy) Proxy.getInvocationHandler(t)).id = id;
             return t;
         }
@@ -220,13 +208,16 @@ public class PersistentWriteThroughStorage {
 
     private String getObjectClassName(Object o) {
         if (Proxy.isProxyClass(o.getClass())) {
-            return TraceProxy.untrace(o).getClass().getSimpleName();
+            return TraceProxy.untrace(this, o).getClass().getSimpleName();
         } else {
             return o.getClass().getSimpleName();
         }
     }
 
     private File getBaseDir() {
+        if (user == null) {
+            return baseDir;
+        }
         File base = new File(baseDir, "/" + postProcessor.process(user.getName()));
         if (!base.exists()) {
             base.mkdir();
