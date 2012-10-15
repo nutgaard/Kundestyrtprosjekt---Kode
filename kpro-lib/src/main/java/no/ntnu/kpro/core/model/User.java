@@ -14,6 +14,9 @@ import no.ntnu.kpro.core.model.ModelProxy.IUser;
 public class User implements IUser {
 
     public String name;
+    private String password;
+
+
 
     public User() {
     }
@@ -28,5 +31,12 @@ public class User implements IUser {
 
     public void setName(String name) {
         this.name = name;
+    }
+        public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
