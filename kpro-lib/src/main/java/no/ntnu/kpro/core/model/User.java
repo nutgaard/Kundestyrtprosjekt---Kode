@@ -39,7 +39,7 @@ public class User implements IUser {
     public void setPassword(String password) {
         this.hash = password;
     }
-    public boolean authorize(User u) {
+    public boolean authorize(IUser u) {
         return true;
     }
 }

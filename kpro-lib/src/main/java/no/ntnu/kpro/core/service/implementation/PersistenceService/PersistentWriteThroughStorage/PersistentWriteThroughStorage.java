@@ -38,7 +38,6 @@ public class PersistentWriteThroughStorage {
         this.postProcessor = postProcessor;
         this.xstream = new XStream();
         xstream.addImplicitCollection(ConcurrentHashMap.class, "classes");
-        this.xstream.registerConverter(new MapEntryConverter());
         this.baseDir = basedir;
         if (!basedir.exists()) {
             basedir.mkdirs();
