@@ -15,10 +15,6 @@ import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 public class SMTPSender {
-
-    public static String LABEL = "XOMailLabel";
-    public static String PRIORITY = "XOMailPriority";
-    public static String TYPE = "XOMailType";
     private final String password;
     private final String mailAdr;
     private Properties props;

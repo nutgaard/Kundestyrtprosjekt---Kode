@@ -29,10 +29,10 @@ import no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWri
  * @author Nicklas
  */
 public class XOMessage implements Comparable<XOMessage>, Parcelable {
-    public static String LABEL = "XOMailLabel";
-    public static String PRIORITY = "XOMailPriority";
-    public static String TYPE = "XOMailType";
 
+    public static String LABEL = "SIO-Label";
+    public static String PRIORITY = "MMHS-Primary-Precedence";
+    public static String TYPE = "MMHS-Message-Type";
     private final String from;
     private final String to;
     private final String subject;
@@ -198,7 +198,7 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         mm.setText(message.getStrippedBody(), "UTF-8");
         mm.setHeader("Content-Type", "text/plain; charset=UTF-8");
         mm.addHeader(PRIORITY, message.priority.toString());
-        mm.addHeader(LABEL, message.grading.toString());
+        mm.addHeader(LABEL, message.grading.getHeaderValue());
         mm.addHeader(TYPE, message.type.toString());
         mm.setSentDate(message.date);
         return mm;
@@ -217,14 +217,30 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
             subject = m.getSubject();
             body = m.getContent().toString();
             priority = EnumHelper.getEnumValue(XOMessagePriority.class, m.getHeader(PRIORITY))[0];
-            label = EnumHelper.getEnumValue(XOMessageSecurityLabel.class, m.getHeader(LABEL))[0];
+//            label = EnumHelper.getEnumValue(XOMessageSecurityLabel.class, m.getHeader(LABEL))[0];
+            label = secLabelParsing(m.getHeader(LABEL));
             type = EnumHelper.getEnumValue(XOMessageType.class, m.getHeader(TYPE))[0];
             date = m.getReceivedDate();
-            
+
             return new XOMessage(from, to, subject, body, label, priority, type, date);
         }
-        return null;    
+        return null;
 //        return new XOMessage(from, to, subject, body, label, priority, type, date);
+    }
+
+    private static XOMessageSecurityLabel secLabelParsing(String[] secLabels) {
+        if (secLabels == null || secLabels.length == 0) {
+            return null;
+        }
+        String s = secLabels[0];
+        for (XOMessageSecurityLabel e : XOMessageSecurityLabel.values()) {
+            System.out.println("E: "+e);
+            System.out.println("S: "+s);
+            if (s.equalsIgnoreCase(e.getHeaderValue())) {
+                return e;
+            }
+        }
+        return null;
     }
 
     private static String convertAddressArray(Address[] al) {
@@ -232,7 +248,7 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         for (Address a : al) {
             sb.append(a.toString()).append(",");
         }
-        sb.deleteCharAt(sb.length()-1);
+        sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
     }
 

@@ -8,20 +8,14 @@ import no.ntnu.kpro.core.model.XOMessageType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 
 
 public class SMTPTest {
-
-    private static final String USER_PASSWORD = "kprothales2012";
-    private static final String USER_NAME = "kprothales";
     private static final String EMAIL_USER_ADDRESS = "kprothales@gmail.com";
     private static final String EMAIL_TO = "kprothales@gmail.com";
     private static final String EMAIL_SUBJECT = "Test E-Mail";
     private static final String EMAIL_TEXT = "This is a test e-mail";
-    private static final String LOCALHOST = "127.0.0.1";
-    @Mock
     private SMTPSender mock;
     private SMTP sender;
 

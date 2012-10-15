@@ -35,7 +35,7 @@ public class SMTP extends Thread {
     }
 
     public void send(XOMessage msg) {
-        System.out.println("Adding message");
+//        System.out.println("Adding message");
         if (!run) {
             start();
         }
@@ -48,7 +48,7 @@ public class SMTP extends Thread {
                 Collections.sort(queue, XOMessage.XOMessageSorter.getSendingPriority());
             }
         }
-        System.out.println("Message added to queue, queuesize: " + queue.size());
+//        System.out.println("Message added to queue, queuesize: " + queue.size());
 //        }
     }
     boolean run = false;
@@ -75,9 +75,9 @@ public class SMTP extends Thread {
             synchronized (queue) {
                 msg = queue.remove(0);
             }
-            System.out.println("Message removed from queue, queuesize: " + queue.size());
+//            System.out.println("Message removed from queue, queuesize: " + queue.size());
             sender.sendMail(msg);
-            System.out.println("Pusher ready, queuesize: " + queue.size());
+//            System.out.println("Pusher ready, queuesize: " + queue.size());
         }
     }
 
