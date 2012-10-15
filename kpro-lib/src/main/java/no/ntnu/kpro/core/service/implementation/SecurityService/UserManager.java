@@ -4,6 +4,7 @@
  */
 package no.ntnu.kpro.core.service.implementation.SecurityService;
 
+import android.content.Context;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,9 +19,9 @@ import no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWri
 public class UserManager {
     private PersistentWriteThroughStorage storage;
     
-    public UserManager(){
+    public UserManager(Context c){
         try {
-            this.storage = new PersistentWriteThroughStorage(new User("globals"), FileCryptoFactory.getProcessor(FileCryptoFactory.Crypto.NONE), new File("/"));
+            this.storage = new PersistentWriteThroughStorage(new User("globals"), FileCryptoFactory.getProcessor(FileCryptoFactory.Crypto.NONE), c.getDir("/", c.MODE_PRIVATE));
         } catch (Exception ex) {
             Logger.getLogger(UserManager.class.getName()).log(Level.SEVERE, null, ex);
         }
