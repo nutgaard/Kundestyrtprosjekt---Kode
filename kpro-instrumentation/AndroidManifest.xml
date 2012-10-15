@@ -8,4 +8,8 @@
     <instrumentation android:name="android.test.InstrumentationTestRunner"
                      android:targetPackage="no.ntnu.kpro.app"
                      android:label="Tests for KPro---Thales."/>
+    <activity android:name=".MainTabActivity"
+            android:label="@string/no.ntnu.no.kpro.app"
+              android:theme="@android:style/Theme.NoTitleBar">
+    </activity>
 </manifest>

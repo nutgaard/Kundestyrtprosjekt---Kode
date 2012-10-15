@@ -4,17 +4,31 @@
  */
 package no.ntnu.kpro.app.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.Address;
@@ -78,6 +92,8 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         addReceiverOnFocusChangedListener(txtReceiver);
         addSubjectOnFocusChangedListener(txtSubject);
 
+        addClickListener(btnAddAttachment);
+
         populateSpinners();
         setDefaultSpinnerValues();
     }
@@ -136,7 +152,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
     public void mailReceivedError() {
         throw new UnsupportedOperationException("Not supported yet.");
-    }    
+    }
 
     private void addBtnSendClickListener(Button btnSend) {
         btnSend.setOnClickListener(
@@ -303,7 +319,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                 });
 
     }
-    
+
     private void addReceiverOnFocusChangedListener(EditText receiver) {
         final SendMessageActivity t = this;
         receiver.setOnFocusChangeListener(
@@ -329,5 +345,49 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         }
                     }
                 });
+    }
+    private int RESULT_LOAD_IMAGE = 1;
+
+    private void addClickListener(Button btnAddAttachment) {
+
+        final String[] items = new String[]{"From Camera", "From SD Card"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, items);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Select Content");
+        builder.setAdapter(adapter, null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+
+
+        //CODE FOR FETCHING IMAGE
+//        btnAddAttachment.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View view) {
+//                Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                startActivityForResult(i, RESULT_LOAD_IMAGE);
+//
+//            }
+//        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            // String picturePath contains the path of selected Image                        
+        }
     }
 }
