@@ -66,6 +66,7 @@ public class MessageOperationActivity extends SendMessageActivity {
                 sprSecurityLabel.setSelection(j);
             }
         }
+        sprSecurityLabel.setEnabled(false);
         sprPriority = (Spinner) findViewById(R.id.sprPriority);
         for (int j = 0; j < sprPriority.getCount(); j++) {
             if (sprPriority.getItemAtPosition(j).toString().equals(message.getPriority().toString())) {
@@ -81,4 +82,5 @@ public class MessageOperationActivity extends SendMessageActivity {
         txtMessage = (EditText) findViewById(R.id.txtMessage);
         txtMessage.setText("\n\n" + message.getFrom() + " wrote: \n\n" + message.getStrippedBody());
     }
+    
 }
