@@ -18,6 +18,7 @@ import no.ntnu.kpro.core.service.ServiceProvider;
  * @author Kristin
  */
 public class MainTabActivity extends WrapperTabActivity{
+    
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_tab);
@@ -54,6 +55,11 @@ public class MainTabActivity extends WrapperTabActivity{
         tabHost.addTab(videospec); // Adding videos tab
         
         tabHost.setCurrentTab(0);
+    }
+    
+    public void switchTab(int tab){
+        TabHost th = (TabHost) findViewById(android.R.id.tabhost);
+        th.setCurrentTab(tab);
     }
     
     @Override

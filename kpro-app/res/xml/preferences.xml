@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen 
+    xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+    <PreferenceCategory android:title="Message retreival">
+        <ListPreference
+            android:key="message_retrieval"
+            android:title="Strategy"
+            android:summary="Select strategy for message retrieval"
+            android:entries="@array/message_retrieval_entries"
+            android:entryValues="@array/message_retrieval_values"
+            android:defaultValue="@string/message_retrieval_default" />
+        <EditTextPreference 
+            android:key="poll_interval"
+            android:dependency="message_retrieval"
+            android:summary="Select pull interval in minutes"
+            android:title="Poll interval"
+            android:defaultValue="1"
+            android:inputType="number"
+/>
+    </PreferenceCategory>                
+    
+    <PreferenceCategory android:title="Message attributes">
+        <no.ntnu.kpro.app.ListPreferenceMultiSelect 
+            android:defaultValue="NATO_CONFIDENTIALOV=I=XseparatorX=I=VONATO_RESTRICTEDOV=I=XseparatorX=I=VONATO_UNCLASSIFIEDOV=I=XseparatorX=I=VOCONFIDENTIALOV=I=XseparatorX=I=VORESTRICTEDOV=I=XseparatorX=I=VOUNCLASSIFIEDOV=I=XseparatorX=I=VOBEGRENSETOV=I=XseparatorX=I=VOUGRADERTOV=I=XseparatorX=I=VOKONFIDENSIELT"
+            android:key="security_labels_available"
+            android:title="Security labels"
+            android:entries="@array/security_labels"
+            android:summary="Select visible security labels for a new message"
+            android:entryValues="@array/security_labels_values"/>
+    </PreferenceCategory>
+</PreferenceScreen>

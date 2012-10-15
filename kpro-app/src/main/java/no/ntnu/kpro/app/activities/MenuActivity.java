@@ -48,7 +48,8 @@ public class MenuActivity extends WrapperActivity{
             case R.id.menu_contacts:
                 return true;
             case R.id.menu_settings:
-                //showHelp();
+                Intent i3 = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivity(i3);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

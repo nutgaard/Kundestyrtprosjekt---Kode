@@ -34,4 +34,9 @@
     <string name="invalidMessageSubjectError">I´m sorry. The subject can not be empty. </string>
     <string name="invalidMessageBodyError">Please add a message body. </string>  
             
+            
+    <!-- Preferences strings -->
+    <string name="message_retrieval_default">Push</string>
+    <string name="separator">OV=I=XseparatorX=I=VO</string>
+    
 </resources>
