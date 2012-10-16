@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import java.security.Security;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -27,8 +28,8 @@ import no.ntnu.kpro.core.service.interfaces.SecurityService;
  * @author Nicklas
  */
 public class ServiceProvider extends Service {
+
     private static ServiceProvider instance;
-    
     private IBinder mBinder = new LocalBinder();
     private static final String TAG = "KPRO";
     public static ThreadPoolExecutor threadpool;
@@ -37,7 +38,6 @@ public class ServiceProvider extends Service {
     private HALService HALService;
     private NetworkService networkService;
     private SecurityService securityService;
-            
 
     @Override
     public void onCreate() {
@@ -69,6 +69,7 @@ public class ServiceProvider extends Service {
         Log.d(this.getClass().getName(), "OnBind");
         return this.mBinder;
     }
+
     @Override
     public boolean onUnbind(Intent intent) {
         boolean b = super.onUnbind(intent);
