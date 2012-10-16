@@ -18,6 +18,7 @@ import no.ntnu.kpro.core.service.factories.HALServiceFactory;
 import no.ntnu.kpro.core.service.factories.NetworkServiceFactory;
 import no.ntnu.kpro.core.service.factories.PersistenceServiceFactory;
 import no.ntnu.kpro.core.service.factories.SecurityServiceFactory;
+import no.ntnu.kpro.core.service.implementation.NetworkService.crypto.CryptoHandler;
 import no.ntnu.kpro.core.service.interfaces.HALService;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.service.interfaces.PersistenceService;
@@ -50,6 +51,7 @@ public class ServiceProvider extends Service {
         this.securityService = SecurityServiceFactory.createService();
         this.networkService.startIMAPIdle();
         this.networkService.getAllMessages();
+        CryptoHandler.setDefaultMailcap(); //tell java mail how to handle security
         Log.i(TAG, "Service starting");
     }
 
