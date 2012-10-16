@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Properties;
 import javax.mail.Authenticator;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 /**
  *
@@ -20,8 +21,8 @@ public class SMTP extends Thread {
     private final List<XOMessage> queue;
     private final SMTPSender sender;
 
-    public SMTP(final String username, final String password, final String mailAdr, final Properties props, final Authenticator auth) {
-        this(new SMTPSender(username, password, mailAdr, props, auth));
+    public SMTP(final String username, final String password, final String mailAdr, final Properties props, final Authenticator auth, List<NetworkService.Callback> listeners) {
+        this(new SMTPSender(username, password, mailAdr, props, auth, listeners));
     }
 
     public SMTP(SMTPSender sender) {
