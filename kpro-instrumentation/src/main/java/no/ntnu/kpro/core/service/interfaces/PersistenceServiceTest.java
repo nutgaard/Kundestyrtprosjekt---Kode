@@ -13,7 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import no.ntnu.kpro.core.service.interfaces.PersistenceService.callback;
+import no.ntnu.kpro.core.service.interfaces.PersistenceService.Callback;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -133,7 +133,7 @@ public class PersistenceServiceTest {
     public void testLoadObject_name_callback() {
         System.out.println("loadObject");
         String fileName = "";
-        callback receiver = null;
+        Callback receiver = null;
         PersistenceService instance = new PersistenceServiceImpl();
         instance.loadObject(fileName, receiver);
         // TODO review the generated test code and remove the default call to fail.
@@ -148,7 +148,7 @@ public class PersistenceServiceTest {
         System.out.println("loadObject");
         String fileName = "";
         String folder = "";
-        callback receiver = null;
+        Callback receiver = null;
         PersistenceService instance = new PersistenceServiceImpl();
         instance.loadObject(fileName, folder, receiver);
         // TODO review the generated test code and remove the default call to fail.
@@ -162,7 +162,7 @@ public class PersistenceServiceTest {
     public void testLoadString_name_callback() {
         System.out.println("loadString");
         String fileName = "";
-        callback receiver = null;
+        Callback receiver = null;
         PersistenceService instance = new PersistenceServiceImpl();
         instance.loadString(fileName, receiver);
         // TODO review the generated test code and remove the default call to fail.
@@ -177,7 +177,7 @@ public class PersistenceServiceTest {
         System.out.println("loadString");
         String fileName = "";
         String folder = "";
-        callback receiver = null;
+        Callback receiver = null;
         PersistenceService instance = new PersistenceServiceImpl();
         instance.loadString(fileName, folder, receiver);
         // TODO review the generated test code and remove the default call to fail.
@@ -233,7 +233,7 @@ public class PersistenceServiceTest {
         System.out.println("authorize");
         String userName = "";
         String password = "";
-        callback receiver = null;
+        Callback receiver = null;
         PersistenceService instance = new PersistenceServiceImpl();
         instance.authorize(userName, password, receiver);
         // TODO review the generated test code and remove the default call to fail.
@@ -246,7 +246,7 @@ public class PersistenceServiceTest {
     @Test
     public void testIsAuthorized_callback() {
         System.out.println("isAuthorized");
-        callback receiver = null;
+        Callback receiver = null;
         PersistenceService instance = new PersistenceServiceImpl();
         instance.isAuthorized(receiver);
         // TODO review the generated test code and remove the default call to fail.
@@ -259,7 +259,7 @@ public class PersistenceServiceTest {
     @Test
     public void testGetFileList_callback() {
         System.out.println("getFileList");
-        callback receiver = null;
+        Callback receiver = null;
         PersistenceService instance = new PersistenceServiceImpl();
         instance.getFileList(receiver);
         // TODO review the generated test code and remove the default call to fail.
@@ -273,7 +273,7 @@ public class PersistenceServiceTest {
     public void testGetFileList_folder_callback() {
         System.out.println("getFileList");
         String folder = "";
-        callback receiver = null;
+        Callback receiver = null;
         PersistenceService instance = new PersistenceServiceImpl();
         instance.getFileList(folder, receiver);
         // TODO review the generated test code and remove the default call to fail.
@@ -287,7 +287,7 @@ public class PersistenceServiceTest {
     public void testGetFileList_Filter_callback() {
         System.out.println("getFileList");
         FilenameFilter filter = null;
-        callback receiver = null;
+        Callback receiver = null;
         PersistenceService instance = new PersistenceServiceImpl();
         instance.getFileList(filter, receiver);
         // TODO review the generated test code and remove the default call to fail.
@@ -302,7 +302,7 @@ public class PersistenceServiceTest {
         System.out.println("getFileList");
         String folder = "";
         FilenameFilter filter = null;
-        callback receiver = null;
+        Callback receiver = null;
         PersistenceService instance = new PersistenceServiceImpl();
         instance.getFileList(folder, filter, receiver);
         // TODO review the generated test code and remove the default call to fail.
@@ -336,16 +336,16 @@ public class PersistenceServiceTest {
         public void save(String fileName, String content, String folder) {
         }
 
-        public void loadObject(String fileName, callback receiver) {
+        public void loadObject(String fileName, Callback receiver) {
         }
 
-        public void loadObject(String fileName, String folder, callback receiver) {
+        public void loadObject(String fileName, String folder, Callback receiver) {
         }
 
-        public void loadString(String fileName, callback receiver) {
+        public void loadString(String fileName, Callback receiver) {
         }
 
-        public void loadString(String fileName, String folder, callback receiver) {
+        public void loadString(String fileName, String folder, Callback receiver) {
         }
 
         public void removeFile(String fileName) {
@@ -357,22 +357,22 @@ public class PersistenceServiceTest {
         public void authorize(String userName, String password) {
         }
 
-        public void authorize(String userName, String password, callback receiver) {
+        public void authorize(String userName, String password, Callback receiver) {
         }
 
-        public void isAuthorized(callback receiver) {
+        public void isAuthorized(Callback receiver) {
         }
 
-        public void getFileList(callback receiver) {
+        public void getFileList(Callback receiver) {
         }
 
-        public void getFileList(String folder, callback receiver) {
+        public void getFileList(String folder, Callback receiver) {
         }
 
-        public void getFileList(FilenameFilter filter, callback receiver) {
+        public void getFileList(FilenameFilter filter, Callback receiver) {
         }
 
-        public void getFileList(String folder, FilenameFilter filter, callback receiver) {
+        public void getFileList(String folder, FilenameFilter filter, Callback receiver) {
         }
 
         public void giveContext(Context context) {

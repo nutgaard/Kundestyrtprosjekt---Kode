@@ -9,8 +9,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.Flags;
@@ -25,6 +23,7 @@ import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.service.interfaces.NetworkService.Callback;
+import no.ntnu.kpro.core.utilities.Converter;
 
 /**
  *
@@ -77,7 +76,7 @@ public class IMAPStorage {
                     for (Message m : messages) {
                         System.out.println("Message: "+m.getClass().getName());
                         System.out.println("Subject: "+m.getSubject());
-                        XOMessage xo = XOMessage.convertToXO(m);
+                        XOMessage xo = Converter.convertToXO(m);
                         box.getBox().add(xo);
                         for (Callback cb : listener) {
                             cb.mailReceived(xo);
