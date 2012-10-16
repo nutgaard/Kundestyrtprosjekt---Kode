@@ -46,7 +46,7 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
     }
     private SMTP smtp;
     private IMAP imap;
-    private List<NetworkService.Callback> listeners;
+    
     public NetworkServiceImp(final String username, final String password, final String mailAdr) {
         this(username, password, mailAdr, new Properties());
     }
@@ -94,14 +94,6 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
     @Override
     public Box<XOMessage> getInbox() {
         return BoxName.INBOX.getBox();
-    }
-    @Override
-    public void addListener(NetworkService.Callback listener){
-        this.listeners.add(listener);
-    }
-    @Override
-    public void removeListener(NetworkService.Callback listener) {
-        this.listeners.remove(listener);
     }
 
     public void mailSent(XOMessage message, Address[] invalidAddress) {
