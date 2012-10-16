@@ -119,15 +119,8 @@
             android:id="@+id/btnSend"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="Send"
+            android:text="Save Message"
             android:layout_below="@id/txtMessage"/> 
-        
-        <Button
-            android:id="@+id/btnSave"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text="SAVE"
-            android:layout_below="@id/txtMessage"/>
     
     </RelativeLayout>
 
