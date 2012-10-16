@@ -28,6 +28,8 @@
         </activity>
         <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.ContactsActivity">
         </activity>
+        <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.activities.SettingsActivity">
+        </activity>
         <service android:name="no.ntnu.kpro.core.service.ServiceProvider">
             <intent-filter>
                 <action android:name="no.ntnu.kpro.core.service.ServiceProvider"/>
@@ -35,4 +37,5 @@
         </service>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.LOCATION_SERVICE" />
 </manifest>

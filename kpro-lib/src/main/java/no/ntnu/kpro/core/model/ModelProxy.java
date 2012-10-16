@@ -12,5 +12,6 @@ public class ModelProxy {
     public static interface IUser {
         public void setName(String name);
         public String getName();
+        public boolean authorize(IUser u);
     }
 }

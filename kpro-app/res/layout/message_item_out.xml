@@ -119,7 +119,6 @@
             android:id="@+id/btnPrevious"
             style="@style/buttonStyle"
             android:background="@drawable/btn_black"
-            android:drawableTop="@drawable/ic_tab_arrow_up"
             android:textColor="@drawable/button_text_color"
             android:text="@string/previousMessageString" />
         
