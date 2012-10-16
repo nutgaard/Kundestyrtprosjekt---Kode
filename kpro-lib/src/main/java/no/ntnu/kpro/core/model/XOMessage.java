@@ -6,7 +6,6 @@ package no.ntnu.kpro.core.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.sun.mail.imap.IMAPMessage;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.Comparator;
@@ -17,12 +16,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.Address;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import no.ntnu.kpro.core.helpers.EnumHelper;
-import no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWriteThroughStorage.PersistentWriteThroughStorage;
+import org.spongycastle.mail.smime.SMIMESignedGenerator;
 
 /**
  *
@@ -190,12 +190,19 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
     };
 
     public static MimeMessage convertToMime(Session session, XOMessage message) throws Exception {
+        SMIMESignedGenerator gen = new SMIMESignedGenerator();
+        gen.addSignerInfoGenerator(null);//TODO: Actually add this
+        
+        MimeBodyPart msg = new MimeBodyPart();
+        msg.setText(message.getStrippedBody());
+        MimeMultipart crypoedText = gen.generate(msg);
+        
         MimeMessage mm = new MimeMessage(session);
         mm.setFrom(new InternetAddress(message.getFrom()));
         mm.setRecipients(Message.RecipientType.TO, InternetAddress.parse(message.getTo()));
 
         mm.setSubject(message.getSubject(), "UTF-8");
-        mm.setText(message.getStrippedBody(), "UTF-8");
+        mm.setContent(crypoedText, crypoedText.getContentType());
         mm.setHeader("Content-Type", "text/plain; charset=UTF-8");
         mm.addHeader(PRIORITY, message.priority.toString());
         mm.addHeader(LABEL, message.grading.getHeaderValue());
