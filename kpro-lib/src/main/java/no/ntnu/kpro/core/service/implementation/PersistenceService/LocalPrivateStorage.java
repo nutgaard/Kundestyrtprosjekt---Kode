@@ -129,20 +129,20 @@ public class LocalPrivateStorage extends PersistenceService {
         saveToStorage(fileName, folder, content);
     }
 
-    public void loadObject(String fileName, callback receiver) {
+    public void loadObject(String fileName, Callback receiver) {
         loadObject(fileName, "", receiver);
     }
 
-    public void loadObject(String fileName, String folder, callback receiver) {
+    public void loadObject(String fileName, String folder, Callback receiver) {
         Object object = loadFile(fileName, "");
         receiver.loadObjectReturn(fileName,object);
     }
 
-    public void loadString(String fileName, callback receiver) {
+    public void loadString(String fileName, Callback receiver) {
         loadString(fileName, "", receiver);
     }
 
-    public void loadString(String fileName, String folder, callback receiver) {
+    public void loadString(String fileName, String folder, Callback receiver) {
         try{
             BufferedReader br = readFromStorage(fileName, folder);
             String nextLine = br.readLine();
@@ -171,27 +171,27 @@ public class LocalPrivateStorage extends PersistenceService {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void authorize(String userName, String password, callback receiver) {
+    public void authorize(String userName, String password, Callback receiver) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void isAuthorized(callback receiver) {
+    public void isAuthorized(Callback receiver) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void getFileList(callback receiver) {
+    public void getFileList(Callback receiver) {
         getFileList("", receiver);
     }
 
-    public void getFileList(String folder, callback receiver) {
+    public void getFileList(String folder, Callback receiver) {
         receiver.fileListReturn(getFileList(folder));
     }
 
-    public void getFileList(FilenameFilter filter, callback receiver) {
+    public void getFileList(FilenameFilter filter, Callback receiver) {
        getFileList("", filter, receiver);
     }
 
-    public void getFileList(String folder, FilenameFilter filter, callback receiver) {
+    public void getFileList(String folder, FilenameFilter filter, Callback receiver) {
         receiver.fileListReturn(fileSearch(folder, filter));
     }
 

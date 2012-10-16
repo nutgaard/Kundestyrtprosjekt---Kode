@@ -9,18 +9,18 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 /**
  *
- * @author Nicklas
+ * //@author Nicklas
  */
 public class XOMessageTest {
-    @Before
+    //@Before
     public void setup() {
         
     }
-    @After
+    //@After
     public void teardown() {
         
     }
-    @Test
+    //@Test
     public void test() {
         assertTrue(true);
     }
