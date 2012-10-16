@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import java.security.Security;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -84,7 +83,38 @@ public class ServiceProvider extends Service {
             return ServiceProvider.this;
         }
     }
-
+    public void addListener(Activity activity){
+        for (Class cls : activity.getClass().getInterfaces()){
+            if (cls.equals(NetworkService.Callback.class) && networkService != null){
+                networkService.addListener((NetworkService.Callback)activity);
+            }
+            if (cls.equals(PersistenceService.Callback.class) && persistenceService != null){
+                persistenceService.addListener((PersistenceService.Callback)activity);
+            }
+            if (cls.equals(SecurityService.Callback.class) && securityService != null){
+                securityService.addListener((SecurityService.Callback)activity);
+            }
+            if (cls.equals(HALService.Callback.class) && HALService != null){
+                HALService.addListener((HALService.Callback)activity);
+            }
+        }
+    }
+    public void removeListener(Activity activity){
+        for (Class cls : activity.getClass().getInterfaces()){
+            if (cls.equals(NetworkService.Callback.class) && networkService != null){
+                networkService.removeListener((NetworkService.Callback)activity);
+            }
+            if (cls.equals(PersistenceService.Callback.class) && persistenceService != null){
+                persistenceService.removeListener((PersistenceService.Callback)activity);
+            }
+            if (cls.equals(SecurityService.Callback.class) && securityService != null){
+                securityService.removeListener((SecurityService.Callback)activity);
+            }
+            if (cls.equals(HALService.Callback.class) && HALService != null){
+                HALService.removeListener((HALService.Callback)activity);
+            }
+        }
+    }
     public PersistenceService getPersistenceService() {
         return persistenceService;
     }
