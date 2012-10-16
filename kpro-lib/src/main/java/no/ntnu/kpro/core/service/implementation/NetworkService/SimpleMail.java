@@ -175,7 +175,7 @@ public class SimpleMail extends NetworkService {
     }
 
     public void send(XOMessage message) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        sendMail(message.getTo(), message.getSubject(), message.getStrippedBody(), message.getGrading(), message.getPriority(), message.getType());
     }
 
     public void startIMAPIdle() {
