@@ -37,6 +37,7 @@ public class PersistentWriteThroughStorage {
         this.user = user;
         this.postProcessor = postProcessor;
         this.xstream = new XStream();
+        xstream.addImplicitCollection(ConcurrentHashMap.class, "classes");
         this.baseDir = basedir;
         if (!basedir.exists()) {
             basedir.mkdirs();
@@ -242,7 +243,6 @@ public class PersistentWriteThroughStorage {
         is.read(data);
         is.close();
         data = postProcessor.unprocess(data);
-        xstream.addImplicitCollection(ConcurrentHashMap.class, "classes");
         if (data.length == 0) {
             this.index = new ConcurrentHashMap<String, Integer>();
         } else {
@@ -261,7 +261,6 @@ public class PersistentWriteThroughStorage {
             ind = indL[0];
         }
         OutputStream os = new FileOutputStream(ind);
-        xstream.addImplicitCollection(ConcurrentHashMap.class, "classes");
         byte[] data = xstream.toXML(this.index).getBytes();
         data = postProcessor.process(data);
         os.write(data);

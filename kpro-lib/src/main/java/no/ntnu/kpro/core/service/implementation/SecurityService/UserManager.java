@@ -4,9 +4,10 @@
  */
 package no.ntnu.kpro.core.service.implementation.SecurityService;
 
-import java.io.File;
+import android.content.Context;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import no.ntnu.kpro.core.model.ModelProxy.IUser;
 import no.ntnu.kpro.core.model.User;
 import no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWriteThroughStorage.FileCryptoFactory;
 import no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWriteThroughStorage.PersistentWriteThroughStorage;
@@ -18,9 +19,9 @@ import no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWri
 public class UserManager {
     private PersistentWriteThroughStorage storage;
     
-    public UserManager(){
+    public UserManager(Context c){
         try {
-            this.storage = new PersistentWriteThroughStorage(new User("globals"), FileCryptoFactory.getProcessor(FileCryptoFactory.Crypto.NONE), new File("/"));
+            this.storage = new PersistentWriteThroughStorage(new User("globals"), FileCryptoFactory.getProcessor(FileCryptoFactory.Crypto.NONE), c.getDir("", c.MODE_PRIVATE));
         } catch (Exception ex) {
             Logger.getLogger(UserManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -32,10 +33,10 @@ public class UserManager {
             Logger.getLogger(UserManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public User authorize(User user){
+    public IUser authorize(IUser user){
         try {
-            User[] users = (User[])storage.findAll(User.class);
-            for (User u : users){
+            IUser[] users = storage.castTo(storage.findAll(User.class), IUser[].class);
+            for (IUser u : users){
                 if (u.authorize(user)){
                     return u;
                 }
