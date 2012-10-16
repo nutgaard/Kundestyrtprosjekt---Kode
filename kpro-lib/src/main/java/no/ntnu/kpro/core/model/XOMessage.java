@@ -223,7 +223,7 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
             from = convertAddressArray(m.getFrom());
             to = convertAddressArray(m.getRecipients(Message.RecipientType.TO));
             subject = m.getSubject();
-            body = m.getContent().toString();
+            Object bodyBites = m.getContent();
             priority = EnumHelper.getEnumValue(XOMessagePriority.class, m.getHeader(PRIORITY))[0];
 //            label = EnumHelper.getEnumValue(XOMessageSecurityLabel.class, m.getHeader(LABEL))[0];
             label = secLabelParsing(m.getHeader(LABEL));

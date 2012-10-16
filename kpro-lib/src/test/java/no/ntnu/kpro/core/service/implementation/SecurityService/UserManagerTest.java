@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author Nicklas
+ * ////@author Nicklas
  */
 public class UserManagerTest {
 
@@ -29,15 +29,15 @@ public class UserManagerTest {
     public UserManagerTest() {
     }
 
-    @BeforeClass
+    ////@BeforeClass
     public static void setUpClass() {
     }
 
-    @AfterClass
+    ////@AfterClass
     public static void tearDownClass() {
     }
 
-    @Before
+    ////@Before
     public void setUp() {
         c = mock(Context.class);
         when(c.getDir(anyString(), anyInt())).thenReturn(new File("/"));
@@ -46,22 +46,22 @@ public class UserManagerTest {
         u.setPassword("oasidj");
     }
 
-    @After
+    ////@After
     public void tearDown() {
         c = null;
         m = null;
     }
     // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
+    // The methods must be annotated with annotation ////@Test. For example:
     //
 
-    @Test
+    ////@Test
     public void createUser() {
         m.createUser(u);
         assertTrue(true);
     }
     
-    @Test
+    ////@Test
     public void auth() {
         m.createUser(u);
         IUser u2 = m.authorize(u);

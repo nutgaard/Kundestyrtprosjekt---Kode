@@ -12,25 +12,25 @@ import static org.mockito.Mockito.*;
 
 
 public class SMTPTest {
-    private static final String EMAIL_USER_ADDRESS = "kprothales@gmail.com";
-    private static final String EMAIL_TO = "kprothales@gmail.com";
+    private static final String EMAIL_USER_ADDRESS = "kprothales//@gmail.com";
+    private static final String EMAIL_TO = "kprothales//@gmail.com";
     private static final String EMAIL_SUBJECT = "Test E-Mail";
     private static final String EMAIL_TEXT = "This is a test e-mail";
     private SMTPSender mock;
     private SMTP sender;
 
-    @Before
+    //@Before
     public void setup() {
         mock = mock(SMTPSender.class);
         when(mock.sendMail(any(XOMessage.class))).thenReturn(Boolean.TRUE);
         sender = new SMTP(mock);
     }
-    @After
+    //@After
     public void teardown() {
         mock = null;
         sender = null;
     }
-    @Test
+    //@Test
     public void test() throws InterruptedException {
         int n = 10;
         XOMessage[] ml = new XOMessage[n];
