@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.Address;
@@ -64,6 +65,9 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     boolean textEnteredInMessageBody = false;
     XOMessagePriority defaultPriority = XOMessagePriority.ROUTINE;
     XOMessageType defaultType = XOMessageType.OPERATION;
+    private List<Uri> images;
+    private List<Uri> videos;
+    private List<Uri> sound;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,6 +104,8 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         populateSpinners();
         setDefaultSpinnerValues();
+
+        pictur
     }
 
     /**
@@ -209,14 +215,14 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                 });
     }
 
-    private void resetFields(){
+    private void resetFields() {
         txtReceiver.setText("");
         txtSubject.setText("");
         txtMessageBody.setText("");
         sprSecurityLabel.setSelection(0);
         setDefaultSpinnerValues();
     }
-    
+
     private boolean isValidInputField(String input) {
         return !input.equals("");
     }
@@ -425,8 +431,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
                 AlertDialog dialog = builder.create();
                 dialog.show();
-
-
             }
         });
     }
@@ -440,7 +444,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         }
 
         if (requestCode == PICK_VOICE_RECORDING) {
-            soundRecordingUri = data.getData();            
+            soundRecordingUri = data.getData();
             Toast.makeText(SendMessageActivity.this, "Saved: " + soundRecordingUri.getPath(), Toast.LENGTH_LONG).show();
         }
 
