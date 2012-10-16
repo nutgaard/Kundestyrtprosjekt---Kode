@@ -18,7 +18,7 @@ import no.ntnu.kpro.core.service.ServiceProvider;
  *
  * @author Nicklas & Ida
  */
-public class WrapperActivity extends Activity {
+public abstract class WrapperActivity extends Activity {
 
     protected ServiceProvider mServiceProvider;
     private ServiceConnection mConnection;
@@ -45,11 +45,14 @@ public class WrapperActivity extends Activity {
     public void onServiceConnected(ServiceProvider serviceProvider) {
         Log.d(this.getClass().getName(), "ServiceConnected to " + this.getClass().getName());
         this.mServiceProvider = serviceProvider;
+        serviceProvider.addListener(this);
     }
 
     public void onServiceDisconnected(ServiceProvider serviceProvider) {
         Log.d(this.getClass().getName(), "ServiceDisconnected from " + this.getClass().getName());
+        serviceProvider.removeListener(this);
         this.mServiceProvider = null;
+        
     }
 
     @Override

@@ -29,11 +29,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.Address;
@@ -65,6 +69,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     boolean textEnteredInMessageBody = false;
     XOMessagePriority defaultPriority = XOMessagePriority.ROUTINE;
     XOMessageType defaultType = XOMessageType.OPERATION;
+    //The lists containing the data fetched from the attachments getter.
     private List<Uri> images;
     private List<Uri> videos;
     private List<Uri> sound;
@@ -105,7 +110,9 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         populateSpinners();
         setDefaultSpinnerValues();
 
-        pictur
+        this.images = new ArrayList<Uri>();
+        this.videos = new ArrayList<Uri>();
+        this.videos = new ArrayList<Uri>();
     }
 
     /**
@@ -191,8 +198,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         if (doIntermediateValidation()) {
                             if (doSendButtonValidation()) {
                                 XOMessage m = new XOMessage("MyMailAddress@gmail.com", txtReceiver.getText().toString(), txtSubject.getText().toString(), txtMessageBody.getText().toString(), selectedSecurity, selectedPriority, selectedType, new Date());
-//                                getServiceProvider().getNetworkService().sendMail(txtReceiver.getText().toString(), txtSubject.getText().toString(), txtMessageBody.getText().toString(), selectedSecurity, selectedPriority, selectedType);
-                                getServiceProvider().getNetworkService().send(m);
+//                                getServiceProvider().getNetworkService().
 
                                 //Is not necessary to have this when callback is implemented, as mailSent() will be called
                                 Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent.", Toast.LENGTH_SHORT);
@@ -375,8 +381,8 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                     }
                 });
     }
-    private Uri mImageCaptureUri;
-    private Uri soundRecordingUri;
+    private Uri imageCaptureUri;
+    private Uri soundCaptureUri;
     private ImageView mImageView;
     private static final int PICK_IMAGE_FROM_CAMERA = 0;
     private static final int PICK_IMAGE_FROM_FILE = 1;
@@ -399,27 +405,36 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                     public void onClick(DialogInterface dialog, int item) {
                         if (item == PICK_IMAGE_FROM_CAMERA) {
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            File file = new File(Environment.getExternalStorageDirectory(), "tmp_avatar_" + String.valueOf(System.currentTimeMillis()) + ".jpg");
-                            mImageCaptureUri = Uri.fromFile(file);
-                            txtMessageBody.setText(mImageCaptureUri.toString());
-
+                            File file = getOutputMediaFile(MEDIA_TYPE_IMAGE);  
+                            imageCaptureUri = Uri.fromFile(file);
                             try {
-                                intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+                                intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, imageCaptureUri);
                                 intent.putExtra("return-data", true);
                                 startActivityForResult(intent, PICK_IMAGE_FROM_CAMERA);
                             } catch (Exception e) {
-                                throw new IllegalArgumentException("Could not get image.");
+                              Log.d("SendMessage","Could not get image.");
                             }
 
-                            //dialog.cancel();
+                            //Add the image to list of images
+                            SendMessageActivity.this.images.add(imageCaptureUri);
+
+                            dialog.cancel();
                         } else if (item == PICK_IMAGE_FROM_FILE) {
                             Intent intent = new Intent();
                             intent.setType("image/*");
                             intent.setAction(Intent.ACTION_GET_CONTENT);
-
-                            startActivityForResult(Intent.createChooser(intent, "Complete action using"), PICK_IMAGE_FROM_FILE);
+                            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_FROM_FILE);
                         } else if (item == PICK_VOICE_RECORDING) {
                             Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+                            File file = getOutputMediaFile(MEDIA_TYPE_SOUND);                            
+                            soundCaptureUri = Uri.fromFile(file);
+                            try {
+                                intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, soundCaptureUri);
+                                intent.putExtra("return-data", true);
+                                startActivityForResult(intent, PICK_VOICE_RECORDING);
+                            } catch (Exception e) {
+                               Log.d("SendMessage", "Exception saving voice");
+                            }
                             startActivityForResult(intent, PICK_VOICE_RECORDING);
 
                         } else if (item == PICK_GPS_COORDINATES) {
@@ -444,10 +459,14 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         }
 
         if (requestCode == PICK_VOICE_RECORDING) {
-            soundRecordingUri = data.getData();
-            Toast.makeText(SendMessageActivity.this, "Saved: " + soundRecordingUri.getPath(), Toast.LENGTH_LONG).show();
+            
         }
 
+        if (requestCode == PICK_IMAGE_FROM_FILE) {
+            Uri imageFromFileUri = Uri.fromFile(new File(data.getData().getEncodedPath()));
+            SendMessageActivity.this.images.add(imageFromFileUri);
+
+        }
 
 //        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
 //            Uri selectedImage = data.getData();
@@ -463,5 +482,53 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 //
 //            // String picturePath contains the path of selected Image                        
 //        }
+    }
+    public static final int MEDIA_TYPE_IMAGE = 1;
+    public static final int MEDIA_TYPE_VIDEO = 2;
+    public static final int MEDIA_TYPE_SOUND = 3;
+
+    /**
+     * Create a file Uri for saving an image or video
+     */
+    private static Uri getOutputMediaFileUri(int type) {
+        return Uri.fromFile(getOutputMediaFile(type));
+    }
+
+    /**
+     * Create a File for saving an image or video
+     */
+    private static File getOutputMediaFile(int type) {
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "XOXOmessage");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d("MyCameraApp", "failed to create directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator
+                    + "IMG_" + timeStamp + ".jpg");
+        } else if (type == MEDIA_TYPE_VIDEO) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator
+                    + "VID_" + timeStamp + ".mp4");
+        } else if (type == MEDIA_TYPE_SOUND) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator
+                    + "SND_" + timeStamp + ".3gp");
+        } else {
+            return null;
+        }
+        return mediaFile;
     }
 }

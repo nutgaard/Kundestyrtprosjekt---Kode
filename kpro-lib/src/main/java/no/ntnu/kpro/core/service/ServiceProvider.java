@@ -17,6 +17,7 @@ import no.ntnu.kpro.core.service.factories.HALServiceFactory;
 import no.ntnu.kpro.core.service.factories.NetworkServiceFactory;
 import no.ntnu.kpro.core.service.factories.PersistenceServiceFactory;
 import no.ntnu.kpro.core.service.factories.SecurityServiceFactory;
+import no.ntnu.kpro.core.service.implementation.NetworkService.crypto.CryptoHandler;
 import no.ntnu.kpro.core.service.interfaces.HALService;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.service.interfaces.PersistenceService;
@@ -27,8 +28,8 @@ import no.ntnu.kpro.core.service.interfaces.SecurityService;
  * @author Nicklas
  */
 public class ServiceProvider extends Service {
+
     private static ServiceProvider instance;
-    
     private IBinder mBinder = new LocalBinder();
     private static final String TAG = "KPRO";
     public static ThreadPoolExecutor threadpool;
@@ -37,7 +38,6 @@ public class ServiceProvider extends Service {
     private HALService HALService;
     private NetworkService networkService;
     private SecurityService securityService;
-            
 
     @Override
     public void onCreate() {
@@ -50,6 +50,7 @@ public class ServiceProvider extends Service {
         this.securityService = SecurityServiceFactory.createService();
         this.networkService.startIMAPIdle();
         this.networkService.getAllMessages();
+        CryptoHandler.setDefaultMailcap(); //tell java mail how to handle security
         Log.i(TAG, "Service starting");
     }
 
@@ -69,6 +70,7 @@ public class ServiceProvider extends Service {
         Log.d(this.getClass().getName(), "OnBind");
         return this.mBinder;
     }
+
     @Override
     public boolean onUnbind(Intent intent) {
         boolean b = super.onUnbind(intent);
@@ -83,7 +85,38 @@ public class ServiceProvider extends Service {
             return ServiceProvider.this;
         }
     }
-
+    public void addListener(Activity activity){
+        for (Class cls : activity.getClass().getInterfaces()){
+            if (cls.equals(NetworkService.Callback.class) && networkService != null){
+                networkService.addListener((NetworkService.Callback)activity);
+            }
+            if (cls.equals(PersistenceService.Callback.class) && persistenceService != null){
+                persistenceService.addListener((PersistenceService.Callback)activity);
+            }
+            if (cls.equals(SecurityService.Callback.class) && securityService != null){
+                securityService.addListener((SecurityService.Callback)activity);
+            }
+            if (cls.equals(HALService.Callback.class) && HALService != null){
+                HALService.addListener((HALService.Callback)activity);
+            }
+        }
+    }
+    public void removeListener(Activity activity){
+        for (Class cls : activity.getClass().getInterfaces()){
+            if (cls.equals(NetworkService.Callback.class) && networkService != null){
+                networkService.removeListener((NetworkService.Callback)activity);
+            }
+            if (cls.equals(PersistenceService.Callback.class) && persistenceService != null){
+                persistenceService.removeListener((PersistenceService.Callback)activity);
+            }
+            if (cls.equals(SecurityService.Callback.class) && securityService != null){
+                securityService.removeListener((SecurityService.Callback)activity);
+            }
+            if (cls.equals(HALService.Callback.class) && HALService != null){
+                HALService.removeListener((HALService.Callback)activity);
+            }
+        }
+    }
     public PersistenceService getPersistenceService() {
         return persistenceService;
     }

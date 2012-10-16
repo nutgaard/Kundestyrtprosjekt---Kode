@@ -4,13 +4,18 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
+import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAP;
+import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPPull;
 import no.ntnu.kpro.core.service.implementation.NetworkService.SMTP.SMTP;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
@@ -18,21 +23,48 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  *
  * @author Nicklas
  */
-public class NetworkServiceImp extends NetworkService {
+public class NetworkServiceImp extends NetworkService implements NetworkService.Callback {
+    public enum BoxName {
 
+        INBOX("INBOX", new Box<XOMessage>()),
+        SENT("[Gmail]/Sendt e-post", new Box<XOMessage>());
+        private String boxName;
+        private Box<XOMessage> box;
+
+        private BoxName(String boxName, Box box) {
+            this.boxName = boxName;
+            this.box = box;
+        }
+
+        public String getBoxname() {
+            return this.boxName;
+        }
+
+        public Box<XOMessage> getBox() {
+            return this.box;
+        }
+    }
     private SMTP smtp;
     private IMAP imap;
-
+    private List<NetworkService.Callback> listeners;
     public NetworkServiceImp(final String username, final String password, final String mailAdr) {
         this(username, password, mailAdr, new Properties());
     }
     public NetworkServiceImp(final String username, final String password, final String mailAdr, Properties properties) {
+        this.listeners = Collections.synchronizedList(new LinkedList<NetworkService.Callback>());
         this.smtp = new SMTP(username, password, mailAdr, properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(username, password);
             }
-        });
+        }, listeners);
+        this.imap = new IMAP(new IMAPPull(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        }, listeners, 100));
+        addListener(this);
     }
     public void send(XOMessage msg) {
         this.smtp.send(msg);
@@ -56,23 +88,35 @@ public class NetworkServiceImp extends NetworkService {
 
     @Override
     public Box<XOMessage> getOutbox() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return BoxName.SENT.getBox();
     }
 
     @Override
     public Box<XOMessage> getInbox() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return BoxName.INBOX.getBox();
     }
     @Override
     public void addListener(NetworkService.Callback listener){
-        smtp.getSender().addCallback(listener);
-        imap.getStorage().addCallback(listener);
-//        imap.getIdleHandler().addCallback(listener);
+        this.listeners.add(listener);
     }
     @Override
     public void removeListener(NetworkService.Callback listener) {
-        smtp.getSender().removeCallback(listener);
-        imap.getStorage().removeCallback(listener);
-//        imap.getIdleHandler().removeCallback(listener);
+        this.listeners.remove(listener);
+    }
+
+    public void mailSent(XOMessage message, Address[] invalidAddress) {
+        getOutbox().add(message);
+    }
+
+    public void mailSentError(XOMessage message, Exception ex) {
+        
+    }
+
+    public void mailReceived(XOMessage message) {
+        getInbox().add(message);
+    }
+
+    public void mailReceivedError(Exception ex) {
+        
     }
 }

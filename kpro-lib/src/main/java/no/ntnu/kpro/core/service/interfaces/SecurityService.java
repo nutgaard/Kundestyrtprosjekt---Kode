@@ -10,6 +10,6 @@ package no.ntnu.kpro.core.service.interfaces;
  */
 public abstract class SecurityService extends ServiceInterface {
 
-    public interface callback {
+    public interface Callback {
     }
 }

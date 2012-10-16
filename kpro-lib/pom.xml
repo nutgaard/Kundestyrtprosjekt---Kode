@@ -41,6 +41,21 @@
             <version>1.47.0.2</version>
         </dependency>
         <dependency>
+            <groupId>com.madgag</groupId>
+            <artifactId>scprov-jdk15on</artifactId>
+            <version>1.47.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.madgag</groupId>
+            <artifactId>scpkix-jdk15on</artifactId>
+            <version>1.47.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.madgag</groupId>
+            <artifactId>scmail-jdk15on</artifactId>
+            <version>1.47.0.2</version>
+        </dependency>
+        <dependency>
             <groupId>xstream</groupId>
             <artifactId>xstream</artifactId>
             <version>1.2.2</version>
