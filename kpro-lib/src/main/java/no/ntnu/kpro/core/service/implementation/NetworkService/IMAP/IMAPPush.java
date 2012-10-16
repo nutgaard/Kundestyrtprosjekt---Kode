@@ -16,9 +16,9 @@ import javax.mail.Store;
 import javax.mail.event.MessageCountEvent;
 import javax.mail.event.MessageCountListener;
 import javax.mail.internet.MimeMessage;
-import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAPStrategy;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
+import no.ntnu.kpro.core.utilities.Converter;
 
 /**
  *
@@ -67,7 +67,7 @@ public class IMAPPush extends IMAPStrategy implements MessageCountListener {
         for (MimeMessage m : messages) {
             for (NetworkService.Callback cb : listeners) {
                 try {
-                    cb.mailReceived(XOMessage.convertToXO(m));
+                    cb.mailReceived(Converter.convertToXO(m));
                 } catch (Exception ex) {
                     Logger.getLogger(IMAPPush.class.getName()).log(Level.SEVERE, null, ex);
                 }

@@ -1,8 +1,6 @@
 package no.ntnu.kpro.core.service.implementation.NetworkService.SMTP;
 
 import com.sun.mail.smtp.SMTPTransport;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -13,6 +11,7 @@ import javax.mail.event.TransportListener;
 import javax.mail.internet.MimeMessage;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
+import no.ntnu.kpro.core.utilities.Converter;
 
 public class SMTPSender {
     private final String password;
@@ -44,7 +43,7 @@ public class SMTPSender {
     public boolean sendMail(XOMessage msg) {
         try {
             Session session = Session.getInstance(this.props, this.auth);
-            MimeMessage message = XOMessage.convertToMime(session, msg);
+            MimeMessage message = Converter.convertToMime(session, msg);
 
             SMTPTransport t = (SMTPTransport) session.getTransport("smtps");
             t.addTransportListener(new LocalTransportListener());
@@ -65,7 +64,7 @@ public class SMTPSender {
             //Callback
             for (NetworkService.Callback c : listeners) {
                 try {
-                    c.mailSent(XOMessage.convertToXO(te.getMessage()), te.getInvalidAddresses());
+                    c.mailSent(Converter.convertToXO(te.getMessage()), te.getInvalidAddresses());
                 } catch (Exception ex) {
                     Logger.getLogger(SMTPSender.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -75,7 +74,7 @@ public class SMTPSender {
         public void messageNotDelivered(TransportEvent te) {
             XOMessage msg;
             try {
-                msg = XOMessage.convertToXO(te.getMessage());
+                msg = Converter.convertToXO(te.getMessage());
                 sendMail(msg);
                 //Retry sending
                 for (NetworkService.Callback c : listeners) {

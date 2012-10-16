@@ -5,27 +5,23 @@
 package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 
 import com.sun.mail.imap.IMAPFolder;
-import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import javax.mail.Address;
 import javax.mail.Authenticator;
-import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Store;
-import javax.mail.search.FlagTerm;
-import javax.mail.search.ReceivedDateTerm;
 import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp.BoxName;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.service.interfaces.NetworkService.Callback;
+import no.ntnu.kpro.core.utilities.Converter;
 
 /**
  *
@@ -55,7 +51,7 @@ public class IMAPStorage {
 //                System.out.println("Messagëeeee: " + m.getClass().getName());
 //                System.out.println("SOUN");
 //                System.out.println("Subjectasdasdasda: " + m.getSubject());
-                XOMessage xo = XOMessage.convertToXO(m);
+                XOMessage xo = Converter.convertToXO(m);
                 System.out.println(xo);
                 box.getBox().add(xo);
                 for (Callback cb : listener) {

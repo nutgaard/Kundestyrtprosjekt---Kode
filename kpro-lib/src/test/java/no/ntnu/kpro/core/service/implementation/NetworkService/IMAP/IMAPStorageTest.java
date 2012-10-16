@@ -4,7 +4,6 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 
-import com.icegreen.greenmail.store.SimpleMessageAttributes;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.DummySSLSocketFactory;
 import com.icegreen.greenmail.util.GreenMail;
@@ -12,7 +11,6 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import java.security.Security;
 import java.util.LinkedList;
 import java.util.Properties;
-import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
@@ -20,7 +18,6 @@ import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
-import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import org.junit.After;
@@ -87,7 +84,7 @@ public class IMAPStorageTest {
     // The methods must be annotated with annotation @Test. For example:
     //
 
-    @Test
+//    @Test
     public void fetchMail() throws Exception {
         MimeMessage message = new MimeMessage((Session) null);
         message.setFrom(new InternetAddress(EMAIL_USER_ADDRESS));
