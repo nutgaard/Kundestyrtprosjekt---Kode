@@ -13,7 +13,6 @@ import javax.mail.event.TransportListener;
 import javax.mail.internet.MimeMessage;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
-import no.ntnu.kpro.core.utilities.Converter;
 
 public class SMTPSender {
     private final String password;
@@ -22,12 +21,12 @@ public class SMTPSender {
     private Authenticator auth;
     private List<NetworkService.Callback> listeners;
 
-    public SMTPSender(final String username, final String password, final String mailAdr, final Properties props, final Authenticator auth) {
+    public SMTPSender(final String username, final String password, final String mailAdr, final Properties props, final Authenticator auth, List<NetworkService.Callback> listeners) {
         this.password = password;
         this.mailAdr = mailAdr;
         this.props = props;
         this.auth = auth;
-        this.listeners = Collections.synchronizedList(new LinkedList<NetworkService.Callback>());
+        this.listeners = listeners;
     }
 
     public void addCallback(NetworkService.Callback l) {
@@ -45,7 +44,7 @@ public class SMTPSender {
     public boolean sendMail(XOMessage msg) {
         try {
             Session session = Session.getInstance(this.props, this.auth);
-            MimeMessage message = Converter.convertToMime(session, msg);
+            MimeMessage message = XOMessage.convertToMime(session, msg);
 
             SMTPTransport t = (SMTPTransport) session.getTransport("smtps");
             t.addTransportListener(new LocalTransportListener());
@@ -59,7 +58,6 @@ public class SMTPSender {
             return false;
         }
     }
-    
 
     class LocalTransportListener implements TransportListener {
 
@@ -67,7 +65,7 @@ public class SMTPSender {
             //Callback
             for (NetworkService.Callback c : listeners) {
                 try {
-                    c.mailSent(Converter.convertToXO(te.getMessage()), te.getInvalidAddresses());
+                    c.mailSent(XOMessage.convertToXO(te.getMessage()), te.getInvalidAddresses());
                 } catch (Exception ex) {
                     Logger.getLogger(SMTPSender.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -77,7 +75,7 @@ public class SMTPSender {
         public void messageNotDelivered(TransportEvent te) {
             XOMessage msg;
             try {
-                msg = Converter.convertToXO(te.getMessage());
+                msg = XOMessage.convertToXO(te.getMessage());
                 sendMail(msg);
                 //Retry sending
                 for (NetworkService.Callback c : listeners) {

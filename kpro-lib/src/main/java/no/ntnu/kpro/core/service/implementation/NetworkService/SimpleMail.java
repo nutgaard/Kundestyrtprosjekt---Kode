@@ -315,7 +315,7 @@ public class SimpleMail extends NetworkService {
                     inboxM.add(new XOMessage(from, to, subject, body, label, priority, type, date));
                 }
                 NOF_received++;
-
+                
             } catch (Exception ex) {
                 Logger.getLogger(SimpleMail.class.getName()).log(Level.SEVERE, null, ex);
             } finally {

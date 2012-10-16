@@ -25,7 +25,7 @@ import org.xml.sax.InputSource;
 
 /**
  *
- * //@author Nicklas
+ * @author Nicklas
  */
 public class PersistentWriteThroughStorageTest {
 
@@ -38,7 +38,7 @@ public class PersistentWriteThroughStorageTest {
         
     }
 
-    //@BeforeClass
+    @BeforeClass
     public static void setUpClass() {
         try {
             baseDir = new File("/test");
@@ -50,12 +50,12 @@ public class PersistentWriteThroughStorageTest {
         }
     }
 
-    //@AfterClass
+    @AfterClass
     public static void tearDownClass() {
         delete(baseDir);
     }
 
-    //@Before
+    @Before
     public void setUp() {
         try {
             good = new User(new BigInteger(130, new SecureRandom()).toString(32));
@@ -66,19 +66,19 @@ public class PersistentWriteThroughStorageTest {
         }
     }
 
-    //@After
+    @After
     public void tearDown() {
             em.close();
             good = null;
             delete(baseDir);
     }
     // TODO add test methods here.
-    // The methods must be annotated with annotation //@Test. For example:
+    // The methods must be annotated with annotation @Test. For example:
     //
-    // //@Test
+    // @Test
     // public void hello() {}
 
-    //@Test
+    @Test
     public void noSavingFile() {
         System.out.println("Test:noSavingFile");
         try {
@@ -92,7 +92,7 @@ public class PersistentWriteThroughStorageTest {
         }
     }
 
-    //@Test
+    @Test
     public void savingUnmanagedObjects() {
         System.out.println("Test:savingUnmanagedObjects");
         try {
@@ -107,7 +107,7 @@ public class PersistentWriteThroughStorageTest {
             Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    //@Test
+    @Test
     public void verifiedSavedContent() {
         System.out.println("Test:verifiedSavedContent");
         try {
@@ -127,7 +127,7 @@ public class PersistentWriteThroughStorageTest {
             Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    //@Test
+    @Test
     public void savingManagedObjects() {
         try {
             IUser u = (IUser) em.manage(new User("GoodGuysFriend"));
@@ -140,7 +140,7 @@ public class PersistentWriteThroughStorageTest {
             Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    //@Test
+    @Test
     public void fetchUnsaved() {
         try {
             IUser u = (IUser)em.find(User.class, Integer.MAX_VALUE);
@@ -150,7 +150,7 @@ public class PersistentWriteThroughStorageTest {
         }
     }
             
-    //@Test
+    @Test
     public void updatingFile() {
         try {
             IUser u = (IUser) em.manage(new User("GoodGuysFriend"));
@@ -171,7 +171,7 @@ public class PersistentWriteThroughStorageTest {
 
     }
 
-    //@Test
+    @Test
     public void readingFile() {
         try {
             User user = new User("Nicklas");
@@ -183,7 +183,7 @@ public class PersistentWriteThroughStorageTest {
         }
     }
 
-    //@Test
+    @Test
     public void deleteFile() {
         try {
             User user = new User("Nicklas");

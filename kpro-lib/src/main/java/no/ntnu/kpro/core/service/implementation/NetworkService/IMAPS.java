@@ -18,7 +18,6 @@ import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.service.interfaces.NetworkService.Callback;
-import no.ntnu.kpro.core.utilities.Converter;
 
 /**
  *
@@ -62,7 +61,7 @@ public class IMAPS {
             inbox.open(Folder.READ_ONLY);
             MimeMessage[] messages = (MimeMessage[]) inbox.search(searchterm);
             for (int i = 0; i < messages.length; i++) {
-                XOMessage message = Converter.convertToXO(messages[i]);
+                XOMessage message = XOMessage.convertToXO(messages[i]);
                 for (Callback c : listener) {
                     c.mailReceived(message);
                 }

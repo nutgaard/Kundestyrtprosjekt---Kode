@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * //@author Nicklas
+ * @author Nicklas
  */
 public class SMTPSenderTest {
 
@@ -35,13 +35,13 @@ public class SMTPSenderTest {
     GreenMail server;
     private static final String USER_PASSWORD = "kprothales2012";
     private static final String USER_NAME = "kprothales";
-    private static final String EMAIL_USER_ADDRESS = "kprothales//@gmail.com";
-    private static final String EMAIL_TO = "kprothales//@gmail.com";
+    private static final String EMAIL_USER_ADDRESS = "kprothales@gmail.com";
+    private static final String EMAIL_TO = "kprothales@gmail.com";
     private static final String EMAIL_SUBJECT = "Test E-Mail";
     private static final String EMAIL_TEXT = "This is a test e-mail";
     private static final String LOCALHOST = "127.0.0.1";
 
-    //@Before
+    @Before
     public void setup() {
         Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory.class.getName());
         Properties props = new Properties();
@@ -50,33 +50,33 @@ public class SMTPSenderTest {
         props.put("mail.debug", "false");
         props.put("mail.smtps.port", ServerSetupTest.SMTPS.getPort());
         Authenticator auth = new Authenticator() {
-            //@Override
+            @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(USER_NAME, USER_PASSWORD);
             }
         };
-        sender = new SMTPSender(USER_NAME, USER_PASSWORD, EMAIL_USER_ADDRESS, props, auth);
+        sender = new SMTPSender(USER_NAME, USER_PASSWORD, EMAIL_USER_ADDRESS, props, auth, new LinkedList<NetworkService.Callback>());
 
         this.server = new GreenMail(ServerSetupTest.SMTPS);
         this.server.start();
         this.server.setUser(EMAIL_USER_ADDRESS, USER_NAME, USER_PASSWORD);
     }
 
-    //@After
+    @After
     public void teardown() {
         sender = null;
         server.stop();
         server = null;
     }
 
-    //@Test
+    @Test
     public void sendMailTest() {
         XOMessage m = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.UGRADERT, XOMessagePriority.DEFERRED, XOMessageType.DRILL, new Date());
         assertTrue(sender.sendMail(m));
         assertEquals(1, server.getReceivedMessages().length);
     }
 
-    //@Test
+    @Test
     public void callbackTest() throws InterruptedException {
         XOMessage m = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.UGRADERT, XOMessagePriority.DEFERRED, XOMessageType.DRILL, new Date());
         final List<XOMessage> ml = new LinkedList<XOMessage>();
