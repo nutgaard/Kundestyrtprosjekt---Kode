@@ -209,9 +209,8 @@ public class SimpleMail extends NetworkService {
 
                 if (m.getContentType().startsWith("multipart")) {
                     Multipart content = (Multipart) m.getContent();
-
-                    from = m.getFrom()[0].toString();
-                    to = mailAdr;
+                    from = MimeUtility.decodeText(m.getFrom()[0].toString());
+                    to = MimeUtility.decodeText(mailAdr);
                     subject = m.getSubject();
                     date = m.getReceivedDate();
                     for (int i = 0; i < content.getCount(); i++) {
@@ -222,8 +221,8 @@ public class SimpleMail extends NetworkService {
                         }
                     }
                 } else {
-                    from = m.getHeader("From")[0];
-                    to = m.getHeader("To")[0];
+                    from = MimeUtility.decodeText(m.getHeader("From")[0]);
+                    to = MimeUtility.decodeText(m.getHeader("To")[0]);
                     subject = m.getHeader("Subject")[0];
                     body = m.getContent().toString();
                     date = m.getReceivedDate();
