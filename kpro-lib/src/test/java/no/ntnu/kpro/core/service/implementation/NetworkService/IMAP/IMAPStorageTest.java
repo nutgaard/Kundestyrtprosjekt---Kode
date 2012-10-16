@@ -4,6 +4,7 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 
+import com.icegreen.greenmail.store.SimpleMessageAttributes;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.DummySSLSocketFactory;
 import com.icegreen.greenmail.util.GreenMail;
@@ -52,16 +53,7 @@ public class IMAPStorageTest {
         props.put("mail.imaps.host", LOCALHOST);
         props.put("mail.imaps.port", ServerSetupTest.IMAPS.getPort());
         props.put("mail.imaps.auth", "true");
-        
-        
-        
-//        props.put("mail.store.protocol", "imaps");
-//        props.put("mail.imaps.host", "imap.gmail.com");
-//        props.put("mail.imaps.socketFactory.port", "993");
-//        props.put("mail.imaps.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-//        props.put("mail.imaps.auth", "true");
-//        props.put("mail.imaps.port", "993");
-
+ 
         server = new GreenMail(ServerSetupTest.IMAPS);
         server.start();
         user = server.setUser(EMAIL_USER_ADDRESS, USER_NAME, USER_PASSWORD);
@@ -84,8 +76,10 @@ public class IMAPStorageTest {
     // The methods must be annotated with annotation @Test. For example:
     //
 
-//    @Test
+    @Test
     public void fetchMail() throws Exception {
+//        SimpleMessageAttributes a;
+        
         MimeMessage message = new MimeMessage((Session) null);
         message.setFrom(new InternetAddress(EMAIL_USER_ADDRESS));
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(EMAIL_TO));
@@ -102,6 +96,7 @@ public class IMAPStorageTest {
                 return true;
             }
         });
+        System.out.println("Got message: "+m);
         assertNotNull(m);
     }
 }
