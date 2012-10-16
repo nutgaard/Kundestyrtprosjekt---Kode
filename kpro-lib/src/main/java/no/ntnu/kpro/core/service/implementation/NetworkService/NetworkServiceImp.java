@@ -51,7 +51,6 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
         this(username, password, mailAdr, new Properties());
     }
     public NetworkServiceImp(final String username, final String password, final String mailAdr, Properties properties) {
-        this.listeners = Collections.synchronizedList(new LinkedList<NetworkService.Callback>());
         this.smtp = new SMTP(username, password, mailAdr, properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
