@@ -23,9 +23,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-//@RunWith(Suite.class)
+@RunWith(Suite.class)
 //@Suite.SuiteClasses({SimpleMailTest.SMTPSMock.class, SimpleMailTest.IMAPSMock.class, SimpleMailTest.SMTPSReal.class, SimpleMailTest.IMAPSReal.class})
-//@Suite.SuiteClasses({SimpleMailTest.SMTPSMock.class})
+@Suite.SuiteClasses({SimpleMailTest.IMAPSMock.class})
 public class SimpleMailTest {
 
     private static final String USER_PASSWORD = "kprothales2012";
@@ -50,7 +50,7 @@ public class SimpleMailTest {
             this.props = new Properties();
             this.props.put("mail.smtps.host", LOCALHOST);
             this.props.put("mail.smtps.auth", "true");
-            this.props.put("mail.debug", "false");
+            this.props.put("mail.debug", "true");
             this.props.put("mail.smtps.port", ServerSetupTest.SMTPS.getPort());
 
             this.mailServer = new GreenMail(ServerSetupTest.SMTPS);
@@ -100,6 +100,7 @@ public class SimpleMailTest {
             this.props = new Properties();
             this.props.put("mail.imaps.host", LOCALHOST);
             this.props.put("mail.imaps.auth", "true");
+            this.props.put("mail.debug", "true");
             this.props.put("mail.imaps.port", ServerSetupTest.IMAPS.getPort());
             
             this.mailServer = new GreenMail(ServerSetup.IMAPS);
@@ -130,7 +131,7 @@ public class SimpleMailTest {
             //Use greenmailuser to deliver message
             this.user.deliver(message);
             
-            
+//            mailClient.getAllMessages();
             
             //Fetch using SimpleMail IMAPS
 //            mailClient.startIMAP();
