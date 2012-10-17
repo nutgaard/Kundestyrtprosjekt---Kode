@@ -11,9 +11,9 @@ import java.io.FilenameFilter;
  *
  * @author Aleksander Sj�fjell
  */
-public abstract class PersistenceService extends ServiceInterface<PersistenceService.callback> {
+public abstract class PersistenceService extends ServiceInterface<PersistenceService.Callback> {
 
-    public interface callback {
+    public interface Callback {
         public void loadObjectReturn(String fileName, Object file);
         public void loadStringReturn(String fileName, String file);
         public void authorizationConfirmation(boolean isAutorized);
@@ -27,10 +27,10 @@ public abstract class PersistenceService extends ServiceInterface<PersistenceSer
     public abstract void save(String fileName, String content, String folder);
     
     //Retrieving files
-    public abstract void loadObject(String fileName, callback receiver);
-    public abstract void loadObject(String fileName, String folder, callback receiver);
-    public abstract void loadString(String fileName, callback receiver);
-    public abstract void loadString(String fileName, String folder, callback receiver);
+    public abstract void loadObject(String fileName, Callback receiver);
+    public abstract void loadObject(String fileName, String folder, Callback receiver);
+    public abstract void loadString(String fileName, Callback receiver);
+    public abstract void loadString(String fileName, String folder, Callback receiver);
     
     //Deleting files
     public abstract void removeFile(String fileName);
@@ -38,14 +38,14 @@ public abstract class PersistenceService extends ServiceInterface<PersistenceSer
     
     //Authorization
     public abstract void authorize(String userName, String password);
-    public abstract void authorize(String userName, String password, callback receiver);
-    public abstract void isAuthorized(callback receiver);
+    public abstract void authorize(String userName, String password, Callback receiver);
+    public abstract void isAuthorized(Callback receiver);
     
     //Utility methodes
-    public abstract void getFileList(callback receiver);
-    public abstract void getFileList(String folder, callback receiver);
-    public abstract void getFileList(FilenameFilter filter, callback receiver);
-    public abstract void getFileList(String folder, FilenameFilter filter, callback receiver);
+    public abstract void getFileList(Callback receiver);
+    public abstract void getFileList(String folder, Callback receiver);
+    public abstract void getFileList(FilenameFilter filter, Callback receiver);
+    public abstract void getFileList(String folder, FilenameFilter filter, Callback receiver);
     
     //setup requirements (temp, in case we don't standardize the constructor)
     public abstract void giveContext(Context context);

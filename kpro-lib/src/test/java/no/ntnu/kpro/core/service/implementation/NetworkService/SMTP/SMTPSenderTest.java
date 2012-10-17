@@ -55,7 +55,7 @@ public class SMTPSenderTest {
                 return new PasswordAuthentication(USER_NAME, USER_PASSWORD);
             }
         };
-        sender = new SMTPSender(USER_NAME, USER_PASSWORD, EMAIL_USER_ADDRESS, props, auth);
+        sender = new SMTPSender(USER_NAME, USER_PASSWORD, EMAIL_USER_ADDRESS, props, auth, new LinkedList<NetworkService.Callback>());
 
         this.server = new GreenMail(ServerSetupTest.SMTPS);
         this.server.start();
