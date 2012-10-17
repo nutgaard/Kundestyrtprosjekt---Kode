@@ -48,9 +48,6 @@ public class IMAPStorage {
             folder.open(Folder.READ_ONLY);
             Message[] messages = folder.search(search);
             for (Message m : messages) {
-//                System.out.println("Messagëeeee: " + m.getClass().getName());
-//                System.out.println("SOUN");
-//                System.out.println("Subjectasdasdasda: " + m.getSubject());
                 XOMessage xo = Converter.convertToXO(m);
                 System.out.println(xo);
                 box.getBox().add(xo);
