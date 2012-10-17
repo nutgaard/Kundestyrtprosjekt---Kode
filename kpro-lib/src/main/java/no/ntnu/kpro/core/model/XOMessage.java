@@ -46,6 +46,7 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
     private final XOMessagePriority priority;
     private final XOMessageType type;
     private final Date date;
+    private boolean opened = false;
 
     public XOMessage(String from, String to, String subject, String body, XOMessageSecurityLabel label) {
         this(from, to, subject, body, label, XOMessagePriority.ROUTINE, XOMessageType.OPERATION, new Date());
@@ -70,6 +71,7 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
                 EnumHelper.getEnumValue(XOMessagePriority.class, in.readString()),
                 EnumHelper.getEnumValue(XOMessageType.class, in.readString()),
                 new Date(in.readLong()));
+        this.opened = true;
     }
 
     public String getFrom() {
@@ -83,7 +85,7 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
     public String getSubject() {
         return subject;
     }
-
+    
     public void addAttachment(InputStream is) {
         this.attachments.add(is);
     }
@@ -112,6 +114,14 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         return type;
     }
 
+    public boolean getOpened(){
+        return opened;
+    }
+    
+    public void setOpened(boolean opened){
+        this.opened = opened;
+    }
+    
     public int compareTo(XOMessage o) {
         if (this == o) {
             System.out.println("Was equals");

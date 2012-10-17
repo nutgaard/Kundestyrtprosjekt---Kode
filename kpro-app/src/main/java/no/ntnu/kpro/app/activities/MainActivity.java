@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
 import no.ntnu.kpro.app.R;
 
 /**
@@ -20,7 +19,7 @@ import no.ntnu.kpro.app.R;
  */
 public class MainActivity extends WrapperActivity {
 
-    private static final String TAG = "KPRO";
+    private static final String TAG = "KPRO-GUI-MAIN";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,19 +45,11 @@ public class MainActivity extends WrapperActivity {
                 try{
                     Class newClass = Class.forName("no.ntnu.kpro.app.activities." + av.getItemAtPosition(i) + "Activity");
                     Intent intent = new Intent(MainActivity.this, newClass);
+                    Log.i(TAG, "Starting intent " + newClass.getName());
                     startActivity(intent);
                 } catch (ClassNotFoundException e) {
                 }
             }
         });
-    }
-
-    //TODO: Check username/password later
-    public boolean checkLogin(String email, String password) {
-        if (email.equalsIgnoreCase("123") && password.equalsIgnoreCase("123")) {
-            return true;
-        } else {
-            return false;
-        }
     }
 }

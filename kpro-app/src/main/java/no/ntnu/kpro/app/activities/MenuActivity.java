@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import no.ntnu.kpro.app.ContactsActivity;
 import no.ntnu.kpro.app.R;
 
 /**
@@ -43,9 +44,12 @@ public class MenuActivity extends WrapperActivity{
                 startActivity(i2);
                 return true;
             case R.id.menu_new_instant:
-                //showHelp();
+                Intent i5 = new Intent(getApplicationContext(), InstantMessageActivity.class);
+                startActivity(i5);
                 return true;
             case R.id.menu_contacts:
+                Intent i4 = new Intent(getApplicationContext(), ContactsActivity.class);
+                startActivity(i4);
                 return true;
             case R.id.menu_settings:
                 Intent i3 = new Intent(getApplicationContext(), SettingsActivity.class);
