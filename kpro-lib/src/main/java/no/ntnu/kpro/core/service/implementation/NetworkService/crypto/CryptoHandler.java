@@ -4,6 +4,8 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService.crypto;
 
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.Security;
 import java.util.Properties;
 import javax.activation.CommandMap;
@@ -16,6 +18,11 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import no.ntnu.kpro.core.model.XOMessage;
+import org.spongycastle.crypto.BlockCipher;
+import org.spongycastle.crypto.BufferedBlockCipher;
+import org.spongycastle.crypto.engines.DESEngine;
+import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 
@@ -28,64 +35,69 @@ import org.spongycastle.jce.provider.BouncyCastleProvider;
  * @author magnus
  */
 public class CryptoHandler {
-    	
+    KeyStore ks;
+    
+    public CryptoHandler(String userName, char[] password){
+        try {
+        ks = setupKeyStore(userName, password);
+        }
+        catch (Exception e){
+            
+        }
+    }
     static {
        Security.addProvider(new BouncyCastleProvider());
     }
-       
     
-    public MimeMessage prepareToSend(XOMessage mail){
+    
+    public static KeyStore createKeyStore(String userName, char[] password) throws Exception{
+        KeyStore _ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        _ks.load(null, password);
+        return _ks;
+    } 
+    public static KeyStore setupKeyStore(String userName, char[] password) throws Exception{
+        KeyStore _ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        java.io.FileInputStream fis = new java.io.FileInputStream("keyStoreName");
+        _ks.load(fis, password);
+        fis.close();
+        return _ks;
+        
+    } 
+    public static void encrypt(String keyString, String inputString) {
+        /*
+         * This will use a supplied key, and encrypt the data
+         * This is the equivalent of DES/CBC/PKCS5Padding
+         */
+        BlockCipher engine = new DESEngine();
+        BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(engine);
+
+        byte[] key = keyString.getBytes();
+        byte[] input = inputString.getBytes();
+
+        cipher.init(true, new KeyParameter(key));
+
+        byte[] cipherText = new byte[cipher.getOutputSize(input.length)];
+
+        int outputLen = cipher.processBytes(input, 0, input.length, cipherText, 0);
         try {
-        //SMIMESignedGenerator gen = new SMIMESignedGenerator();
-        //gen.addCertificates(certs);
-
-        //
-        // create the base for our message
-        //
-        MimeBodyPart msg = new MimeBodyPart();
-
-        msg.setText(mail.getStrippedBody()); //TODO: consider adding support for HTML
-
-        //
-        // extract the multipart object from the SMIMESigned object.
-        //
-        //MimeMultipart mm = gen.generate(msg);
-
-        //
-        // Get a Session object and create the mail message
-        //
-        Properties props = System.getProperties();
-        Session session = Session.getDefaultInstance(props, null);
-
-        Address fromUser = new InternetAddress(mail.getFrom());
-        Address toUser = new InternetAddress(mail.getTo());
-
-        MimeMessage body = new MimeMessage(session);
-        body.setFrom(fromUser);
-        body.setRecipient(Message.RecipientType.TO, toUser);
-        body.setSubject(mail.getSubject());
-        //body.setContent(mm, mm.getContentType());
-        body.saveChanges();
-        return null;
-        }
-        catch(Exception e){
-            return null;
+            cipher.doFinal(cipherText, outputLen);
+        } catch (Exception ce) {
+            System.err.println(ce);
         }
     }
-    public XOMessage decrypt(MimeMessage mail){
-        return null;
-    }
-    
-    public static void setDefaultMailcap()
-    {
+        public void test(){
+           
+        }
+
+    public static void setDefaultMailcap() {
         MailcapCommandMap _mailcap =
             (MailcapCommandMap)CommandMap.getDefaultCommandMap();
 
-        _mailcap.addMailcap("application/pkcs7-signature;; x-java-content-handler=org.bouncycastle.mail.smime.handlers.pkcs7_signature");
-        _mailcap.addMailcap("application/pkcs7-mime;; x-java-content-handler=org.bouncycastle.mail.smime.handlers.pkcs7_mime");
-        _mailcap.addMailcap("application/x-pkcs7-signature;; x-java-content-handler=org.bouncycastle.mail.smime.handlers.x_pkcs7_signature");
-        _mailcap.addMailcap("application/x-pkcs7-mime;; x-java-content-handler=org.bouncycastle.mail.smime.handlers.x_pkcs7_mime");
-        _mailcap.addMailcap("multipart/signed;; x-java-content-handler=org.bouncycastle.mail.smime.handlers.multipart_signed");
+        _mailcap.addMailcap("application/pkcs7-signature;; x-java-content-handler=org.spongycastle.mail.smime.handlers.pkcs7_signature");
+        _mailcap.addMailcap("application/pkcs7-mime;; x-java-content-handler=org.spongycastle.mail.smime.handlers.pkcs7_mime");
+        _mailcap.addMailcap("application/x-pkcs7-signature;; x-java-content-handler=org.spongycastle.mail.smime.handlers.x_pkcs7_signature");
+        _mailcap.addMailcap("application/x-pkcs7-mime;; x-java-content-handler=org.spongycastle.mail.smime.handlers.x_pkcs7_mime");
+        _mailcap.addMailcap("multipart/signed;; x-java-content-handler=org.spongycastle.mail.smime.handlers.multipart_signed");
 
     	CommandMap.setDefaultCommandMap(_mailcap);
     }
