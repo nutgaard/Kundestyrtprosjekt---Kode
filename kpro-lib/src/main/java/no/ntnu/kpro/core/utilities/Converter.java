@@ -6,6 +6,7 @@ package no.ntnu.kpro.core.utilities;
 
 import java.util.Date;
 import javax.mail.Address;
+import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
@@ -21,11 +22,11 @@ import no.ntnu.kpro.core.model.XOMessageType;
  * @author Nicklas
  */
 public class Converter {
+
     public static String LABEL = "SIO-Label";
     public static String PRIORITY = "MMHS-Primary-Precedence";
     public static String TYPE = "MMHS-Message-Type";
-    
-    
+
     public static MimeMessage convertToMime(Session session, XOMessage message) throws Exception {
         MimeMessage mm = new MimeMessage(session);
         mm.setFrom(new InternetAddress(message.getFrom()));
@@ -40,6 +41,7 @@ public class Converter {
         mm.setSentDate(message.getDate());
         return mm;
     }
+
     public static XOMessage convertToXO(Message message) throws Exception {
         String from, to, subject, body;
         XOMessagePriority priority;
@@ -53,7 +55,7 @@ public class Converter {
             subject = m.getSubject();
             body = m.getContent().toString();
             priority = EnumHelper.getEnumValue(XOMessagePriority.class, m.getHeader(PRIORITY))[0];
-//            label = EnumHelper.getEnumValue(XOMessageSecurityLabel.class, m.getHeader(LABEL))[0];
+            //            label = EnumHelper.getEnumValue(XOMessageSecurityLabel.class, m.getHeader(LABEL))[0];
             label = secLabelParsing(m.getHeader(LABEL));
             type = EnumHelper.getEnumValue(XOMessageType.class, m.getHeader(TYPE))[0];
             date = m.getReceivedDate();
@@ -63,14 +65,15 @@ public class Converter {
         return null;
 //        return new XOMessage(from, to, subject, body, label, priority, type, date);
     }
+
     private static XOMessageSecurityLabel secLabelParsing(String[] secLabels) {
         if (secLabels == null || secLabels.length == 0) {
             return null;
         }
         String s = secLabels[0];
         for (XOMessageSecurityLabel e : XOMessageSecurityLabel.values()) {
-            System.out.println("E: "+e);
-            System.out.println("S: "+s);
+            System.out.println("E: " + e);
+            System.out.println("S: " + s);
             if (s.equalsIgnoreCase(e.getHeaderValue())) {
                 return e;
             }

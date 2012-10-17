@@ -45,7 +45,8 @@
                 android:layout_height="wrap_content"
                 android:textColor="#372c24"
                 android:text="Email"/>
-          <EditText android:layout_width="fill_parent"
+          <EditText android:id="@+id/usernameEdit" 
+              android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dip"
                 android:layout_marginBottom="20dip"
@@ -55,7 +56,8 @@
                 android:layout_height="wrap_content"
                 android:textColor="#372c24"
                 android:text="Password"/>
-          <EditText android:layout_width="fill_parent"
+          <EditText android:id="@+id/passwordEdit" 
+              android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dip"
                 android:singleLine="true"
