@@ -312,7 +312,11 @@ public class SimpleMail extends NetworkService {
                     if (typeString != null) {
                         type = XOMessageType.valueOf(typeString);
                     }
-                    inboxM.add(new XOMessage(from, to, subject, body, label, priority, type, date));
+                    XOMessage mmm = new XOMessage(from, to, subject, body, label, priority, type, date);
+                    inboxM.add(mmm);
+                    for (NetworkService.Callback cb : listeners){
+                        cb.mailReceived(mmm);
+                    }
                 }
                 NOF_received++;
                 
