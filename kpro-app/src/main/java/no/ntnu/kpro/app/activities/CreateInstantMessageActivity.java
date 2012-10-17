@@ -73,7 +73,7 @@ public class CreateInstantMessageActivity extends MenuActivity implements Networ
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.send_message);
+        setContentView(R.layout.create_instant_message);
 
         //Find all textFields
         txtReceiver = (EditText) findViewById(R.id.txtMessageReceiver);

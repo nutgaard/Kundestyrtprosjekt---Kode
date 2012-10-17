@@ -115,11 +115,11 @@
             android:gravity="top|left"/>    
     
         <!-- SEND BUTTON-->
-        <Button
-            android:id="@+id/btnSend"
+         <Button
+            android:id="@+id/btnSave"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="Save Message"
+            android:text="SAVE"
             android:layout_below="@id/txtMessage"/> 
     
     </RelativeLayout>
