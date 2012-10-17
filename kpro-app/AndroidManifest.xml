@@ -10,10 +10,19 @@
         <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.activities.SendMessageActivity">
             <action android:name="no.ntnu.kpro.app.activities.SendMessageActivity"/>
         </activity>
+        <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.activities.CreateInstantMessageActivity">
+            <action android:name="no.ntnu.kpro.app.activities.CreateInstantMessageActivity"/>
+        </activity>
+        <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.activities.ViewInstantMessagesActivity">
+            <action android:name="no.ntnu.kpro.app.activities.ViewInstantMessagesActivity"/>
+        </activity>
         <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.activities.LoginActivity">
             <action android:name="no.ntnu.kpro.app.activities.LoginActivity"/>
         </activity>
-              <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.activities.RegisterActivity">
+        <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.activities.InstantMessageActivity">
+            <action android:name="no.ntnu.kpro.app.activities.InstantMessageActivity"/>
+        </activity>
+        <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.activities.RegisterActivity">
             <action android:name="no.ntnu.kpro.app.activities.RegisterActivity"/>
         </activity>
      
