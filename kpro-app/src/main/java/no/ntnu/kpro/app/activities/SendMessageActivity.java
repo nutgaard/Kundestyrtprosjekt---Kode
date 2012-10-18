@@ -28,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 import java.io.File;
@@ -43,6 +44,8 @@ import java.util.regex.Pattern;
 import javax.mail.Address;
 import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.core.helpers.EnumHelper;
+import no.ntnu.kpro.core.model.AttachmentType;
+import no.ntnu.kpro.core.model.Attachments;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 import no.ntnu.kpro.core.model.XOMessagePriority;
@@ -73,6 +76,9 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private List<Uri> images;
     private List<Uri> videos;
     private List<Uri> sound;
+    //Attachments//
+    private ListView lstAttachments;
+    private Attachments attachments;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -112,7 +118,12 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         this.images = new ArrayList<Uri>();
         this.videos = new ArrayList<Uri>();
-        this.videos = new ArrayList<Uri>();
+
+        //Attachments//
+        lstAttachments = (ListView) findViewById(R.id.lstAttachments);
+        attachments = new Attachments();
+        addAttachmentsListener(lstAttachments);
+        
     }
 
     /**
@@ -381,20 +392,16 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                     }
                 });
     }
-    private Uri imageCaptureUri;
-    private Uri soundCaptureUri;
-    private ImageView mImageView;
-    private static final int PICK_IMAGE_FROM_CAMERA = 0;
-    private static final int PICK_IMAGE_FROM_FILE = 1;
-    private static final int PICK_VOICE_RECORDING = 2;
-    private static final int PICK_GPS_COORDINATES = 3;
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 67;
+    private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 73;
+    private Uri attachmentUri;
 
     private void addClickListener(Button btnAddAttachment) {
         //A LOT OF DEBUG / TEST CODE HERE. DO NOT RELY ON THIS!!!
 
         btnAddAttachment.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                String[] items = new String[]{"From Camera", "From SD Card", "Voice Recording", "GPS Coordinates"};
+                String[] items = new String[]{"Image From Camera", "Video From Camera"};
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(SendMessageActivity.this, android.R.layout.select_dialog_item, items);
                 AlertDialog.Builder builder = new AlertDialog.Builder(SendMessageActivity.this);
 
@@ -403,48 +410,37 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
                 builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
-                        if (item == PICK_IMAGE_FROM_CAMERA) {
+                        if (item == 0) {
+                            // create Intent to take a picture and return control to the calling application
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            File file = getOutputMediaFile(MEDIA_TYPE_IMAGE);  
-                            imageCaptureUri = Uri.fromFile(file);
-                            try {
-                                intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, imageCaptureUri);
-                                intent.putExtra("return-data", true);
-                                startActivityForResult(intent, PICK_IMAGE_FROM_CAMERA);
-                            } catch (Exception e) {
-                              Log.d("SendMessage","Could not get image.");
-                            }
 
-                            //Add the image to list of images
-                            SendMessageActivity.this.images.add(imageCaptureUri);
+                            attachmentUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE); // create a file to save the image
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT, attachmentUri); // set the image file name
 
-                            dialog.cancel();
-                        } else if (item == PICK_IMAGE_FROM_FILE) {
-                            Intent intent = new Intent();
-                            intent.setType("image/*");
-                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_FROM_FILE);
-                        } else if (item == PICK_VOICE_RECORDING) {
-                            Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
-                            File file = getOutputMediaFile(MEDIA_TYPE_SOUND);                            
-                            soundCaptureUri = Uri.fromFile(file);
-                            try {
-                                intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, soundCaptureUri);
-                                intent.putExtra("return-data", true);
-                                startActivityForResult(intent, PICK_VOICE_RECORDING);
-                            } catch (Exception e) {
-                               Log.d("SendMessage", "Exception saving voice");
-                            }
-                            startActivityForResult(intent, PICK_VOICE_RECORDING);
+                            Log.d("SendMessage", "The file uri of imagei is: " + attachmentUri.getEncodedPath());
 
-                        } else if (item == PICK_GPS_COORDINATES) {
-                            //Pick locations using code from: 
-                            //AS soon as we are ready to implement it. A lot of fiddlig work, perhaps, so waiting with it.
+                            // start the image capture Intent
+                            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+
+                        } else if (item == 1) {
+                            //create new Intent
+                            Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+
+                            attachmentUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);  // create a file to save the video
+                            Log.d("SendMessage", "File uri is:" + attachmentUri.getPath());
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT, attachmentUri);  // set the image file name
+
+                            intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1); // set the video image quality to high
+
+                            // start the Video Capture Intent
+                            startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
+
                         }
                     }
                 });
 
                 AlertDialog dialog = builder.create();
+
                 dialog.show();
             }
         });
@@ -452,40 +448,46 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode != RESULT_OK || data == null) {
-            return;
+        logMe("ReqCode: " + requestCode + ". ResultCode:" + resultCode);
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                attachments.addAttachment(attachmentUri, AttachmentType.IMAGE);
+                updateAttachments();
+            } else if (resultCode == RESULT_CANCELED) {
+                // User cancelled the image capture
+            } else {
+                logMe("Something failed");
+            }
         }
 
-        if (requestCode == PICK_VOICE_RECORDING) {
-            
+        if (requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                attachments.addAttachment(attachmentUri, AttachmentType.VIDEO);
+                updateAttachments();
+            } else if (resultCode == RESULT_CANCELED) {
+                // User cancelled the video capture
+            } else {
+                // Video capture failed, advise user
+            }
         }
+    }
+    
+     private void addAttachmentsListener(ListView attachments) {
+         logMe("InsideAttachmentsListener");
+         attachments.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
+                 logMe("AttachmentClicked");
+                   Toast confirm = Toast.makeText(SendMessageActivity.this, "Item " + i, Toast.LENGTH_SHORT);
+             }
+         });
+    }
 
-        if (requestCode == PICK_IMAGE_FROM_FILE) {
-            Uri imageFromFileUri = Uri.fromFile(new File(data.getData().getEncodedPath()));
-            SendMessageActivity.this.images.add(imageFromFileUri);
-
-        }
-
-//        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
-//            Uri selectedImage = data.getData();
-//            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-//
-//            Cursor cursor = getContentResolver().query(selectedImage,
-//                    filePathColumn, null, null, null);
-//            cursor.moveToFirst();
-//
-//            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-//            String picturePath = cursor.getString(columnIndex);
-//            cursor.close();
-//
-//            // String picturePath contains the path of selected Image                        
-//        }
+    private void updateAttachments() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, attachments.getAttachments());
+        lstAttachments.setAdapter(adapter);
     }
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
-    public static final int MEDIA_TYPE_SOUND = 3;
 
     /**
      * Create a file Uri for saving an image or video
@@ -509,7 +511,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
-                Log.d("MyCameraApp", "failed to create directory");
+                Log.d("SendMessage", "failed to create directory");
                 return null;
             }
         }
@@ -518,17 +520,21 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         File mediaFile;
         if (type == MEDIA_TYPE_IMAGE) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator
-                    + "IMG_" + timeStamp + ".jpg");
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
+            Log.d("SendMessage", "Picture:" + mediaFile.getAbsolutePath());
         } else if (type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator
-                    + "VID_" + timeStamp + ".mp4");
-        } else if (type == MEDIA_TYPE_SOUND) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator
-                    + "SND_" + timeStamp + ".3gp");
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "VID_" + timeStamp + ".mp4");
+            Log.d("SendMessage", "Video" + mediaFile.getAbsolutePath());
         } else {
             return null;
         }
         return mediaFile;
     }
+
+    private void logMe(String message){
+        Log.d("SendMessage", message);
+    }
+   
+
+   
 }
