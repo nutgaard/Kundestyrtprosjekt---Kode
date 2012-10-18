@@ -6,9 +6,14 @@ package no.ntnu.kpro.app.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import no.ntnu.kpro.app.R;
@@ -25,6 +30,7 @@ import no.ntnu.kpro.core.service.ServiceProvider;
  */
 public class MessageViewActivity extends WrapperActivity {
 
+    final static String TAG = "KPRO-GUI-MESSAGEVIEW";
     Box messages;
     XOMessage currentMessage;
     String folder = "Inbox";
@@ -35,7 +41,8 @@ public class MessageViewActivity extends WrapperActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.i(TAG, "Starting onCreate");
+        
         Intent i = getIntent();
         // Get what folder you came from and set the correct layout
         folder = i.getStringExtra("folder");
@@ -44,39 +51,71 @@ public class MessageViewActivity extends WrapperActivity {
         } else if (folder.equals("Sent")) {
             setContentView(R.layout.message_item_out);
         }
+        Log.i(TAG, "Setting content view based on folder choice");
+        
         // Get the selected message and update the view
         currentMessage = i.getParcelableExtra("message");
-
+        Log.i(TAG, "Fetching current message from parcelable");
+        
+        Log.i(TAG, "Calling elements from id");
         btnPrevious = (Button) findViewById(R.id.btnPrevious);
         btnNext = (Button) findViewById(R.id.btnNext);
         btnReply = (Button) findViewById(R.id.btnReply);
         btnForward = (Button) findViewById(R.id.btnForward);
 
+        Log.i(TAG, "Updating views and enabling buttons");
         updateViews();
         enableButtons();
     }
 
+    // Create "popup" menu (shows by pressing MENU button) based on layout
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.layout.menu_message , menu);
+        return true;
+    }
+
+    // Handler for pressing the popup menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menu_delete:
+                Log.i(TAG, "Delete message pressed");
+                Toast.makeText(this, "Fake deleting message", Toast.LENGTH_LONG).show();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
     // Get the previous message
     private void getPreviousMessage() {
+        Log.i(TAG, "Getting previous message");
         enableButtons();
         if (messages.getPrevious(currentMessage) != null) {
             XOMessage newM = (XOMessage) messages.getPrevious(currentMessage);
             currentMessage = newM;
+            currentMessage.setOpened(true);
             if (messages.getPrevious(currentMessage) == null) {
                 btnPrevious.setEnabled(false);
             }
+            Log.i(TAG, "Found previous message and set buttons state");
         }
     }
 
     // Get the next message
     private void getNextMessage() {
+        Log.i(TAG, "Getting next message");
         enableButtons();
         if (messages.getNext(currentMessage) != null) {
             XOMessage newM = (XOMessage) messages.getNext(currentMessage);
             currentMessage = newM;
+            currentMessage.setOpened(true);
             if (messages.getNext(currentMessage) == null) {
                 btnNext.setEnabled(false);
             }
+            Log.i(TAG, "Found next message and set buttons state");
         }
     }
 
@@ -88,6 +127,7 @@ public class MessageViewActivity extends WrapperActivity {
 
     // Update the current message and the fields corresponding to the message
     private void updateViews() {
+        Log.i(TAG, "Starting update of views according to current message");
         // From
         if (folder.equals("Inbox")) {
             String from = currentMessage.getFrom();
@@ -135,12 +175,14 @@ public class MessageViewActivity extends WrapperActivity {
         XOMessageType type = currentMessage.getType();
         TextView lblType = (TextView) findViewById(R.id.lblType);
         lblType.setText(type.toString());
+        Log.i(TAG, "Finished updating views");
     }
 
     // 
     @Override
     public void onServiceConnected(ServiceProvider sp) {
         super.onServiceConnected(sp);
+        Log.i(TAG, "Service is connected");
         // Fetch messages acc to what folder you came from (storage later?)
         if (folder.equals("Inbox")) {
             messages = sp.getNetworkService().getInbox();
@@ -162,6 +204,7 @@ public class MessageViewActivity extends WrapperActivity {
 
     // Add button click listeners
     private void addButtonClickListeners() {
+        Log.i(TAG, "Adding button click listeners to previous/next/reply/forward");
         // Add click listener to Previous button
         btnPrevious.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
