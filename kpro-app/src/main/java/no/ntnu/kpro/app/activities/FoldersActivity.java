@@ -55,6 +55,40 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
         btnSort.setOnClickListener(this);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        fetchMessages();
+    }
+
+    private void fetchMessages() {
+        adapter = new XOMessageAdapter(this, messages, getResources());
+        if (selectedBox.equals(BoxOption.INBOX)) {
+            messages = serviceProvider.getNetworkService().getInbox();
+            sortOnCondition();
+            adapter.setIsInbox(true);
+            lstFolder.setAdapter(adapter);
+        } else if (selectedBox.equals(BoxOption.OUTBOX)) {
+            messages = null;
+            lstFolder.setAdapter(adapter);
+        } else if (selectedBox.equals(BoxOption.SENT)) {
+            messages = serviceProvider.getNetworkService().getOutbox();
+            sortOnCondition();
+            adapter.setIsInbox(false);
+            lstFolder.setAdapter(adapter);
+        }
+    }
+
     // Populating spinner with folder choices
     private void populateSprFolders() {
         Log.i(TAG, "Starting populate of folders spinner");
@@ -119,55 +153,68 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
                 Log.i(TAG, "Opening message " + currentMessage.toString());
                 currentMessage.setOpened(true); // Problem hvis man blar...
 
-                
+
                 startActivity(i);
             }
         });
     }
 
-    @Override
-    public void onPause(){
-        super.onPause();
+    public void onClick(View view) {
+        if (view.equals((Button) findViewById(R.id.btnSort))) {
+            showDialogButtonClick();
+        }
     }
-    
-    @Override
-    public void onRestart(){
-        super.onRestart();
-        messages = serviceProvider.getNetworkService().getInbox();
-        sortOnCondition();
-        lstFolder.setAdapter(new XOMessageAdapter(this, messages, getResources()));
-    }
-    
-    private void sortOnCondition(){
+
+    private void sortOnCondition() {
         switch (sortCon) {
-                case DATE_DESC:
-                    Log.i(TAG, "Sorting on date descending");
-                    Collections.sort(messages, XOMessage.XOMessageSorter.getDateComparator(true));
-                    Log.i(TAG, "Finished sorting");
-                    break;
-                case DATE_ASC:
-                    Log.i(TAG, "Sorting on date ascending");
-                    Collections.sort(messages, XOMessage.XOMessageSorter.getDateComparator(false));
-                    Log.i(TAG, "Finished sorting");
-                    break;
-                case SENDER_DESC:
-                    Log.i(TAG, "Sorting on sender descending");
-                    Collections.sort(messages, XOMessage.XOMessageSorter.getSenderComparator(true));
-                    Log.i(TAG, "Finished sorting");
-                    break;
-                case SENDER_ASC:
-                    Log.i(TAG, "Sorting on sender ascending");
-                    Collections.sort(messages, XOMessage.XOMessageSorter.getSenderComparator(false));
-                    Log.i(TAG, "Finished sorting");
-                    break;
+            case DATE_DESC:
+                Log.i(TAG, "Sorting on date descending");
+                Collections.sort(messages, XOMessage.XOMessageSorter.getDateComparator(true));
+                Log.i(TAG, "Finished sorting");
+                break;
+            case DATE_ASC:
+                Log.i(TAG, "Sorting on date ascending");
+                Collections.sort(messages, XOMessage.XOMessageSorter.getDateComparator(false));
+                Log.i(TAG, "Finished sorting");
+                break;
+            case SENDER_DESC:
+                Log.i(TAG, "Sorting on sender descending");
+                Collections.sort(messages, XOMessage.XOMessageSorter.getSenderComparator(true));
+                Log.i(TAG, "Finished sorting");
+                break;
+            case SENDER_ASC:
+                Log.i(TAG, "Sorting on sender ascending");
+                Collections.sort(messages, XOMessage.XOMessageSorter.getSenderComparator(false));
+                Log.i(TAG, "Finished sorting");
+                break;
+        }
+    }
+
+    private void showDialogButtonClick() {
+
+        Log.i(TAG, "Show sort dialog");
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Sort by");
+        final CharSequence[] choiceList = {"Date (newest)", "Date (oldest)", "Sender (A to Z)", "Sender (Z to A)", "Subject (A to Z)", "Subject (Z to A)", "Priority (highest)", "Priority (lowest)"};
+        int selected = -1;
+        for (int i = 0; i < choiceList.length; i++) {
+            if (choiceList[i].equals(sortCon.toString())) {
+                selected = i;
             }
+        }
+        builder.setSingleChoiceItems(choiceList, selected, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                sortCon = EnumHelper.getEnumValue(SortCondition.class, choiceList[which].toString());
+                fetchMessages();
+                Toast.makeText(FoldersActivity.this, "Selected " + sortCon.toString(), Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
-    
-    @Override
-    public void onResume(){
-        super.onResume();
-    }
-    
+
     @Override
     public void onServiceConnected(ServiceProvider sp) {
         super.onServiceConnected(sp);
@@ -188,44 +235,6 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
         Log.i(TAG, "Adding click listener to message list");
     }
 
-    public void onClick(View view) {
-        if (view.equals((Button) findViewById(R.id.btnSort))) {
-            
-            
-            messages = serviceProvider.getNetworkService().getInbox();
-            sortOnCondition();
-            lstFolder.setAdapter(new XOMessageAdapter(this, messages, getResources()));
-            
-            showDialogButtonClick();
-        }
-    }
-    
-    
-
-    private void showDialogButtonClick() {
-
-        Log.i(TAG, "Show sort dialog");
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Sort by");
-        final CharSequence[] choiceList = {"Date (newest)", "Date (oldest)", "Sender (A to Z)", "Sender (Z to A)", "Subject (A to Z)", "Subject (Z to A)", "Priority (highest)", "Priority (lowest)"};
-        int selected = -1;
-        for (int i = 0; i<choiceList.length;i++){
-            if (choiceList[i].equals(sortCon.toString())){
-                selected = i;
-            }
-        }
-        builder.setSingleChoiceItems(choiceList, selected, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                sortCon = EnumHelper.getEnumValue(SortCondition.class, choiceList[which].toString());
-                Toast.makeText(FoldersActivity.this, "Selected " + sortCon.toString(), Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
     public void mailSent(XOMessage message, Address[] invalidAddress) {
         Log.i(TAG, "Mail sent");
     }
@@ -239,10 +248,12 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
             public void run() {
                 Log.d(TAG, "Mail received in UI");
                 Toast.makeText(FoldersActivity.this, "1 new message", Toast.LENGTH_LONG).show();
-                messages = serviceProvider.getNetworkService().getInbox();
-                sortOnCondition();
-                lstFolder.setAdapter(new XOMessageAdapter(FoldersActivity.this, messages, getResources()));
-                adapter.notifyDataSetChanged();
+                if (selectedBox.equals(BoxOption.INBOX)) {
+                    messages = serviceProvider.getNetworkService().getInbox();
+                    sortOnCondition();
+                    lstFolder.setAdapter(new XOMessageAdapter(FoldersActivity.this, messages, getResources()));
+                    adapter.notifyDataSetChanged();
+                }
             }
         });
     }
@@ -252,7 +263,7 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
         FoldersActivity.this.runOnUiThread(new Runnable() {
             public void run() {
                 Log.i(TAG, "Mail received error in UI");
-                Toast.makeText(FoldersActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                Log.i(TAG, e.getMessage());
             }
         });
     }
