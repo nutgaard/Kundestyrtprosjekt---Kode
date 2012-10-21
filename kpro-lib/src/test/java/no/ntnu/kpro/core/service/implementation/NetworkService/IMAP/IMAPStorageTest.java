@@ -137,7 +137,7 @@ public class IMAPStorageTest {
         }
         assertEquals(1, m.size());
     }
-//    @Test
+//    @Test     
     public void errorCallbackTest() throws Exception {
         final List<Exception> m = new LinkedList<Exception>();
         store.addCallback(new NetworkService.Callback() {
