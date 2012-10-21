@@ -14,6 +14,7 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  */
 public class NetworkServiceFactory {
     public static NetworkService createService() {
-        return new SimpleMail("kprothales", "kprothales2012", "kprothales@gmail.com");
+//        return new SimpleMail("kprothales", "kprothales2012", "kprothales@gmail.com");
+        return new NetworkServiceImp("kprothales", "kprothales2012", "kprothales@gmail.com", props);
     }
 }
