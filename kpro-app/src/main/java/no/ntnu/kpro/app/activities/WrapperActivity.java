@@ -50,9 +50,11 @@ public abstract class WrapperActivity extends Activity {
 
     public void onServiceDisconnected(ServiceProvider serviceProvider) {
         Log.d(this.getClass().getName(), "ServiceDisconnected from " + this.getClass().getName());
-        serviceProvider.removeListener(this);
+        if (serviceProvider != null) {
+            serviceProvider.removeListener(this);
+        }
         this.mServiceProvider = null;
-        
+
     }
 
     @Override
@@ -65,6 +67,7 @@ public abstract class WrapperActivity extends Activity {
 
     private ServiceConnection newServiceConnection() {
         return new ServiceConnection() {
+
             public void onServiceConnected(ComponentName cn, IBinder ib) {
                 ServiceProvider.LocalBinder lb = (ServiceProvider.LocalBinder) ib;
                 WrapperActivity.this.onServiceConnected(lb.getService());
