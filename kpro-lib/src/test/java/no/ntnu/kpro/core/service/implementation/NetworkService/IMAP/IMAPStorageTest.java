@@ -72,6 +72,7 @@ public class IMAPStorageTest {
     @After
     public void tearDown() {
         server.stop();
+        server = null;
         store = null;
     }
 

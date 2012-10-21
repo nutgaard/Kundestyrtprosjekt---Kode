@@ -30,4 +30,8 @@ public class IMAP extends Thread {
             this.strategy = strategy;
         }
     }
+    public void halt() {
+        this.strategy.halt();
+        this.strategy = null;
+    }
 }
