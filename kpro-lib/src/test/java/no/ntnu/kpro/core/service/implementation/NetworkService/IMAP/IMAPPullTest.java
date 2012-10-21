@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Properties;
 import javax.mail.PasswordAuthentication;
 import javax.mail.search.SearchTerm;
+import no.ntnu.kpro.core.service.implementation.NetworkService.IMAPStrategy;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import org.junit.*;
@@ -61,3 +62,4 @@ public class IMAPPullTest {
          verify(store, atLeast(2)).getAllMessages(any(NetworkServiceImp.BoxName.class), any(SearchTerm.class));
      }
 }
+
