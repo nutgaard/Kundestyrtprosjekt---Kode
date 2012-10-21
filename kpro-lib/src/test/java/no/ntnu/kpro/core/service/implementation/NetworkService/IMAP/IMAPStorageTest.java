@@ -5,11 +5,9 @@
 package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 
 import com.icegreen.greenmail.user.GreenMailUser;
-import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.DummySSLSocketFactory;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import java.io.IOException;
 import java.security.Security;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +15,6 @@ import java.util.Properties;
 import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
@@ -137,9 +134,10 @@ public class IMAPStorageTest {
         }
         assertEquals(1, m.size());
     }
-//    @Test     
+    @Test     
     public void errorCallbackTest() throws Exception {
         final List<Exception> m = new LinkedList<Exception>();
+        store = new IMAPStorage(null, null, new LinkedList<NetworkService.Callback>());
         store.addCallback(new NetworkService.Callback() {
             public void mailSent(XOMessage message, Address[] invalidAddress) {
             }
