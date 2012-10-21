@@ -6,14 +6,13 @@ package no.ntnu.kpro.app;
 
 import android.app.Activity;
 import android.content.res.Resources;
-import android.database.DataSetObserver;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import no.ntnu.kpro.core.model.XOMessage;
@@ -23,7 +22,7 @@ import no.ntnu.kpro.core.model.XOMessage;
  * @author Kristin
  */
 public class XOMessageAdapter extends ArrayAdapter {
-
+    private final static String TAG = "XO-MESSAGE-ADAPTER";
     private final Activity activity;
     private final List messages;
     private boolean isInbox = true;
@@ -47,7 +46,7 @@ public class XOMessageAdapter extends ArrayAdapter {
         XOMessageView xoView = null;
 
         XOMessage message = (XOMessage) messages.get(position);
-
+        Log.d(TAG, "Got message: "+message);
         if (rowView == null) {
             // Get a new instance of the row layout view
             LayoutInflater inflater = activity.getLayoutInflater();

@@ -5,6 +5,8 @@
 package no.ntnu.kpro.core.service.factories;
 
 import java.util.Properties;
+import javax.mail.Address;
+import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
@@ -14,7 +16,6 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  */
 public class NetworkServiceFactory {
     public static NetworkService createService() {
-//        return new SimpleMail("kprothales", "kprothales2012", "kprothales@gmail.com");
         Properties props = new Properties();
         props.put("mail.transport.protocol", "smtps");
         props.put("mail.smtps.host", "smtp.gmail.com");
@@ -30,5 +31,26 @@ public class NetworkServiceFactory {
         props.put("mail.imaps.auth", "true");
         props.put("mail.imaps.port", "993");
         return new NetworkServiceImp("kprothales", "kprothales2012", "kprothales@gmail.com", props);
+    }
+    public static void main(String[] args) {
+        NetworkService ns = createService();
+        ns.addListener(new NetworkService.Callback() {
+
+            public void mailSent(XOMessage message, Address[] invalidAddress) {
+                System.out.println("Mailsent: "+message);
+            }
+
+            public void mailSentError(XOMessage message, Exception ex) {
+                System.out.println("MailsentError: "+message);
+            }
+
+            public void mailReceived(XOMessage message) {
+                System.out.println("Mailreceived: "+message);
+            }
+
+            public void mailReceivedError(Exception ex) {
+                System.out.println("MailreceivedError");
+            }
+        });
     }
 }

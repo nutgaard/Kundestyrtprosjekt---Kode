@@ -23,6 +23,7 @@ import no.ntnu.kpro.core.model.XOMessageType;
  */
 public class Converter {
 
+    public static String TAG = "CONVERTER";
     public static String LABEL = "SIO-Label";
     public static String PRIORITY = "MMHS-Primary-Precedence";
     public static String TYPE = "MMHS-Message-Type";
@@ -72,12 +73,15 @@ public class Converter {
         }
         String s = secLabels[0];
         for (XOMessageSecurityLabel e : XOMessageSecurityLabel.values()) {
-            System.out.println("E: " + e);
-            System.out.println("S: " + s);
-            if (s.equalsIgnoreCase(e.getHeaderValue())) {
+//            System.out.println("E: " + e.getHeaderValue());
+//            System.out.println("S: " + s);
+//            if (s.equalsIgnoreCase(e.getHeaderValue())) {
+            if (s.contains(e.toString())) {
+//                System.out.println("Returning: "+e.getShortValue());
                 return e;
             }
         }
+//        System.out.println("Returning null, no grading found");
         return null;
     }
 

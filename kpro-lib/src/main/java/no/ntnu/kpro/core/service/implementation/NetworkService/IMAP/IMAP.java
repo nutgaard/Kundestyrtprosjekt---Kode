@@ -17,7 +17,8 @@ public class IMAP extends Thread {
 
     public IMAP(IMAPStrategy strategy) {
         this.strategy = strategy;
-        this.run = true;
+        this.run = false;
+        start();
     }
 
     @Override
@@ -27,6 +28,15 @@ public class IMAP extends Thread {
                 strategy.run();
             }
         }
+    }
+
+    @Override
+    public void start() {
+        if (run) {
+            return;
+        }
+        this.run = true;
+        super.start();
     }
 
     public void changeStrategy(IMAPStrategy strategy) {

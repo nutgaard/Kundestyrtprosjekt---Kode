@@ -141,26 +141,50 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     }
 
     public void mailSent(XOMessage message, Address[] invalidAddress) {
-        Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent", Toast.LENGTH_SHORT);
-        confirm.show();
+        runOnUiThread(new Runnable() {
+
+            public void run() {
+                Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent", Toast.LENGTH_SHORT);
+                confirm.show();
+            }
+        });
     }
 
     public void mailSentError(XOMessage message, Exception ex) {
-        Toast errorMess = Toast.makeText(SendMessageActivity.this, "Something went wrong", Toast.LENGTH_SHORT);
-        errorMess.show();
+        runOnUiThread(new Runnable() {
+
+            public void run() {
+                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Something went wrong", Toast.LENGTH_SHORT);
+                errorMess.show();
+            }
+        });
     }
 
     public void mailReceived(XOMessage message) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        runOnUiThread(new Runnable() {
+
+            public void run() {
+                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Message Received, but I dont care", Toast.LENGTH_SHORT);
+                errorMess.show();
+            }
+        });
     }
 
     public void mailReceivedError(Exception ex) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        runOnUiThread(new Runnable() {
+
+            public void run() {
+                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Message Received with error, but I dont care", Toast.LENGTH_SHORT);
+                errorMess.show();
+            }
+        });
+        
     }
 
     private void addBtnSendClickListener(Button btnSend) {
         btnSend.setOnClickListener(
                 new View.OnClickListener() {
+
                     public void onClick(View view) {
                         while (!isConnected()) {
                             Thread.yield();
@@ -209,14 +233,14 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                 });
     }
 
-    private void resetFields(){
+    private void resetFields() {
         txtReceiver.setText("");
         txtSubject.setText("");
         txtMessageBody.setText("");
         sprSecurityLabel.setSelection(0);
         setDefaultSpinnerValues();
     }
-    
+
     private boolean isValidInputField(String input) {
         return !input.equals("");
     }
@@ -311,6 +335,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private void addTextChangedListeners() {
         txtReceiver.addTextChangedListener(
                 new TextWatcher() {
+
                     public void onTextChanged(CharSequence cs, int i, int i1, int i2) {
                         SendMessageActivity.this.textEnteredInReceiver = true;
                     }
@@ -327,6 +352,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         txtMessageBody.addTextChangedListener(
                 new TextWatcher() {
+
                     public void beforeTextChanged(CharSequence cs, int i, int i1, int i2) {
                     }
 
@@ -347,6 +373,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         final SendMessageActivity t = this;
         receiver.setOnFocusChangeListener(
                 new OnFocusChangeListener() {
+
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
                         if (!hasFocus) {
@@ -360,6 +387,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         final SendMessageActivity t = this;
         receiver.setOnFocusChangeListener(
                 new OnFocusChangeListener() {
+
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
                         if (!hasFocus) {
@@ -381,6 +409,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         //A LOT OF DEBUG / TEST CODE HERE. DO NOT RELY ON THIS!!!
 
         btnAddAttachment.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View view) {
                 String[] items = new String[]{"From Camera", "From SD Card", "Voice Recording", "GPS Coordinates"};
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(SendMessageActivity.this, android.R.layout.select_dialog_item, items);
@@ -390,6 +419,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                 builder.setAdapter(adapter, null);
 
                 builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+
                     public void onClick(DialogInterface dialog, int item) {
                         if (item == PICK_IMAGE_FROM_CAMERA) {
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -440,7 +470,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         }
 
         if (requestCode == PICK_VOICE_RECORDING) {
-            soundRecordingUri = data.getData();            
+            soundRecordingUri = data.getData();
             Toast.makeText(SendMessageActivity.this, "Saved: " + soundRecordingUri.getPath(), Toast.LENGTH_LONG).show();
         }
 

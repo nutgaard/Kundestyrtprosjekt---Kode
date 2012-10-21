@@ -18,6 +18,7 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  */
 public class SMTP extends Thread {
 
+    boolean run = false;
     private final List<XOMessage> queue;
     private final SMTPSender sender;
 
@@ -52,7 +53,6 @@ public class SMTP extends Thread {
 //        System.out.println("Message added to queue, queuesize: " + queue.size());
 //        }
     }
-    boolean run = false;
 
     @Override
     public void start() {

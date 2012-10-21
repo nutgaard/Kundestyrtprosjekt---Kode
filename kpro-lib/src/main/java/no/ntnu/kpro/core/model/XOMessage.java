@@ -131,9 +131,12 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         }
     }
 
+    @Override
     public String toString() {
-        return "XOMessage{" + "from=" + from + ", to=" + to + ", subject=" + subject + ", strippedBody=" + strippedBody + '}';
+        return "XOMessage{" + "from=" + from + ", to=" + to + ", subject=" + subject + ", attachments=" + attachments + ", htmlBody=" + htmlBody + ", strippedBody=" + strippedBody + ", grading=" + grading + ", priority=" + priority + ", type=" + type + ", date=" + date + ", opened=" + opened + '}';
     }
+
+    
 
     public boolean equals(Object obj) {
         if (obj == null) {

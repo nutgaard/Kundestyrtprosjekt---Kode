@@ -36,6 +36,7 @@ public class IMAPStorage {
     }
 
     public Message[] getAllMessages(final BoxName box, final SearchTerm search) {
+        System.out.println("Searching");
         try {
             Session session = Session.getInstance(props, auth);
             Store store = session.getStore("imaps");
@@ -43,6 +44,7 @@ public class IMAPStorage {
             IMAPFolder folder = (IMAPFolder) store.getFolder(box.getBoxname());
             folder.open(Folder.READ_ONLY);
             Message[] messages = folder.search(search);
+            System.out.println("Found "+messages.length+" messages");
             for (Message m : messages) {
                 XOMessage xo = Converter.convertToXO(m);
                 System.out.println(xo);
@@ -54,7 +56,7 @@ public class IMAPStorage {
             store.close();
             return messages;
         } catch (Exception ex) {
-//            ex.printStackTrace();
+            ex.printStackTrace();
             for (Callback cb : listener) {
                 cb.mailReceivedError(ex);
             }
