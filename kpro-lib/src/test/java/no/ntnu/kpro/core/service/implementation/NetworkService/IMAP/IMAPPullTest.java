@@ -4,14 +4,19 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 
-import java.net.Authenticator;
+
+import com.sun.mail.imap.IMAPMessage;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Properties;
+import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.search.SearchTerm;
-import no.ntnu.kpro.core.service.implementation.NetworkService.IMAPStrategy;
+import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
+import no.ntnu.kpro.core.utilities.Pair;
 import org.junit.*;
 import static org.mockito.Mockito.*;
 
@@ -30,12 +35,17 @@ public class IMAPPullTest {
         store = mock(IMAPStorage.class);
         when(store.getAllMessages(any(NetworkServiceImp.BoxName.class), any(SearchTerm.class)))
                 .thenReturn(null);
-        puller = new IMAPPull(new Properties(), new javax.mail.Authenticator() {
+        Properties p = new Properties();
+        Authenticator a = new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication("kprothales", "kprothales2012");
             }
-        }, 1, store);
+        };
+        LinkedList<NetworkService.Callback> l = new LinkedList<NetworkService.Callback>();
+        Map<String, Pair<IMAPMessage, XOMessage>> c = new HashMap<String, Pair<IMAPMessage, XOMessage>>();
+        puller = new IMAPPull(p, a, 1, store, c);
+        
         pullerThread = new Thread(puller);
     }
 
@@ -47,19 +57,19 @@ public class IMAPPullTest {
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:
     //
-     @Test
-     public void recurringpull() throws Exception {
-         pullerThread.start();
-         
-         synchronized (this){
-             this.wait(1000);
-         }
-         verify(store, atLeastOnce()).getAllMessages(any(NetworkServiceImp.BoxName.class), any(SearchTerm.class));
-         
-         synchronized (this){
-             this.wait(1000);
-         }
-         verify(store, atLeast(2)).getAllMessages(any(NetworkServiceImp.BoxName.class), any(SearchTerm.class));
-     }
-}
 
+    @Test
+    public void recurringpull() throws Exception {
+        pullerThread.start();
+
+        synchronized (this) {
+            this.wait(1000);
+        }
+        verify(store, atLeastOnce()).getAllMessages(any(NetworkServiceImp.BoxName.class), any(SearchTerm.class));
+
+        synchronized (this) {
+            this.wait(1000);
+        }
+        verify(store, atLeast(2)).getAllMessages(any(NetworkServiceImp.BoxName.class), any(SearchTerm.class));
+    }
+}

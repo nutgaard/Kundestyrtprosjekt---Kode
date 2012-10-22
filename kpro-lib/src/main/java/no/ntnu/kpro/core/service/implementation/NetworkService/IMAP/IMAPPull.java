@@ -4,8 +4,10 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 
+import com.sun.mail.imap.IMAPMessage;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,9 +16,11 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.search.ComparisonTerm;
 import javax.mail.search.ReceivedDateTerm;
+import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAPStrategy;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
+import no.ntnu.kpro.core.utilities.Pair;
 
 /**
  *
@@ -30,13 +34,14 @@ public class IMAPPull extends IMAPStrategy {
     private Date lastReceived = new Date(0);
     private boolean run = true;
 
-    IMAPPull(final Properties props, final Authenticator auth, int intervalInSeconds, final IMAPStorage store) {
+    IMAPPull(final Properties props, final Authenticator auth, int intervalInSeconds, final IMAPStorage store, Map<String, Pair<IMAPMessage, XOMessage>> cache) {
+        super(cache);
         this.storage = store;
         this.intervalInMillies = intervalInSeconds * 1000;
     }
 
-    public IMAPPull(final Properties props, final Authenticator auth, NetworkService.InternalCallback listener, int intervalInSeconds) {
-        this(props, auth, intervalInSeconds, new IMAPStorage(props, auth, listener));
+    public IMAPPull(final Properties props, final Authenticator auth, List<NetworkService.Callback> listener, int intervalInSeconds, Map<String, Pair<IMAPMessage, XOMessage>> cache) {
+        this(props, auth, intervalInSeconds, new IMAPStorage(props, auth, listener, cache), cache);
     }
 
     public void run() {
@@ -52,16 +57,14 @@ public class IMAPPull extends IMAPStrategy {
                     Logger.getLogger(IMAPPull.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            System.out.println("Searching at: "+lastReceived);
+            System.out.println("Searching at: " + lastReceived);
             Message[] messagesReceived = storage.getAllMessages(NetworkServiceImp.BoxName.INBOX, new ReceivedDateTerm(ComparisonTerm.GT, lastReceived));
-            System.out.println("Pull seen message: "+messagesReceived);
+            System.out.println("Pull seen message: " + messagesReceived);
             if (messagesReceived != null) {
                 System.out.println("Finding newest mail");
                 for (Message m : messagesReceived) {
                     try {
-                        System.out.println("DateCompare: "+lastReceived+" vs "+m.getReceivedDate());
                         if (lastReceived.before(m.getReceivedDate())) {
-                            System.out.println("Updating last seen mail");
                             lastReceived = m.getReceivedDate();
                         }
                     } catch (MessagingException ex) {

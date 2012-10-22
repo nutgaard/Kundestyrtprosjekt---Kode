@@ -7,6 +7,7 @@ package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 import com.sun.mail.imap.IMAPMessage;
 import com.sun.mail.smtp.SMTPTransport;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -19,6 +20,7 @@ import no.ntnu.kpro.core.model.XOMessageType;
 import no.ntnu.kpro.core.service.implementation.NetworkService.SMTP.SMTPSender;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.utilities.Converter;
+import no.ntnu.kpro.core.utilities.Pair;
 import org.junit.After;
 import org.junit.Before;
 import static org.junit.Assert.*;
@@ -72,7 +74,7 @@ public class IMAPPushTest {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(USER_NAME, USER_PASSWORD);
             }
-        }, null);
+        }, new LinkedList<NetworkService.Callback>(), new HashMap<String, Pair<IMAPMessage, XOMessage>>());
         pusherThread = new Thread(pusher);
         pusherThread.start();
     }
@@ -87,8 +89,8 @@ public class IMAPPushTest {
 
 //    @Test
     public void mailReceived() throws Exception {
-        final List<IMAPMessage> m = new LinkedList<IMAPMessage>();
-        pusher.setCallback(new NetworkService.InternalCallback() {
+        final List<XOMessage> m = new LinkedList<XOMessage>();
+        pusher.addCallback(new NetworkService.Callback() {
 
             public void mailSent(XOMessage message, Address[] invalidAddress) {
             }
@@ -96,7 +98,7 @@ public class IMAPPushTest {
             public void mailSentError(XOMessage message, Exception ex) {
             }
 
-            public void mailReceived(IMAPMessage message) {
+            public void mailReceived(XOMessage message) {
                 m.add(message);
             }
 

@@ -21,13 +21,6 @@ public abstract class NetworkService extends ServiceInterface<NetworkService.Cal
         public void mailReceived(XOMessage message);
         public void mailReceivedError(Exception ex);
     }
-    public interface InternalCallback {
-        public void mailSent(XOMessage message, Address[] invalidAddress);
-        public void mailSentError(XOMessage message, Exception ex);
-        public void mailReceived(IMAPMessage message);
-        public void mailReceivedError(Exception ex);
-    }
-
 //    public boolean sendMail(final String recipient, final String subject, final String body);
     public abstract void send(XOMessage message);
     public abstract Box<XOMessage> getOutbox();

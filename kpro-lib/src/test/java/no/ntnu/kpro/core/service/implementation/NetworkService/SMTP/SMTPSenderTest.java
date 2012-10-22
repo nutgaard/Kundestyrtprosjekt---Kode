@@ -7,7 +7,6 @@ package no.ntnu.kpro.core.service.implementation.NetworkService.SMTP;
 import com.icegreen.greenmail.util.DummySSLSocketFactory;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import com.sun.mail.imap.IMAPMessage;
 import java.security.Security;
 import java.util.Date;
 import java.util.LinkedList;
@@ -56,7 +55,7 @@ public class SMTPSenderTest {
                 return new PasswordAuthentication(USER_NAME, USER_PASSWORD);
             }
         };
-        sender = new SMTPSender(USER_NAME, USER_PASSWORD, EMAIL_USER_ADDRESS, props, auth, null);
+        sender = new SMTPSender(USER_NAME, USER_PASSWORD, EMAIL_USER_ADDRESS, props, auth, new LinkedList<NetworkService.Callback>());
 
         this.server = new GreenMail(ServerSetupTest.SMTPS);
         this.server.start();
@@ -73,7 +72,7 @@ public class SMTPSenderTest {
     @Test
     public void sendMailTest() {
         XOMessage m = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.UGRADERT, XOMessagePriority.DEFERRED, XOMessageType.DRILL, new Date());
-        sender.setListener(new NetworkService.InternalCallback() {
+        sender.addListener(new NetworkService.Callback() {
 
             public void mailSent(XOMessage message, Address[] invalidAddress) {
                 
@@ -83,7 +82,7 @@ public class SMTPSenderTest {
                 
             }
 
-            public void mailReceived(IMAPMessage message) {
+            public void mailReceived(XOMessage message) {
                 
             }
 
@@ -99,7 +98,7 @@ public class SMTPSenderTest {
     public void callbackTest() throws InterruptedException {
         XOMessage m = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.UGRADERT, XOMessagePriority.DEFERRED, XOMessageType.DRILL, new Date());
         final List<XOMessage> ml = new LinkedList<XOMessage>();
-        sender.setCallback(new NetworkService.InternalCallback() {
+        sender.addListener(new NetworkService.Callback() {
             public void mailSent(XOMessage message, Address[] invalidAddress) {
                 ml.add(message);
             }
@@ -108,7 +107,7 @@ public class SMTPSenderTest {
                 ml.add(message);
             }
 
-            public void mailReceived(IMAPMessage message) {
+            public void mailReceived(XOMessage message) {
 //                ml.add(message);
             }
 

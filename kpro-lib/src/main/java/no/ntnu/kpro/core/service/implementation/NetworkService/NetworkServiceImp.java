@@ -8,8 +8,6 @@ import com.sun.mail.imap.IMAPMessage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
@@ -19,24 +17,13 @@ import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAP;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPPull;
 import no.ntnu.kpro.core.service.implementation.NetworkService.SMTP.SMTP;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
-import no.ntnu.kpro.core.utilities.Converter;
+import no.ntnu.kpro.core.utilities.Pair;
 
 /**
  *
  * @author Nicklas
  */
-public class NetworkServiceImp extends NetworkService implements NetworkService.InternalCallback {
-
-    class Pair<S, T> {
-
-        S first;
-        T second;
-
-        public Pair(S f, T s) {
-            this.first = f;
-            this.second = s;
-        }
-    }
+public class NetworkServiceImp extends NetworkService implements NetworkService.Callback {
 
     public enum BoxName {
 
@@ -67,19 +54,21 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
     }
 
     public NetworkServiceImp(final String username, final String password, final String mailAdr, Properties properties) {
+        cache = new HashMap<String, Pair<IMAPMessage, XOMessage>>();
         this.smtp = new SMTP(username, password, mailAdr, properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(username, password);
             }
-        }, this);
-        this.imap = new IMAP(new IMAPPull(properties, new Authenticator() {
+        }, listeners);
+        IMAPStrategy s = new IMAPPull(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(username, password);
             }
-        }, this, 10));
-        this.cache = new HashMap<String, Pair<IMAPMessage, XOMessage>>();
+        }, listeners, 10, cache);
+        this.imap = new IMAP(s);
+        listeners.add(this);
     }
 
     public void send(XOMessage msg) {
@@ -103,37 +92,17 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
 
     public void mailSent(XOMessage message, Address[] invalidAddress) {
         getOutbox().add(message);
-        for (NetworkService.Callback cb : listeners) {
-            cb.mailSent(message, invalidAddress);
-        }
     }
 
     public void mailSentError(XOMessage message, Exception ex) {
-        for (NetworkService.Callback cb : listeners) {
-            cb.mailSentError(message, ex);
-        }
+        
     }
 
-    public void mailReceived(IMAPMessage message) {
-        try {
-            String id = message.getMessageID();
-            if (!cache.containsKey(id)) {
-                System.out.println("InternalCallback::got id: " + id);
-                XOMessage xo = Converter.convertToXO(message);
-                cache.put(id, new Pair<IMAPMessage, XOMessage>(message, xo));
-                getInbox().add(xo);
-                for (NetworkService.Callback cb : listeners) {
-                    cb.mailReceived(xo);
-                }
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(NetworkServiceImp.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void mailReceived(XOMessage message) {
+        
     }
 
     public void mailReceivedError(Exception ex) {
-        for (NetworkService.Callback cb : listeners) {
-            cb.mailReceivedError(ex);
-        }
+        
     }
 }
