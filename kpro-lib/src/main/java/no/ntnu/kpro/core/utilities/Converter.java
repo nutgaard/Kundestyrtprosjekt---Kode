@@ -44,13 +44,14 @@ public class Converter {
     }
 
     public static XOMessage convertToXO(Message message) throws Exception {
-        String from, to, subject, body;
+        String id, from, to, subject, body;
         XOMessagePriority priority;
         XOMessageSecurityLabel label;
         XOMessageType type;
         Date date;
         if (message instanceof MimeMessage) {
             MimeMessage m = (MimeMessage) message;
+            id = m.getMessageID();
             from = convertAddressArray(m.getFrom());
             to = convertAddressArray(m.getRecipients(Message.RecipientType.TO));
             subject = m.getSubject();
@@ -61,7 +62,7 @@ public class Converter {
             type = EnumHelper.getEnumValue(XOMessageType.class, m.getHeader(TYPE))[0];
             date = m.getReceivedDate();
 
-            return new XOMessage(from, to, subject, body, label, priority, type, date);
+            return new XOMessage(id, from, to, subject, body, label, priority, type, date);
         }
         return null;
 //        return new XOMessage(from, to, subject, body, label, priority, type, date);

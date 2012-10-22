@@ -6,14 +6,12 @@ package no.ntnu.kpro.core.service.implementation.NetworkService;
 
 import com.sun.mail.imap.IMAPMessage;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.Address;
 import javax.mail.Authenticator;
-import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.XOMessage;
@@ -118,10 +116,7 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
 
     public void mailReceived(IMAPMessage message) {
         try {
-            String id = message.getHeader("Message-ID")[0];
-            if (cache.containsKey(id)) {
-                return;
-            }
+            String id = message.getMessageID();
             XOMessage xo = Converter.convertToXO(message);
             cache.put(id, new Pair<IMAPMessage, XOMessage>(message, xo));
             getInbox().add(xo);

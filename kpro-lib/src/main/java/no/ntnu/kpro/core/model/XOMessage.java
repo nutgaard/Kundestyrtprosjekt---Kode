@@ -47,11 +47,16 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
     private final XOMessageType type;
     private final Date date;
     private boolean opened = false;
+    private String id;
 
     public XOMessage(String from, String to, String subject, String body, XOMessageSecurityLabel label) {
         this(from, to, subject, body, label, XOMessagePriority.ROUTINE, XOMessageType.OPERATION, new Date());
     }
 
+    public XOMessage(String id, String from, String to, String subject, String body, XOMessageSecurityLabel grading, XOMessagePriority priority, XOMessageType type, Date date) {
+        this(from, to, subject, body, grading, priority, type, date);
+        this.id = id;
+    }
     public XOMessage(String from, String to, String subject, String body, XOMessageSecurityLabel grading, XOMessagePriority priority, XOMessageType type, Date date) {
         this.from = from;
         this.to = to;
@@ -131,6 +136,10 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         }
     }
 
+    public String getId() {
+        return id;
+    }
+    
     @Override
     public String toString() {
         return "XOMessage{" + "from=" + from + ", to=" + to + ", subject=" + subject + ", attachments=" + attachments + ", htmlBody=" + htmlBody + ", strippedBody=" + strippedBody + ", grading=" + grading + ", priority=" + priority + ", type=" + type + ", date=" + date + ", opened=" + opened + '}';
