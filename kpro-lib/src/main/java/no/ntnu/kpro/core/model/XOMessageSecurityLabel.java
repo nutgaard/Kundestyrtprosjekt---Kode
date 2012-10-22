@@ -12,15 +12,15 @@ package no.ntnu.kpro.core.model;
  */
 public enum XOMessageSecurityLabel {
     CHOOSE_ONE("Choose Security Label", "I SHOULD NOT SHOW, BECAUSE I CANNOT BE CHOSEN", null),
-    UGRADERT("Ugradert", "ug", "marking=\"UGRADERT\"; fgcolor=black; bgcolor=white; type=\":ess\"; label=\"MQ8CAQEGCmCEQgECARyEQgE=\""),
-    BEGRENSET("Begrenset", "b", "marking=\"BEGRENSET\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ8CAQIGCmCEQgECARyEQgE=\""),
-    KONFIDENSIELT("Kondfidensielt", "k", "marking=\"KONFIDENSIELT\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ8CAQMGCmCEQgECARyEQgE=\""),
-    UNCLASSIFIED("Unclassified", "uc", "marking=\"UNCLASSIFIED\"; fgcolor=black; bgcolor=white; type=\":ess\"; label=\"MQ4CAQEGCWCEQgECARwAAQ==\""),
-    RESTRICTED("Restricted", "r", "marking=\"RESTRICTED\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ4CAQIGCWCEQgECARwAAQ==\""), 
-    CONFIDENTIAL("Confidential", "c", "marking=\"CONFIDENTIAL\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ4CAQMGCWCEQgECARwAAQ==\""),
-    NATO_UNCLASSIFIED("Nato Unclassified", "nu", "marking=\"NATO UNCLASSIFIED\"; fgcolor=black; bgcolor=white; type=\":ess\"; label=\"MQ0CAQEGCCsaAKI2AAUB\""),
-    NATO_RESTRICTED("Nato Restricted", "nr", "marking=\"NATO RESTRICTED\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ0CAQIGCCsaAKI2AAUB\""),
-    NATO_CONFIDENTIAL("Nato Confidential", "nc", "marking=\"NATO CONFIDENTIAL\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ0CAQMGCCsaAKI2AAUB\"");
+    UGRADERT("UGRADERT", "ug", "marking=\"UGRADERT\"; fgcolor=black; bgcolor=white; type=\":ess\"; label=\"MQ8CAQEGCmCEQgECARyEQgE=\""),
+    BEGRENSET("BEGRENSET", "b", "marking=\"BEGRENSET\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ8CAQIGCmCEQgECARyEQgE=\""),
+    KONFIDENSIELT("KONFIDENSIELT", "k", "marking=\"KONFIDENSIELT\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ8CAQMGCmCEQgECARyEQgE=\""),
+    UNCLASSIFIED("UNCLASSIFIED", "uc", "marking=\"UNCLASSIFIED\"; fgcolor=black; bgcolor=white; type=\":ess\"; label=\"MQ4CAQEGCWCEQgECARwAAQ==\""),
+    RESTRICTED("RESTRICTED", "r", "marking=\"RESTRICTED\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ4CAQIGCWCEQgECARwAAQ==\""), 
+    CONFIDENTIAL("CONFIDENTIAL", "c", "marking=\"CONFIDENTIAL\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ4CAQMGCWCEQgECARwAAQ==\""),
+    NATO_UNCLASSIFIED("NATO_UNCLASSIFIED", "nu", "marking=\"NATO UNCLASSIFIED\"; fgcolor=black; bgcolor=white; type=\":ess\"; label=\"MQ0CAQEGCCsaAKI2AAUB\""),
+    NATO_RESTRICTED("NATO_RESTRICTED", "nr", "marking=\"NATO RESTRICTED\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ0CAQIGCCsaAKI2AAUB\""),
+    NATO_CONFIDENTIAL("NATO_CONFIDENTIAL", "nc", "marking=\"NATO CONFIDENTIAL\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ0CAQMGCCsaAKI2AAUB\"");
     
     private String val;
     private String shortVal;
@@ -36,10 +36,11 @@ public enum XOMessageSecurityLabel {
     public String toString(){
         return this.val;
     }
-    
+
     public String getShortValue(){
         return this.shortVal;
     }
+    
     public String getHeaderValue() {
         return this.headerValue;
     }

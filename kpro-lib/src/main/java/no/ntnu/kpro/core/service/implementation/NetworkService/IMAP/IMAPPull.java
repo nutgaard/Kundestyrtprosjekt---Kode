@@ -25,25 +25,32 @@ public class IMAPPull extends IMAPStrategy {
     private int intervalInMillies;
     private long lastPull;
     private boolean run = true;
+    
+    IMAPPull(final Properties props, final Authenticator auth, List<NetworkService.Callback> listeners, int intervalInSeconds, final IMAPStorage store) {
+        this.storage = store;
+        this.intervalInMillies = intervalInSeconds * 1000; 
+    }
 
     public IMAPPull(final Properties props, final Authenticator auth, List<NetworkService.Callback> listeners, int intervalInSeconds) {
-        this.storage = new IMAPStorage(props, auth, listeners);
-        this.intervalInMillies = intervalInSeconds * 1000;
+        this(props, auth, listeners, intervalInSeconds, new IMAPStorage(props, auth, listeners));
     }
 
     public void run() {
         while (run) {
-            long diff = System.currentTimeMillis() - lastPull;
-            while (diff < intervalInMillies) {
+            long diff = 0;
+            while ((diff = System.currentTimeMillis() - lastPull) < intervalInMillies) {
                 try {
                     synchronized (this) {
-                        wait(diff);
+                        System.out.println("Waiting for: "+(intervalInMillies-diff));
+                        wait(intervalInMillies-diff);
                     }
                 } catch (InterruptedException ex) {
                     Logger.getLogger(IMAPPull.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            System.out.println("Pulling");
             storage.getAllMessages(NetworkServiceImp.BoxName.INBOX, new ReceivedDateTerm(1, new Date(lastPull)));
+            lastPull = System.currentTimeMillis();
         }
     }
 

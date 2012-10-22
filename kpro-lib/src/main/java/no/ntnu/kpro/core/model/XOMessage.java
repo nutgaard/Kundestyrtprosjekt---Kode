@@ -7,6 +7,8 @@ package no.ntnu.kpro.core.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import java.io.InputStream;
+import java.security.KeyPair;
+import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.util.Comparator;
 import java.util.Date;
@@ -22,6 +24,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import no.ntnu.kpro.core.helpers.EnumHelper;
+import org.spongycastle.cms.jcajce.JcaSimpleSignerInfoGeneratorBuilder;
 import org.spongycastle.mail.smime.SMIMESignedGenerator;
 
 /**
@@ -43,6 +46,7 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
     private final XOMessagePriority priority;
     private final XOMessageType type;
     private final Date date;
+    private boolean opened = false;
 
     public XOMessage(String from, String to, String subject, String body, XOMessageSecurityLabel label) {
         this(from, to, subject, body, label, XOMessagePriority.ROUTINE, XOMessageType.OPERATION, new Date());
@@ -67,6 +71,7 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
                 EnumHelper.getEnumValue(XOMessagePriority.class, in.readString()),
                 EnumHelper.getEnumValue(XOMessageType.class, in.readString()),
                 new Date(in.readLong()));
+        this.opened = true;
     }
 
     public String getFrom() {
@@ -80,7 +85,7 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
     public String getSubject() {
         return subject;
     }
-
+    
     public void addAttachment(InputStream is) {
         this.attachments.add(is);
     }
@@ -109,6 +114,14 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         return type;
     }
 
+    public boolean getOpened(){
+        return opened;
+    }
+    
+    public void setOpened(boolean opened){
+        this.opened = opened;
+    }
+    
     public int compareTo(XOMessage o) {
         if (this == o) {
             System.out.println("Was equals");
@@ -191,18 +204,20 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
 
     public static MimeMessage convertToMime(Session session, XOMessage message) throws Exception {
         SMIMESignedGenerator gen = new SMIMESignedGenerator();
-        gen.addSignerInfoGenerator(null);//TODO: Actually add this
+        X509Certificate signCert = null;
+        KeyPair         signKP   = null; 
+        gen.addSignerInfoGenerator(new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC").build("SHA1withRSA", signKP.getPrivate(), signCert));
         
         MimeBodyPart msg = new MimeBodyPart();
         msg.setText(message.getStrippedBody());
-//        MimeMultipart crypoedText = gen.generate(msg);
+        MimeMultipart crypoedText = gen.generate(msg);
         
         MimeMessage mm = new MimeMessage(session);
         mm.setFrom(new InternetAddress(message.getFrom()));
         mm.setRecipients(Message.RecipientType.TO, InternetAddress.parse(message.getTo()));
 
         mm.setSubject(message.getSubject(), "UTF-8");
-//        mm.setContent(crypoedText, crypoedText.getContentType());
+        mm.setContent(crypoedText, crypoedText.getContentType());
         mm.setContent(message.getStrippedBody(), "UTF-8");
         mm.setHeader("Content-Type", "text/plain; charset=UTF-8");
         mm.addHeader(PRIORITY, message.priority.toString());

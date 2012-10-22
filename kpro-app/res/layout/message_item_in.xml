@@ -18,7 +18,7 @@
             >
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                             android:layout_width="fill_parent"
-                            android:layout_height="100dp"
+                            android:layout_height="80dp"
                             android:orientation="vertical" 
                             android:background="@drawable/btn_black"
             >
@@ -29,18 +29,18 @@
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    android:paddingTop="8dp"
-                    android:paddingLeft="8dp"
-                    android:textSize="14dp"
+                    android:paddingTop="2dp"
+                    android:paddingLeft="2dp"
+                    android:textSize="14sp"
                     android:maxLines="1"
                     android:lines="1"
                     android:textStyle="bold" />
                 <!-- Security label -->
                 <TextView
                     android:id="@+id/lblSecurityLabel"
-                    android:layout_width="80dp"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     android:layout_alignParentRight="true"
                     android:background="@color/white"
                     android:textColor="@color/black"
@@ -48,7 +48,7 @@
                 <!-- Priority -->
                 <TextView
                     android:id="@+id/lblPriority"
-                    android:layout_width="80dp"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:textSize="12dp"
                     android:layout_alignParentRight="true"
@@ -59,7 +59,7 @@
                 <!-- Type -->
                 <TextView
                     android:id="@+id/lblType"
-                    android:layout_width="80dp"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:textSize="12dp"
                     android:layout_alignParentRight="true"
@@ -72,7 +72,7 @@
                 <TextView android:id="@+id/lblSubject"
                           android:layout_height="wrap_content"
                           android:layout_width="200dp"
-                          android:paddingLeft="8dp"
+                          android:paddingLeft="2dp"
                           android:lines="1"
                           android:maxLines="1"  
                           android:textSize="12dp"
@@ -85,8 +85,8 @@
                           android:layout_height="wrap_content"
                           android:text="@string/defaultDate"
                           android:textColor="@color/white"
-                          android:paddingLeft="8dp"
-                          android:textSize="12dp"
+                          android:paddingLeft="2dp"
+                          android:textSize="12sp"
                           android:layout_below="@id/lblSubject"/>
                 
             </RelativeLayout>

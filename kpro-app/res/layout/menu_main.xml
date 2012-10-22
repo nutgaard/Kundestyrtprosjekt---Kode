@@ -4,19 +4,19 @@
          Set id, icon and Title for each menu item
     -->
     <item android:id="@+id/menu_folders"
-          android:icon="@drawable/icon"
+          android:icon="@drawable/ic_tab_folder_selected"
           android:title="Folders" />
     <item android:id="@+id/menu_new"
-          android:icon="@drawable/icon"
+          android:icon="@drawable/ic_tab_new_unselected"
           android:title="New" />
     <item android:id="@+id/menu_new_instant"
-          android:icon="@drawable/icon"
+          android:icon="@drawable/ic_tab_instant_message_selected"
           android:title="Instant message" />
     <item android:id="@+id/menu_contacts"
-          android:icon="@drawable/icon"
+          android:icon="@drawable/ic_tab_contact_selected"
           android:title="Contacts" />
     <item android:id="@+id/menu_settings"
-          android:icon="@drawable/icon"
+          android:icon="@drawable/ic_tab_settings_selected"
           android:title="Settings" />
     
 </menu>
