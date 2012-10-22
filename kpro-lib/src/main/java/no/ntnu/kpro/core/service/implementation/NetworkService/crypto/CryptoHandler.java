@@ -4,6 +4,11 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService.crypto;
 
+import android.content.Context;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.Security;
@@ -36,9 +41,11 @@ import org.spongycastle.jce.provider.BouncyCastleProvider;
  */
 public class CryptoHandler {
     KeyStore ks;
+    Context c;
     
-    public CryptoHandler(String userName, char[] password){
+    public CryptoHandler(String userName, char[] password, Context context){
         try {
+        c = context;
         ks = setupKeyStore(userName, password);
         }
         catch (Exception e){
@@ -50,14 +57,20 @@ public class CryptoHandler {
     }
     
     
-    public static KeyStore createKeyStore(String userName, char[] password) throws Exception{
+    public static KeyStore createKeyStore(char[] password) throws Exception{
         KeyStore _ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        File file = new File("", "keyStore");
+        FileOutputStream fos = new FileOutputStream(file);
         _ks.load(null, password);
+        _ks.store(fos, password);
         return _ks;
     } 
-    public static KeyStore setupKeyStore(String userName, char[] password) throws Exception{
+    public KeyStore setupKeyStore(String userName, char[] password) throws Exception{
         KeyStore _ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        java.io.FileInputStream fis = new java.io.FileInputStream("keyStoreName");
+        File dir = c.getDir("", c.MODE_PRIVATE);
+            File file = new File(dir, "keyStore");
+            FileReader fr = new FileReader(file);
+        java.io.FileInputStream fis = new java.io.FileInputStream(file);
         _ks.load(fis, password);
         fis.close();
         return _ks;
