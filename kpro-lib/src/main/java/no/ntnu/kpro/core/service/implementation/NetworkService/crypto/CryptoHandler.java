@@ -68,8 +68,7 @@ public class CryptoHandler {
     public KeyStore setupKeyStore(String userName, char[] password) throws Exception{
         KeyStore _ks = KeyStore.getInstance(KeyStore.getDefaultType());
         File dir = c.getDir("", c.MODE_PRIVATE);
-            File file = new File(dir, "keyStore");
-            FileReader fr = new FileReader(file);
+        File file = new File(dir, "keyStore");
         java.io.FileInputStream fis = new java.io.FileInputStream(file);
         _ks.load(fis, password);
         fis.close();
