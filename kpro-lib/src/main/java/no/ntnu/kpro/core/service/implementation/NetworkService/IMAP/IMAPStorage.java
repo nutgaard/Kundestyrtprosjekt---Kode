@@ -44,6 +44,8 @@ public class IMAPStorage {
             Message[] messages = folder.search(search);
             System.out.println("Found "+messages.length+" messages");
             for (Message m : messages) {
+                m.getAllHeaders();
+                m.getContent();
                 System.out.println("Found message: "+m);
                 System.out.println("Telling: "+listener);
                 listener.mailReceived((IMAPMessage)m);

@@ -45,7 +45,7 @@ public class NetworkServiceFactory {
             }
 
             public void mailReceived(XOMessage message) {
-                System.out.println("Mailreceived: "+message);
+                System.err.println("Mailreceived: "+message);
             }
 
             public void mailReceivedError(Exception ex) {

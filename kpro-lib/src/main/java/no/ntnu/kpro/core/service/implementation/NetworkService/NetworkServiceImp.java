@@ -117,11 +117,14 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
     public void mailReceived(IMAPMessage message) {
         try {
             String id = message.getMessageID();
-            XOMessage xo = Converter.convertToXO(message);
-            cache.put(id, new Pair<IMAPMessage, XOMessage>(message, xo));
-            getInbox().add(xo);
-            for (NetworkService.Callback cb : listeners) {
-                cb.mailReceived(xo);
+            if (!cache.containsKey(id)) {
+                System.out.println("InternalCallback::got id: " + id);
+                XOMessage xo = Converter.convertToXO(message);
+                cache.put(id, new Pair<IMAPMessage, XOMessage>(message, xo));
+                getInbox().add(xo);
+                for (NetworkService.Callback cb : listeners) {
+                    cb.mailReceived(xo);
+                }
             }
         } catch (Exception ex) {
             Logger.getLogger(NetworkServiceImp.class.getName()).log(Level.SEVERE, null, ex);
