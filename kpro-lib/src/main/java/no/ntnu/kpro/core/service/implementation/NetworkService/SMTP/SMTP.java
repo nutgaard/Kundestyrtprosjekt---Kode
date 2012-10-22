@@ -48,9 +48,11 @@ public class SMTP extends Thread {
 //        if (index < 0) {
         synchronized (this) {
             if (!queue.contains(msg)) {
-                queue.add(msg);
-                Collections.sort(queue, XOMessage.XOMessageSorter.getSendingPriority());
-                System.out.println("Notify");
+                synchronized (queue) {
+                    queue.add(msg);
+                    Collections.sort(queue, XOMessage.XOMessageSorter.getSendingPriority());
+                    System.out.println("Notify");
+                }
                 notifyAll();
             }
         }
