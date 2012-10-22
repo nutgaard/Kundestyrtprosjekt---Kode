@@ -54,7 +54,7 @@ public class IMAPStorage {
             store.close();
             return messages;
         } catch (Exception ex) {
-            ex.printStackTrace();
+//            ex.printStackTrace();
             for (Callback cb : listener) {
                 cb.mailReceivedError(ex);
             }

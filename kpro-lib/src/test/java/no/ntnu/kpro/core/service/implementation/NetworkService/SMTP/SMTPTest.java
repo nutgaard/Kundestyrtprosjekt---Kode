@@ -16,19 +16,19 @@ public class SMTPTest {
     private static final String EMAIL_TO = "kprothales@gmail.com";
     private static final String EMAIL_SUBJECT = "Test E-Mail";
     private static final String EMAIL_TEXT = "This is a test e-mail";
-    private SMTPSender mock;
-    private SMTP sender;
+    private SMTPSender sender;
+    private SMTP smtp;
 
     @Before
     public void setup() {
-        mock = mock(SMTPSender.class);
-        when(mock.sendMail(any(XOMessage.class))).thenReturn(Boolean.TRUE);
-        sender = new SMTP(mock);
+        sender = mock(SMTPSender.class);
+        when(sender.sendMail(any(XOMessage.class))).thenReturn(Boolean.TRUE);
+        smtp = new SMTP(sender);
     }
     @After
     public void teardown() {
-        mock = null;
         sender = null;
+        smtp = null;
     }
     @Test
     public void test() throws InterruptedException {
@@ -38,11 +38,11 @@ public class SMTPTest {
             ml[i] = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT+i, XOMessageSecurityLabel.UGRADERT, XOMessagePriority.DEFERRED, XOMessageType.DRILL, new Date());
         }
         for (XOMessage m : ml){
-            sender.send(m);
+            smtp.send(m);
         }
         synchronized (this){
             wait(200);
         }
-        verify(mock, times(n)).sendMail(any(XOMessage.class));
+        verify(sender, times(n)).sendMail(any(XOMessage.class));
     }
 }

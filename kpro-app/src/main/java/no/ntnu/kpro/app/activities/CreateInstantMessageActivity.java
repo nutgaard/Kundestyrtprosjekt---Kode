@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.thoughtworks.xstream.XStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -56,6 +57,7 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  */
 public class CreateInstantMessageActivity extends MenuActivity implements NetworkService.Callback {
 
+    private EditText messageTemplateName;
     private EditText txtReceiver;
     private EditText txtSubject;
     private EditText txtMessageBody;
@@ -76,6 +78,7 @@ public class CreateInstantMessageActivity extends MenuActivity implements Networ
         setContentView(R.layout.create_instant_message);
 
         //Find all textFields
+        messageTemplateName = (EditText) findViewById(R.id.templateName); 
         txtReceiver = (EditText) findViewById(R.id.txtMessageReceiver);
         txtSubject = (EditText) findViewById(R.id.txtSubject);
         txtMessageBody = (EditText) findViewById(R.id.txtMessage);
@@ -99,6 +102,7 @@ public class CreateInstantMessageActivity extends MenuActivity implements Networ
         //Add listener to the send button.
         addBtnSendClickListener(btnSend);
         addReceiverOnFocusChangedListener(txtReceiver);
+        addReceiverOnFocusChangedListener(messageTemplateName);
         addSubjectOnFocusChangedListener(txtSubject);
 
         addClickListener(btnAddAttachment);
@@ -192,7 +196,7 @@ public class CreateInstantMessageActivity extends MenuActivity implements Networ
                                 XOMessage m = new XOMessage("MyMailAddress@gmail.com", txtReceiver.getText().toString(), txtSubject.getText().toString(), txtMessageBody.getText().toString(), selectedSecurity, selectedPriority, selectedType, new Date());
 //                                getServiceProvider().getNetworkService().sendMail(txtReceiver.getText().toString(), txtSubject.getText().toString(), txtMessageBody.getText().toString(), selectedSecurity, selectedPriority, selectedType);
                                 //getServiceProvider().getNetworkService().send(m);
-                                saveInstantMessage(m);
+                                saveInstantMessage(m, messageTemplateName.getText().toString());
                                 //Is not necessary to have this when callback is implemented, as mailSent() will be called
                                 Toast confirm = Toast.makeText(CreateInstantMessageActivity.this, "Message Added to Instant Messages.", Toast.LENGTH_SHORT);
                                 confirm.show();
@@ -214,30 +218,17 @@ public class CreateInstantMessageActivity extends MenuActivity implements Networ
                 });
     }
 
-    private void saveInstantMessage(XOMessage m) {
+    private void saveInstantMessage(XOMessage m, String name) {
         try {
-            OutputStream os = openFileOutput("mail.txt", MODE_WORLD_READABLE);
+            OutputStream os = openFileOutput("mail.txt", MODE_APPEND);
             OutputStreamWriter osw = new OutputStreamWriter(os);
-            osw.write(m.toString());
+            osw.write(name+","+m.toString()+"#");
             osw.close();
         } catch (Exception e) {
             Log.i("ReadNWrite, fileCreate()", "Exception e = " + e);
         }
     }
 
-    private String readInstantMessages(XOMessage xo) {
-        try {
-            FileInputStream fin = openFileInput("mail.txt");
-            InputStreamReader isReader = new InputStreamReader(fin);
-            char[] buffer = new char[xo.toString().length()];
-            // Fill the buffer with data from file
-            isReader.read(buffer);
-            return new String(buffer);
-        } catch (Exception e) {
-            Log.i("ReadNWrite, readFile()", "Exception e = " + e);
-            return null;
-        }
-    }
 
 private void resetFields() {
         txtReceiver.setText("");

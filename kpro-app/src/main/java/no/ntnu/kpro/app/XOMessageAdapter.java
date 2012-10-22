@@ -36,7 +36,7 @@ public class XOMessageAdapter extends ArrayAdapter {
         //this.isInbox = isInbox;
         this.resources = res;
     }
-    
+
     public void setIsInbox(boolean value) {
         this.isInbox = value;
     }
@@ -47,16 +47,21 @@ public class XOMessageAdapter extends ArrayAdapter {
         XOMessageView xoView = null;
 
         XOMessage message = (XOMessage) messages.get(position);
-        
+
         if (rowView == null) {
             // Get a new instance of the row layout view
             LayoutInflater inflater = activity.getLayoutInflater();
-            if(message.getOpened()){
-                rowView = inflater.inflate(R.layout.message_list_item, null);
+            if (isInbox) {
+                if (message.getOpened()) {
+                    rowView = inflater.inflate(R.layout.message_list_item, null);
+                } else {
+                    rowView = inflater.inflate(R.layout.message_list_item_unread, null);
+                }
             }
             else{
-                rowView = inflater.inflate(R.layout.message_list_item_unread, null);
+                rowView = inflater.inflate(R.layout.message_list_item, null);
             }
+
 
             // Hold the view objects in an object,
             // so they don't need to be re-fetched
@@ -77,7 +82,7 @@ public class XOMessageAdapter extends ArrayAdapter {
         // Transfer the stock data from the data object
         // to the view objects
 
-        
+
         if (isInbox) {
             xoView.address.setText(message.getFrom());
         } else {
