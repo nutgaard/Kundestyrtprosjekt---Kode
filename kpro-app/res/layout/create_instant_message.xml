@@ -10,21 +10,12 @@
         style="@style/backgroundStyle"
         xmlns:android="http://schemas.android.com/apk/res/android">
     
-        <EditText 
-            android:id="@+id/templateName"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:singleLine="true"
-            android:hint="Name"
-            android:imeOptions="actionDone"/>
         <!--RECEIVER OF MESSAGE-->
-        
+    
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
                       android:id="@+id/receiver_layout"
                       android:orientation="horizontal"
                       android:layout_width="fill_parent" 
-                      android:layout_below="@id/templateName"
                       android:weightSum="100" 
                       android:layout_height="wrap_content"> 
             <!-- Receiver -->
@@ -35,7 +26,6 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:hint="To"/>
-            
             <!-- Address book -->
             <ImageButton
                 android:id="@+id/btnContacts"
@@ -46,7 +36,6 @@
         </LinearLayout>
     
         <!--SUBJECT-->
-      
         <EditText 
             android:id="@+id/txtSubject"
             android:layout_width="fill_parent"
@@ -56,7 +45,6 @@
             android:singleLine="true"
             android:hint="Subject"
             android:imeOptions="actionDone"/>
-    
     
         <!--MESSAGE SECURITY LABEL SPINNER-->
     
@@ -124,12 +112,10 @@
             android:maxLines="10"
             android:maxLength="500"
             android:hint="Message text"
-            android:gravity="top|left"/>  
-        
-       
+            android:gravity="top|left"/>    
     
         <!-- SEND BUTTON-->
-        <Button
+         <Button
             android:id="@+id/btnSave"
             android:layout_width="150dp"
             android:layout_height="wrap_content"

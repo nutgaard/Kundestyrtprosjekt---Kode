@@ -44,5 +44,16 @@ public class SMTPTest {
             wait(200);
         }
         verify(sender, times(n)).sendMail(any(XOMessage.class));
+        ml = new XOMessage[n];
+        for (int i = 0;i < n; i++){
+            ml[i] = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT+(10+i), XOMessageSecurityLabel.UGRADERT, XOMessagePriority.DEFERRED, XOMessageType.DRILL, new Date());
+        }
+        for (XOMessage m : ml){
+            smtp.send(m);
+        }
+        synchronized (this){
+            wait(200);
+        }
+        verify(sender, times(2*n)).sendMail(any(XOMessage.class));
     }
 }

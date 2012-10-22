@@ -18,9 +18,9 @@ public enum XOMessageSecurityLabel {
     UNCLASSIFIED("UNCLASSIFIED", "uc", "marking=\"UNCLASSIFIED\"; fgcolor=black; bgcolor=white; type=\":ess\"; label=\"MQ4CAQEGCWCEQgECARwAAQ==\""),
     RESTRICTED("RESTRICTED", "r", "marking=\"RESTRICTED\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ4CAQIGCWCEQgECARwAAQ==\""), 
     CONFIDENTIAL("CONFIDENTIAL", "c", "marking=\"CONFIDENTIAL\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ4CAQMGCWCEQgECARwAAQ==\""),
-    NATO_UNCLASSIFIED("NATO_UNCLASSIFIED", "nu", "marking=\"NATO UNCLASSIFIED\"; fgcolor=black; bgcolor=white; type=\":ess\"; label=\"MQ0CAQEGCCsaAKI2AAUB\""),
-    NATO_RESTRICTED("NATO_RESTRICTED", "nr", "marking=\"NATO RESTRICTED\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ0CAQIGCCsaAKI2AAUB\""),
-    NATO_CONFIDENTIAL("NATO_CONFIDENTIAL", "nc", "marking=\"NATO CONFIDENTIAL\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ0CAQMGCCsaAKI2AAUB\"");
+    NATO_UNCLASSIFIED("NATO UNCLASSIFIED", "nu", "marking=\"NATO UNCLASSIFIED\"; fgcolor=black; bgcolor=white; type=\":ess\"; label=\"MQ0CAQEGCCsaAKI2AAUB\""),
+    NATO_RESTRICTED("NATO RESTRICTED", "nr", "marking=\"NATO RESTRICTED\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ0CAQIGCCsaAKI2AAUB\""),
+    NATO_CONFIDENTIAL("NATO CONFIDENTIAL", "nc", "marking=\"NATO CONFIDENTIAL\"; fgcolor=red; bgcolor=white; type=\":ess\"; label=\"MQ0CAQMGCCsaAKI2AAUB\"");
     
     private String val;
     private String shortVal;

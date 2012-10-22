@@ -72,6 +72,24 @@ public class SMTPSenderTest {
     @Test
     public void sendMailTest() {
         XOMessage m = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.UGRADERT, XOMessagePriority.DEFERRED, XOMessageType.DRILL, new Date());
+        sender.addListener(new NetworkService.Callback() {
+
+            public void mailSent(XOMessage message, Address[] invalidAddress) {
+                
+            }
+
+            public void mailSentError(XOMessage message, Exception ex) {
+                
+            }
+
+            public void mailReceived(XOMessage message) {
+                
+            }
+
+            public void mailReceivedError(Exception ex) {
+                
+            }
+        });
         assertTrue(sender.sendMail(m));
         assertEquals(1, server.getReceivedMessages().length);
     }
@@ -80,7 +98,7 @@ public class SMTPSenderTest {
     public void callbackTest() throws InterruptedException {
         XOMessage m = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.UGRADERT, XOMessagePriority.DEFERRED, XOMessageType.DRILL, new Date());
         final List<XOMessage> ml = new LinkedList<XOMessage>();
-        sender.addCallback(new NetworkService.Callback() {
+        sender.addListener(new NetworkService.Callback() {
             public void mailSent(XOMessage message, Address[] invalidAddress) {
                 ml.add(message);
             }
@@ -90,7 +108,7 @@ public class SMTPSenderTest {
             }
 
             public void mailReceived(XOMessage message) {
-                ml.add(message);
+//                ml.add(message);
             }
 
             public void mailReceivedError(Exception ex) {

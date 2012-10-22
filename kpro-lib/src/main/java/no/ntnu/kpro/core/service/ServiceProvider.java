@@ -48,8 +48,6 @@ public class ServiceProvider extends Service {
         this.HALService = HALServiceFactory.createService();
         this.networkService = NetworkServiceFactory.createService();
         this.securityService = SecurityServiceFactory.createService();
-        this.networkService.startIMAPIdle();
-        this.networkService.getAllMessages();
         CryptoHandler.setDefaultMailcap(); //tell java mail how to handle security
         Log.i(TAG, "Service starting");
     }
@@ -58,7 +56,7 @@ public class ServiceProvider extends Service {
     public void onDestroy() {
         super.onDestroy();
         ServiceProvider.instance = null;
-        this.networkService.stopIMAPIdle();
+        this.networkService.close();
         Log.i(TAG, "Service destroyed");
     }
 

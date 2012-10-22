@@ -6,16 +6,29 @@ package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPMessage;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.mail.*;
+import javax.mail.Authenticator;
+import javax.mail.Folder;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Store;
 import javax.mail.event.MessageCountEvent;
 import javax.mail.event.MessageCountListener;
+import javax.mail.search.ComparisonTerm;
+import javax.mail.search.ReceivedDateTerm;
+import no.ntnu.kpro.core.model.XOMessage;
+
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAPStrategy;
+import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
+import no.ntnu.kpro.core.service.interfaces.NetworkService.Callback;
 import no.ntnu.kpro.core.utilities.Converter;
+import no.ntnu.kpro.core.utilities.Pair;
 
 /**
  *
@@ -30,7 +43,8 @@ public class IMAPPush extends IMAPStrategy implements MessageCountListener {
     private IMAPFolder inbox;
     private boolean run = true;
 
-    public IMAPPush(final Properties props, final Authenticator auth, final List<NetworkService.Callback> listeners) {
+    public IMAPPush(final Properties props, final Authenticator auth, final List<NetworkService.Callback> listeners, Map<String, Pair<IMAPMessage, XOMessage>> cache) {
+        super(cache);
         this.props = props;
         this.auth = auth;
         this.session = Session.getInstance(props, auth);
@@ -38,25 +52,38 @@ public class IMAPPush extends IMAPStrategy implements MessageCountListener {
     }
 
     public void run() {
+        System.out.println("Fetching existing messages");
+        IMAPStorage pull = new IMAPStorage(props, auth, listeners, cache);
+        pull.getAllMessages(NetworkServiceImp.BoxName.INBOX, new ReceivedDateTerm(ComparisonTerm.GT, new Date(0)));
+        System.out.println("Starting IMAPPush");
+        Store store = null;
         while (run) {
             try {
-                Store store = session.getStore("imaps");
-                store.connect();
+                if (store == null || !store.isConnected()) {
+                    System.out.println("Connection to server");
+                    store = session.getStore("imaps");
+                    store.connect();
+                }
+                System.out.println("Opening folder");
                 inbox = (IMAPFolder) store.getFolder("Inbox");
                 inbox.open(Folder.READ_ONLY);
                 inbox.addMessageCountListener(this);
-
+                
                 while (run) {
-                    System.out.println("Waiting for change");
+//                    System.out.println("Waiting for change");
                     if (!inbox.isOpen() && run) {
+                        System.out.println("Reopen folder");
                         inbox.open(Folder.READ_ONLY);
-                    }else {
-                        break;
-                    }
+                    } 
+//                    else {
+//                        break;
+//                    }
+                    System.out.println("Waiting");
                     inbox.idle();
                 }
 
             } catch (Exception e) {
+                System.out.println("Exception found: "+e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -73,33 +100,30 @@ public class IMAPPush extends IMAPStrategy implements MessageCountListener {
     }
 
     public void messagesAdded(MessageCountEvent e) {
-        System.out.println("New message");
+//        System.out.println("New message");
         IMAPMessage[] messages = new IMAPMessage[e.getMessages().length];
         for (int i = 0; i < messages.length; i++) {
             messages[i] = (IMAPMessage) e.getMessages()[i];
         }
-        for (IMAPMessage m : messages) {
-            for (NetworkService.Callback cb : listeners) {
-                try {
-                    cb.mailReceived(Converter.convertToXO(m));
-                } catch (Exception ex) {
-                    Logger.getLogger(IMAPPush.class.getName()).log(Level.SEVERE, null, ex);
+        try {
+            for (IMAPMessage m : messages) {
+                IMAPMessage im = (IMAPMessage) m;
+                if (cache.containsKey(im.getMessageID())) {
+                    continue;
+                }
+                for (NetworkService.Callback cb : listeners) {
+                    XOMessage xo = Converter.convertToXO(m);
+                    cb.mailReceived(xo);
+                    cache.put(im.getMessageID(), new Pair<IMAPMessage, XOMessage>(m, xo));
                 }
             }
+        } catch (Exception ex) {
+            Logger.getLogger(IMAPPush.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void messagesRemoved(MessageCountEvent e) {
     }
-
-    public void addCallback(NetworkService.Callback listener) {
-        this.listeners.add(listener);
-    }
-
-    public void removeCallback(NetworkService.Callback listener) {
-        this.listeners.remove(listener);
-    }
-
 //    public static void main(String[] args) {
 //        Properties props = new Properties();
 //        props.put("mail.store.protocol", "imaps");
@@ -135,4 +159,12 @@ public class IMAPPush extends IMAPStrategy implements MessageCountListener {
 //        });
 //        new Thread(p).start();
 //    }
+
+    public void addCallback(Callback callback) {
+        this.listeners.add(callback);
+    }
+
+    public void removeCallback(Callback callback) {
+        this.listeners.remove(callback);
+    }
 }

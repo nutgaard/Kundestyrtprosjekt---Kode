@@ -83,6 +83,10 @@ public class IMAPTest {
 class IMAPStrategyDummy extends IMAPStrategy {
     public boolean run = true;
 
+    public IMAPStrategyDummy() {
+        super(null);
+    }
+    
     @Override
     public void halt() {
         run = false;

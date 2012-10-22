@@ -8,7 +8,9 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.DummySSLSocketFactory;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import com.sun.mail.imap.IMAPMessage;
 import java.security.Security;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -23,6 +25,7 @@ import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
+import no.ntnu.kpro.core.utilities.Pair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,7 +69,7 @@ public class IMAPStorageTest {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(USER_NAME, USER_PASSWORD);
             }
-        }, new LinkedList<NetworkService.Callback>());
+        }, new LinkedList<NetworkService.Callback>(), new HashMap<String, Pair<IMAPMessage, XOMessage>>());
     }
 
     @After
@@ -83,7 +86,24 @@ public class IMAPStorageTest {
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(EMAIL_TO));
         message.setSubject(EMAIL_SUBJECT);
         message.setText(EMAIL_TEXT);
+        store.addCallback(new NetworkService.Callback() {
 
+            public void mailSent(XOMessage message, Address[] invalidAddress) {
+                
+            }
+
+            public void mailSentError(XOMessage message, Exception ex) {
+                
+            }
+
+            public void mailReceived(XOMessage message) {
+                
+            }
+
+            public void mailReceivedError(Exception ex) {
+                
+            }
+        });
         user.deliver(message);
         Message[] m = store.getAllMessages(NetworkServiceImp.BoxName.INBOX, new SearchTerm() {
             @Override
@@ -106,6 +126,7 @@ public class IMAPStorageTest {
             }
 
             public void mailReceived(XOMessage message) {
+                System.out.println("MAILRECEIVED");
                 m.add(message);
             }
 
@@ -138,7 +159,7 @@ public class IMAPStorageTest {
     @Test     
     public void errorCallbackTest() throws Exception {
         final List<Exception> m = new LinkedList<Exception>();
-        store = new IMAPStorage(null, null, new LinkedList<NetworkService.Callback>());
+        store = new IMAPStorage(null, null, new LinkedList<NetworkService.Callback>(), new HashMap<String, Pair<IMAPMessage, XOMessage>>());
         store.addCallback(new NetworkService.Callback() {
             public void mailSent(XOMessage message, Address[] invalidAddress) {
             }

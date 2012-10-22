@@ -4,18 +4,14 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 
-import com.icegreen.greenmail.user.GreenMailUser;
-import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetupTest;
+import com.sun.mail.imap.IMAPMessage;
 import com.sun.mail.smtp.SMTPTransport;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import javax.mail.*;
-import javax.mail.event.MessageCountEvent;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
@@ -24,9 +20,9 @@ import no.ntnu.kpro.core.model.XOMessageType;
 import no.ntnu.kpro.core.service.implementation.NetworkService.SMTP.SMTPSender;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.utilities.Converter;
+import no.ntnu.kpro.core.utilities.Pair;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
@@ -71,14 +67,14 @@ public class IMAPPushTest {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(USER_NAME, USER_PASSWORD);
             }
-        }, new LinkedList<NetworkService.Callback>());
+        }, null);
         pusher = new IMAPPush(props, new Authenticator() {
 
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(USER_NAME, USER_PASSWORD);
             }
-        }, new LinkedList<NetworkService.Callback>());
+        }, new LinkedList<NetworkService.Callback>(), new HashMap<String, Pair<IMAPMessage, XOMessage>>());
         pusherThread = new Thread(pusher);
         pusherThread.start();
     }

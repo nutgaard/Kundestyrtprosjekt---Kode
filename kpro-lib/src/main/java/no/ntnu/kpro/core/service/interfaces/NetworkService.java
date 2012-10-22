@@ -4,8 +4,8 @@
  */
 package no.ntnu.kpro.core.service.interfaces;
 
+import com.sun.mail.imap.IMAPMessage;
 import javax.mail.Address;
-import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.XOMessage;
 
@@ -21,13 +21,9 @@ public abstract class NetworkService extends ServiceInterface<NetworkService.Cal
         public void mailReceived(XOMessage message);
         public void mailReceivedError(Exception ex);
     }
-
 //    public boolean sendMail(final String recipient, final String subject, final String body);
     public abstract void send(XOMessage message);
-    public abstract void startIMAPIdle();
-    public abstract void stopIMAPIdle();
-    public abstract void getMessages(SearchTerm searchterm);
-    public abstract void getAllMessages();
     public abstract Box<XOMessage> getOutbox();
     public abstract Box<XOMessage> getInbox();
+    public abstract void close();
 }
