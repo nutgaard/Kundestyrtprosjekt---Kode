@@ -12,12 +12,17 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.mail.*;
+import javax.mail.Authenticator;
+import javax.mail.Folder;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Store;
 import javax.mail.event.MessageCountEvent;
 import javax.mail.event.MessageCountListener;
 import javax.mail.search.ComparisonTerm;
 import javax.mail.search.ReceivedDateTerm;
 import no.ntnu.kpro.core.model.XOMessage;
+
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAPStrategy;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
@@ -78,6 +83,7 @@ public class IMAPPush extends IMAPStrategy implements MessageCountListener {
                 }
 
             } catch (Exception e) {
+                System.out.println("Exception found: "+e.getMessage());
                 e.printStackTrace();
             }
         }

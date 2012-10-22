@@ -5,6 +5,7 @@
 package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 
 
+
 import com.sun.mail.imap.IMAPMessage;
 import java.util.HashMap;
 import java.util.LinkedList;

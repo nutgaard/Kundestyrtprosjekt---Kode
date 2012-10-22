@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.mail.Authenticator;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
@@ -27,7 +29,7 @@ public class SMTP extends Thread {
     }
 
     public SMTP(SMTPSender sender) {
-        this.queue = new LinkedList<XOMessage>();
+        this.queue = Collections.synchronizedList(new LinkedList<XOMessage>());
         this.sender = sender;
         start();
     }
@@ -44,10 +46,12 @@ public class SMTP extends Thread {
 //        int index = Collections.binarySearch(queue, msg, XOMessage.XOMessageSorter.getSendingPriority());
 //        System.out.println("Insert at "+index);
 //        if (index < 0) {
-        synchronized (queue) {
+        synchronized (this) {
             if (!queue.contains(msg)) {
                 queue.add(msg);
                 Collections.sort(queue, XOMessage.XOMessageSorter.getSendingPriority());
+                System.out.println("Notify");
+                notifyAll();
             }
         }
 //        System.out.println("Message added to queue, queuesize: " + queue.size());
@@ -69,7 +73,15 @@ public class SMTP extends Thread {
 //            System.out.println("Running: "+run);
         while (run) {
             while (queue.isEmpty()) {
-                SMTP.yield();
+//                SMTP.yield();
+                synchronized (this) {
+                    try {
+                        System.out.println("Going to sleep");
+                        wait();
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(SMTP.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             }
 //                System.out.println("Pusher waked");
             XOMessage msg;

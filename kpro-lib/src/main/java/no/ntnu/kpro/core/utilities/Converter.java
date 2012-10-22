@@ -61,7 +61,7 @@ public class Converter {
                 System.out.println("Found "+multipart.getCount()+" different parts");
                 for (int i = 0; i < multipart.getCount(); i++){
                     System.out.println("Checking type: "+multipart.getBodyPart(i).getContentType());
-                    if (multipart.getBodyPart(i).getContentType().equalsIgnoreCase("text/plain")){
+                    if (multipart.getBodyPart(i).getContentType().toLowerCase().contains("text/plain")){
                         System.out.println("Found body");
                         body = (String)multipart.getBodyPart(i).getContent();
                     }
