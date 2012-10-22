@@ -263,7 +263,7 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
         FoldersActivity.this.runOnUiThread(new Runnable() {
             public void run() {
                 Log.i(TAG, "Mail received error in UI");
-                Log.i(TAG, e.getMessage());
+                //Log.i(TAG, e.getMessage());
             }
         });
     }

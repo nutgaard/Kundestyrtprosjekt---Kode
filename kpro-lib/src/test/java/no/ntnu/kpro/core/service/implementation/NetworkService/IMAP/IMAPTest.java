@@ -44,7 +44,7 @@ public class IMAPTest {
         imap.start();
         imap.halt();
         synchronized (this) {
-            wait(100);
+            wait(500);
         }
         verify(puller).run();
         verify(puller).halt();
