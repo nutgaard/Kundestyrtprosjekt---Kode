@@ -101,6 +101,7 @@
             android:layout_below="@id/sprType"
             android:text="Add attachment"/>
         
+        <!--ATTACHMENTS LIST-->
         <ListView
             android:id="@+id/lstAttachments"
             android:layout_width="match_parent"

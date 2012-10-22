@@ -79,6 +79,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     //Attachments//
     private ListView lstAttachments;
     private Attachments attachments;
+    private List<String> attachmentsVisualRepresentation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -123,7 +124,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         lstAttachments = (ListView) findViewById(R.id.lstAttachments);
         attachments = new Attachments();
         addAttachmentsListener(lstAttachments);
-        
+
     }
 
     /**
@@ -394,6 +395,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     }
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 67;
     private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 73;
+    private static final int FETCH_IMAGE_ACTIVITY_REQUEST_CODE = 77;
     private Uri attachmentUri;
 
     private void addClickListener(Button btnAddAttachment) {
@@ -401,7 +403,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         btnAddAttachment.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                String[] items = new String[]{"Image From Camera", "Video From Camera"};
+                String[] items = new String[]{"Image From Camera", "Video From Camera", "Image From Phone"};
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(SendMessageActivity.this, android.R.layout.select_dialog_item, items);
                 AlertDialog.Builder builder = new AlertDialog.Builder(SendMessageActivity.this);
 
@@ -435,6 +437,13 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                             // start the Video Capture Intent
                             startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
 
+                        } else if (item == 2) {
+                            //Create intent
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            intent.addCategory(Intent.CATEGORY_OPENABLE);
+                            startActivityForResult(intent, FETCH_IMAGE_ACTIVITY_REQUEST_CODE);
                         }
                     }
                 });
@@ -449,10 +458,10 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         logMe("ReqCode: " + requestCode + ". ResultCode:" + resultCode);
+
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                attachments.addAttachment(attachmentUri, AttachmentType.IMAGE);
-                updateAttachments();
+                addAttachment(attachmentUri, AttachmentType.IMAGE);
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the image capture
             } else {
@@ -462,30 +471,79 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         if (requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                attachments.addAttachment(attachmentUri, AttachmentType.VIDEO);
-                updateAttachments();
+                addAttachment(attachmentUri, AttachmentType.VIDEO);
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the video capture
             } else {
                 // Video capture failed, advise user
             }
         }
+
+        if (requestCode == FETCH_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Uri path = data.getData();
+                addAttachment(path, AttachmentType.IMAGE);
+                //super.onActivityResult(requestCode, resultCode, data);
+            }
+        }
     }
     
-     private void addAttachmentsListener(ListView attachments) {
-         logMe("InsideAttachmentsListener");
-         attachments.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
-                 logMe("AttachmentClicked");
-                   Toast confirm = Toast.makeText(SendMessageActivity.this, "Item " + i, Toast.LENGTH_SHORT);
-             }
-         });
+    private void addAttachment(Uri attachmentUri, AttachmentType type){
+        String visualRepresentation = attachments.addAttachment(attachmentUri, type);
+        ArrayAdapter<String> adapter = getCurrentAdapter();
+        logMe("Size first of Adapter" + adapter.getCount());
+        this.getCurrentAdapter().add(visualRepresentation);
+        this.getCurrentAdapter().notifyDataSetChanged();
+        logMe("Size after of Adapter" + adapter.getCount());
+        
+    }
+    
+     /**
+     * 
+     * @return the adapter attached to the listview. If it does not exist, a new one
+     * is created, connected to the listview and then returned.
+     */
+    private ArrayAdapter<String> getCurrentAdapter(){
+        ArrayAdapter<String> adapter;
+        if (lstAttachments.getAdapter() == null) {
+            attachmentsVisualRepresentation = new ArrayList<String>();
+            adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, attachmentsVisualRepresentation);
+            lstAttachments.setAdapter(adapter);
+        }else{
+            adapter = (ArrayAdapter<String>) lstAttachments.getAdapter();
+        }
+        return adapter;
     }
 
-    private void updateAttachments() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, attachments.getAttachments());
-        lstAttachments.setAdapter(adapter);
+    private void addAttachmentsListener(ListView attachments) {
+        logMe("InsideAttachmentsListener");
+        attachments.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> av, View view, int i, long l) {
+                logMe("AttachmentClicked");
+                Toast confirm = Toast.makeText(SendMessageActivity.this, "Item " + i, Toast.LENGTH_SHORT);
+            }
+        });
     }
+
+//    private void updateAttachments() {
+//        logMe("Starting to update attachments ...");
+//        
+//        ArrayAdapter<String> adapter;
+//        if (lstAttachments.getAdapter() == null) {
+//            logMe("Attachments Adapter was null. Creating new one..");
+//            adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, attachments.getAttachments());
+//            lstAttachments.setAdapter(adapter);
+//        }else{            
+//            logMe("Used already existing attachments Adapter");
+//            adapter = (ArrayAdapter<String>) lstAttachments.getAdapter();
+//        }
+//        logMe("Number of elements in attachments BEFORE changed:" + adapter);
+//        adapter.notifyDataSetChanged();
+//        logMe("Number of elements in attachments AFTER changed:" + attachments.getAttachments().size());
+//        adapter.getCount();
+//        
+//    }
+    
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
 
@@ -531,10 +589,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         return mediaFile;
     }
 
-    private void logMe(String message){
+    private void logMe(String message) {
         Log.d("SendMessage", message);
     }
-   
-
-   
 }
