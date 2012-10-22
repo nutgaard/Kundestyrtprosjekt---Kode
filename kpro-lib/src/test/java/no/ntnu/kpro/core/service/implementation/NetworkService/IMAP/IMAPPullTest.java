@@ -35,7 +35,7 @@ public class IMAPPullTest {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication("kprothales", "kprothales2012");
             }
-        }, new LinkedList<NetworkService.Callback>(), 1, store);
+        }, 1, store);
         pullerThread = new Thread(puller);
     }
 

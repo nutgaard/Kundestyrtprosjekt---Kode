@@ -5,7 +5,7 @@
 package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 
 import com.sun.mail.imap.IMAPFolder;
-import java.util.List;
+import com.sun.mail.imap.IMAPMessage;
 import java.util.Properties;
 import javax.mail.Authenticator;
 import javax.mail.Folder;
@@ -13,11 +13,9 @@ import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.search.SearchTerm;
-import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp.BoxName;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
-import no.ntnu.kpro.core.service.interfaces.NetworkService.Callback;
-import no.ntnu.kpro.core.utilities.Converter;
+import no.ntnu.kpro.core.service.interfaces.NetworkService.InternalCallback;
 
 /**
  *
@@ -27,12 +25,12 @@ public class IMAPStorage {
 
     private Properties props;
     private Authenticator auth;
-    private List<NetworkService.Callback> listener;
+    private NetworkService.InternalCallback listener;
 
-    public IMAPStorage(final Properties props, final Authenticator auth, List<NetworkService.Callback> listeners) {
+    public IMAPStorage(final Properties props, final Authenticator auth, NetworkService.InternalCallback listener) {
         this.props = props;
         this.auth = auth;
-        this.listener = listeners;
+        this.listener = listener;
     }
 
     public Message[] getAllMessages(final BoxName box, final SearchTerm search) {
@@ -46,29 +44,18 @@ public class IMAPStorage {
             Message[] messages = folder.search(search);
             System.out.println("Found "+messages.length+" messages");
             for (Message m : messages) {
-                XOMessage xo = Converter.convertToXO(m);
-                System.out.println(xo);
-                box.getBox().add(xo);
-                for (Callback cb : listener) {
-                    cb.mailReceived(xo);
-                }
+                System.out.println("Found message: "+m);
+                System.out.println("Telling: "+listener);
+                listener.mailReceived((IMAPMessage)m);
             }
             store.close();
             return messages;
         } catch (Exception ex) {
-            ex.printStackTrace();
-            for (Callback cb : listener) {
-                cb.mailReceivedError(ex);
-            }
+            listener.mailReceivedError(ex);
         }
         return null;
     }
-
-    public void addCallback(Callback listener) {
-        this.listener.add(listener);
-    }
-
-    public void removeCallback(Callback listener) {
-        this.listener.remove(listener);
+    public void setCallback(InternalCallback internalCallback) {
+        this.listener = internalCallback;
     }
 }

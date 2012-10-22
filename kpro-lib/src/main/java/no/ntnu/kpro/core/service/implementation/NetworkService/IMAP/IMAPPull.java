@@ -30,13 +30,13 @@ public class IMAPPull extends IMAPStrategy {
     private Date lastReceived = new Date(0);
     private boolean run = true;
 
-    IMAPPull(final Properties props, final Authenticator auth, List<NetworkService.Callback> listeners, int intervalInSeconds, final IMAPStorage store) {
+    IMAPPull(final Properties props, final Authenticator auth, int intervalInSeconds, final IMAPStorage store) {
         this.storage = store;
         this.intervalInMillies = intervalInSeconds * 1000;
     }
 
-    public IMAPPull(final Properties props, final Authenticator auth, List<NetworkService.Callback> listeners, int intervalInSeconds) {
-        this(props, auth, listeners, intervalInSeconds, new IMAPStorage(props, auth, listeners));
+    public IMAPPull(final Properties props, final Authenticator auth, NetworkService.InternalCallback listener, int intervalInSeconds) {
+        this(props, auth, intervalInSeconds, new IMAPStorage(props, auth, listener));
     }
 
     public void run() {

@@ -22,8 +22,8 @@ public class SMTP extends Thread {
     private final List<XOMessage> queue;
     private final SMTPSender sender;
 
-    public SMTP(final String username, final String password, final String mailAdr, final Properties props, final Authenticator auth, List<NetworkService.Callback> listeners) {
-        this(new SMTPSender(username, password, mailAdr, props, auth, listeners));
+    public SMTP(final String username, final String password, final String mailAdr, final Properties props, final Authenticator auth, NetworkService.InternalCallback listener) {
+        this(new SMTPSender(username, password, mailAdr, props, auth, listener));
     }
 
     public SMTP(SMTPSender sender) {

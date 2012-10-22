@@ -7,6 +7,7 @@ package no.ntnu.kpro.core.service.implementation.NetworkService.SMTP;
 import com.icegreen.greenmail.util.DummySSLSocketFactory;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import com.sun.mail.imap.IMAPMessage;
 import java.security.Security;
 import java.util.Date;
 import java.util.LinkedList;
@@ -55,7 +56,7 @@ public class SMTPSenderTest {
                 return new PasswordAuthentication(USER_NAME, USER_PASSWORD);
             }
         };
-        sender = new SMTPSender(USER_NAME, USER_PASSWORD, EMAIL_USER_ADDRESS, props, auth, new LinkedList<NetworkService.Callback>());
+        sender = new SMTPSender(USER_NAME, USER_PASSWORD, EMAIL_USER_ADDRESS, props, auth, null);
 
         this.server = new GreenMail(ServerSetupTest.SMTPS);
         this.server.start();
@@ -72,6 +73,24 @@ public class SMTPSenderTest {
     @Test
     public void sendMailTest() {
         XOMessage m = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.UGRADERT, XOMessagePriority.DEFERRED, XOMessageType.DRILL, new Date());
+        sender.setListener(new NetworkService.InternalCallback() {
+
+            public void mailSent(XOMessage message, Address[] invalidAddress) {
+                
+            }
+
+            public void mailSentError(XOMessage message, Exception ex) {
+                
+            }
+
+            public void mailReceived(IMAPMessage message) {
+                
+            }
+
+            public void mailReceivedError(Exception ex) {
+                
+            }
+        });
         assertTrue(sender.sendMail(m));
         assertEquals(1, server.getReceivedMessages().length);
     }
@@ -80,7 +99,7 @@ public class SMTPSenderTest {
     public void callbackTest() throws InterruptedException {
         XOMessage m = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.UGRADERT, XOMessagePriority.DEFERRED, XOMessageType.DRILL, new Date());
         final List<XOMessage> ml = new LinkedList<XOMessage>();
-        sender.addCallback(new NetworkService.Callback() {
+        sender.setCallback(new NetworkService.InternalCallback() {
             public void mailSent(XOMessage message, Address[] invalidAddress) {
                 ml.add(message);
             }
@@ -89,8 +108,8 @@ public class SMTPSenderTest {
                 ml.add(message);
             }
 
-            public void mailReceived(XOMessage message) {
-                ml.add(message);
+            public void mailReceived(IMAPMessage message) {
+//                ml.add(message);
             }
 
             public void mailReceivedError(Exception ex) {
