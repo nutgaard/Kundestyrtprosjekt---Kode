@@ -41,24 +41,24 @@ public class IMAPStorage {
     }
 
     public Message[] getAllMessages(final BoxName box, final SearchTerm search) {
-        System.out.println("Searching");
+//        System.out.println("Searching");
         try {
-            System.out.println("Props: " + props);
-            System.out.println("Auth: " + auth);
+//            System.out.println("Props: " + props);
+//            System.out.println("Auth: " + auth);
             Session session = Session.getInstance(props, auth);
             Store store = session.getStore("imaps");
             store.connect();
             IMAPFolder folder = (IMAPFolder) store.getFolder(box.getBoxname());
             folder.open(Folder.READ_ONLY);
             Message[] messages = folder.search(search);
-            System.out.println("Found " + messages.length + " messages");
+//            System.out.println("Found " + messages.length + " messages");
             for (Message m : messages) {
                 IMAPMessage im = (IMAPMessage)m;
                 if (cache.containsKey(im.getMessageID())) {
-                    System.out.println("Message allready cached");
+//                    System.out.println("Message allready cached");
                     continue;
                 }
-                System.out.println("Found message: " + m);
+//                System.out.println("Found message: " + m);
                 for (NetworkService.Callback cb : listeners) {
                     XOMessage xo = Converter.convertToXO(m);
                     cb.mailReceived(xo);
@@ -68,7 +68,7 @@ public class IMAPStorage {
             store.close();
             return messages;
         } catch (Exception ex) {
-            System.out.println("Listeners: " + listeners);
+//            System.out.println("Listeners: " + listeners);
             for (NetworkService.Callback cb : listeners) {
                 cb.mailReceivedError(ex);
             }
@@ -77,7 +77,7 @@ public class IMAPStorage {
     }
 
     public void addCallback(Callback callback) {
-        System.out.println("Adding callback");
+//        System.out.println("Adding callback");
         listeners.add(callback);
     }
 

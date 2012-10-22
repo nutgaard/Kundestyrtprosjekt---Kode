@@ -15,6 +15,7 @@ import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAP;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPPull;
+import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPPush;
 import no.ntnu.kpro.core.service.implementation.NetworkService.SMTP.SMTP;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.utilities.Pair;
@@ -67,7 +68,13 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
                 return new PasswordAuthentication(username, password);
             }
         }, listeners, 10, cache);
-        this.imap = new IMAP(s);
+        IMAPStrategy ss = new IMAPPush(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        }, listeners, cache);
+        this.imap = new IMAP(ss);
         listeners.add(this);
     }
 
@@ -95,14 +102,12 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
     }
 
     public void mailSentError(XOMessage message, Exception ex) {
-        
     }
 
     public void mailReceived(XOMessage message) {
-        
+        getInbox().add(message);
     }
 
     public void mailReceivedError(Exception ex) {
-        
     }
 }

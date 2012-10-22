@@ -6,11 +6,11 @@ package no.ntnu.kpro.core.utilities;
 
 import java.util.Date;
 import javax.mail.Address;
-import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import no.ntnu.kpro.core.helpers.EnumHelper;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
@@ -44,7 +44,7 @@ public class Converter {
     }
 
     public static XOMessage convertToXO(Message message) throws Exception {
-        String id, from, to, subject, body;
+        String id, from, to, subject, body = "";
         XOMessagePriority priority;
         XOMessageSecurityLabel label;
         XOMessageType type;
@@ -55,7 +55,20 @@ public class Converter {
             from = convertAddressArray(m.getFrom());
             to = convertAddressArray(m.getRecipients(Message.RecipientType.TO));
             subject = m.getSubject();
-            body = m.getContent().toString();
+            if (m.getContentType().contains("multipart")){
+                System.out.println("Message was multipart");
+                MimeMultipart multipart = (MimeMultipart) m.getContent();
+                System.out.println("Found "+multipart.getCount()+" different parts");
+                for (int i = 0; i < multipart.getCount(); i++){
+                    System.out.println("Checking type: "+multipart.getBodyPart(i).getContentType());
+                    if (multipart.getBodyPart(i).getContentType().equalsIgnoreCase("text/plain")){
+                        System.out.println("Found body");
+                        body = (String)multipart.getBodyPart(i).getContent();
+                    }
+                }
+            }else {
+                body = m.getContent().toString();
+            }
             priority = EnumHelper.getEnumValue(XOMessagePriority.class, m.getHeader(PRIORITY))[0];
             //            label = EnumHelper.getEnumValue(XOMessageSecurityLabel.class, m.getHeader(LABEL))[0];
             label = secLabelParsing(m.getHeader(LABEL));
@@ -70,19 +83,14 @@ public class Converter {
 
     private static XOMessageSecurityLabel secLabelParsing(String[] secLabels) {
         if (secLabels == null || secLabels.length == 0) {
-            return null;
+            return XOMessageSecurityLabel.BEGRENSET;
         }
         String s = secLabels[0];
         for (XOMessageSecurityLabel e : XOMessageSecurityLabel.values()) {
-//            System.out.println("E: " + e.getHeaderValue());
-//            System.out.println("S: " + s);
-//            if (s.equalsIgnoreCase(e.getHeaderValue())) {
             if (s.contains(e.toString())) {
-//                System.out.println("Returning: "+e.getShortValue());
                 return e;
             }
         }
-//        System.out.println("Returning null, no grading found");
         return null;
     }
 

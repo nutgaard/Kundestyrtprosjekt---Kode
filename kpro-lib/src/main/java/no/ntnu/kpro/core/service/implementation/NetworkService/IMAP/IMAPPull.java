@@ -57,11 +57,11 @@ public class IMAPPull extends IMAPStrategy {
                     Logger.getLogger(IMAPPull.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            System.out.println("Searching at: " + lastReceived);
+//            System.out.println("Searching at: " + lastReceived);
             Message[] messagesReceived = storage.getAllMessages(NetworkServiceImp.BoxName.INBOX, new ReceivedDateTerm(ComparisonTerm.GT, lastReceived));
-            System.out.println("Pull seen message: " + messagesReceived);
+//            System.out.println("Pull seen message: " + messagesReceived);
             if (messagesReceived != null) {
-                System.out.println("Finding newest mail");
+//                System.out.println("Finding newest mail");
                 for (Message m : messagesReceived) {
                     try {
                         if (lastReceived.before(m.getReceivedDate())) {
