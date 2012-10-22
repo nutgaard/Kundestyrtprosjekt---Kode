@@ -29,8 +29,8 @@ import org.xml.sax.InputSource;
  */
 public class PersistentWriteThroughStorageTest {
 
-    static User good = new User("GoodGuy");
-    static User bad = new User("BadGuy");
+    static User good = new User("GoodGuy", "");
+    static User bad = new User("BadGuy", "");
     static PersistentWriteThroughStorage em;
     static File baseDir;
 
@@ -58,7 +58,7 @@ public class PersistentWriteThroughStorageTest {
     @Before
     public void setUp() {
         try {
-            good = new User(new BigInteger(130, new SecureRandom()).toString(32));
+            good = new User(new BigInteger(130, new SecureRandom()).toString(32), "");
             em = new PersistentWriteThroughStorage(good, FileCryptoFactory.getProcessor(FileCryptoFactory.Crypto.NONE), baseDir);
 //            em = PersistentWriteThroughStorage.create(good, FileCryptoFactory.getProcessor(FileCryptoFactory.Crypto.NONE), baseDir);
         } catch (Exception ex) {
@@ -82,7 +82,7 @@ public class PersistentWriteThroughStorageTest {
     public void noSavingFile() {
         System.out.println("Test:noSavingFile");
         try {
-            User u = new User("GoodGuysFriend");
+            User u = new User("GoodGuysFriend", "");
 
             //Base dir not created, cannot be saved
             Object[] users = em.findAll(User.class);
@@ -96,7 +96,7 @@ public class PersistentWriteThroughStorageTest {
     public void savingUnmanagedObjects() {
         System.out.println("Test:savingUnmanagedObjects");
         try {
-            User u = new User("GoodGuysFriend");
+            User u = new User("GoodGuysFriend", "");
             em.save(u);
             IUser[] users = em.castTo(em.findAll(User.class), IUser[].class);
             assertEquals(1, users.length);
@@ -111,7 +111,7 @@ public class PersistentWriteThroughStorageTest {
     public void verifiedSavedContent() {
         System.out.println("Test:verifiedSavedContent");
         try {
-            User u = new User("GoodGuysFriend");
+            User u = new User("GoodGuysFriend", "");
             em.save(u);
             IUser[] users = em.castTo(em.findAll(User.class), IUser[].class);
             assertEquals(1, users.length);
@@ -130,7 +130,7 @@ public class PersistentWriteThroughStorageTest {
     @Test
     public void savingManagedObjects() {
         try {
-            IUser u = (IUser) em.manage(new User("GoodGuysFriend"));
+            IUser u = (IUser) em.manage(new User("GoodGuysFriend", ""));
             IUser[] users = em.castTo(em.findAll(User.class), IUser[].class);
             assertEquals(1, users.length);
             em.save(u);
@@ -153,7 +153,7 @@ public class PersistentWriteThroughStorageTest {
     @Test
     public void updatingFile() {
         try {
-            IUser u = (IUser) em.manage(new User("GoodGuysFriend"));
+            IUser u = (IUser) em.manage(new User("GoodGuysFriend", ""));
             String nowName = u.getName();
             
             u.setName("ABCDEFG");
@@ -174,7 +174,7 @@ public class PersistentWriteThroughStorageTest {
     @Test
     public void readingFile() {
         try {
-            User user = new User("Nicklas");
+            User user = new User("Nicklas", "");
             em.save(user);
             IUser readUser = (IUser)em.find(User.class, 0);
             assertEquals(user.getName(), readUser.getName());
@@ -186,7 +186,7 @@ public class PersistentWriteThroughStorageTest {
     @Test
     public void deleteFile() {
         try {
-            User user = new User("Nicklas");
+            User user = new User("Nicklas", "");
             em.save(user);
             IUser[] users = em.castTo(em.findAll(User.class), IUser[].class);
             assertEquals(1, users.length);

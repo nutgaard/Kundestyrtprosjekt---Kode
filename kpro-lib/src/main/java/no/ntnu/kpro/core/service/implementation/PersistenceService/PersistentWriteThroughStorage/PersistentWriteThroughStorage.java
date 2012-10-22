@@ -12,12 +12,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import no.ntnu.kpro.core.model.User;
 import no.ntnu.kpro.core.service.interfaces.PersistencePostProcessor;
+import no.ntnu.kpro.core.service.interfaces.PersistenceService;
 
 /**
  *
  * @author Nicklas
  */
-public class PersistentWriteThroughStorage {
+public class PersistentWriteThroughStorage extends PersistenceService {
 
     private User user;
     private PersistencePostProcessor postProcessor;
@@ -45,7 +46,10 @@ public class PersistentWriteThroughStorage {
         getIndex();
     }
 
-    public <T> T[] castTo(Object[] l, Class<? extends T[]> cls) {
+    public  <T> T[] castTo(Object[] l, Class<? extends T[]> cls) {
+        if (l == null || l.length == 0){
+            return (T[])new Object[]{};
+        }
         return Arrays.copyOf(l, l.length, cls);
     }
 

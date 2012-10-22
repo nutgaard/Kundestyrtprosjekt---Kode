@@ -46,7 +46,7 @@ public class ServiceProvider extends Service {
         threadpool = new ThreadPoolExecutor(3, 100, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
         this.persistenceService = PersistenceServiceFactory.createService();
         this.HALService = HALServiceFactory.createService();
-        this.networkService = NetworkServiceFactory.createService();
+        this.networkService = NetworkServiceFactory.createService(getApplicationContext());
         this.securityService = SecurityServiceFactory.createService();
         CryptoHandler.setDefaultMailcap(); //tell java mail how to handle security
         Log.i(TAG, "Service starting");
@@ -127,22 +127,6 @@ public class ServiceProvider extends Service {
         return networkService;
     }
 
-//    public void register(Activity activity) {
-//        this.currentActivity = activity;
-//        
-//        if (activity instanceof NetworkService.Callback) {
-//            this.getNetworkService().clearListeners();
-//            this.getNetworkService().addListener((NetworkService.Callback)activity);
-//        }
-//        if (activity instanceof HALService.callback) {
-//            this.getHALService().clearListeners();
-//            this.getHALService().addListener((HALService.callback)activity);
-//        }
-//        if (activity instanceof PersistenceService.callback) {
-//            this.getPersistenceService().clearListeners();
-//            this.getPersistenceService().addListener((PersistenceService.callback)activity);
-//        }
-//    }
     //Can to this because Service is implicit singleton
     public static ServiceProvider getInstance() {
         return instance;

@@ -42,8 +42,8 @@ public class UserManagerTest {
         c = mock(Context.class);
         when(c.getDir(anyString(), anyInt())).thenReturn(new File("/"));
         m = new UserManager(c);
-        u = new User("Hei");
-        u.setPassword("oasidj");
+        u = new User("Hei", "oasidj");
+
     }
 
     @After

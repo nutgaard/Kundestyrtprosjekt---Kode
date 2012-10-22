@@ -4,6 +4,8 @@
  */
 package no.ntnu.kpro.core.service.factories;
 
+import android.content.Context;
+import java.util.List;
 import java.util.Properties;
 import javax.mail.Address;
 import no.ntnu.kpro.core.model.XOMessage;
@@ -15,7 +17,7 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  * @author Nicklas
  */
 public class NetworkServiceFactory {
-    public static NetworkService createService() {
+    public static NetworkService createService(Context c) {
         Properties props = new Properties();
         props.put("mail.transport.protocol", "smtps");
         props.put("mail.smtps.host", "smtp.gmail.com");
@@ -30,10 +32,12 @@ public class NetworkServiceFactory {
         props.put("mail.imaps.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         props.put("mail.imaps.auth", "true");
         props.put("mail.imaps.port", "993");
-        return new NetworkServiceImp("kprothales", "kprothales2012", "kprothales@gmail.com", props);
+        return new NetworkServiceImp("kprothales", "kprothales2012", "kprothales@gmail.com", props, c);
     }
     public static void main(String[] args) {
-        NetworkService ns = createService();
+        System.out.println("Hei");
+        NetworkService ns = createService(null);
+        System.out.println("ei");
         ns.addListener(new NetworkService.Callback() {
 
             public void mailSent(XOMessage message, Address[] invalidAddress) {

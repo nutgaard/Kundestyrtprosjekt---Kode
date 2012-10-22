@@ -31,7 +31,7 @@ import org.spongycastle.mail.smime.SMIMESignedGenerator;
  *
  * @author Nicklas
  */
-public class XOMessage implements Comparable<XOMessage>, Parcelable {
+public class XOMessage implements ModelProxy.IXOMessage {
 
     public static String LABEL = "SIO-Label";
     public static String PRIORITY = "MMHS-Primary-Precedence";
@@ -49,6 +49,10 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
     private boolean opened = false;
     private String id;
 
+    public XOMessage() {
+        this("", "", "", "", XOMessageSecurityLabel.CHOOSE_ONE);
+    }
+    
     public XOMessage(String from, String to, String subject, String body, XOMessageSecurityLabel label) {
         this(from, to, subject, body, label, XOMessagePriority.ROUTINE, XOMessageType.OPERATION, new Date());
     }
@@ -79,54 +83,67 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         this.opened = true;
     }
 
+    @Override
     public String getFrom() {
         return from;
     }
 
+    @Override
     public String getTo() {
         return to;
     }
 
+    @Override
     public String getSubject() {
         return subject;
     }
     
+    @Override
     public void addAttachment(InputStream is) {
         this.attachments.add(is);
     }
 
+    @Override
     public List<InputStream> getAttachments() {
         return attachments;
     }
 
+    @Override
     public String getHtmlBody() {
         return htmlBody;
     }
 
+    @Override
     public String getStrippedBody() {
         return strippedBody;
     }
 
+    @Override
     public XOMessageSecurityLabel getGrading() {
         return grading;
     }
 
+    @Override
     public XOMessagePriority getPriority() {
         return priority;
     }
 
+    @Override
     public XOMessageType getType() {
         return type;
     }
 
+    @Override
     public boolean getOpened(){
         return opened;
     }
     
+    @Override
     public void setOpened(boolean opened){
         this.opened = opened;
     }
     
+    @Override
     public int compareTo(XOMessage o) {
         if (this == o) {
             System.out.println("Was equals");
@@ -136,6 +153,7 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         }
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -147,6 +165,7 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
 
     
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -179,14 +198,17 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         return true;
     }
 
+    @Override
     public int describeContents() {
         return 0;
     }
 
+    @Override
     public Date getDate() {
         return date;
     }
 
+    @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(from);
         parcel.writeString(to);
@@ -199,20 +221,6 @@ public class XOMessage implements Comparable<XOMessage>, Parcelable {
         parcel.writeString(type.toString());
         parcel.writeLong(date.getTime());
     }
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public XOMessage createFromParcel(Parcel parcel) {
-            try {
-                return new XOMessage(parcel);
-            } catch (ParseException ex) {
-                Logger.getLogger(XOMessage.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            return null;
-        }
-
-        public XOMessage[] newArray(int i) {
-            return new XOMessage[i];
-        }
-    };
 
     public static MimeMessage convertToMime(Session session, XOMessage message) throws Exception {
         SMIMESignedGenerator gen = new SMIMESignedGenerator();

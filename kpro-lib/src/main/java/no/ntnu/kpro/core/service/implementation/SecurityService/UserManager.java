@@ -21,7 +21,7 @@ public class UserManager {
     
     public UserManager(Context c){
         try {
-            this.storage = new PersistentWriteThroughStorage(new User("globals"), FileCryptoFactory.getProcessor(FileCryptoFactory.Crypto.NONE), c.getDir("", c.MODE_PRIVATE));
+            this.storage = new PersistentWriteThroughStorage(new User("globals", ""), FileCryptoFactory.getProcessor(FileCryptoFactory.Crypto.NONE), c.getDir("", c.MODE_PRIVATE));
         } catch (Exception ex) {
             Logger.getLogger(UserManager.class.getName()).log(Level.SEVERE, null, ex);
         }
