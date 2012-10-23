@@ -56,8 +56,9 @@ public abstract class PersistenceService extends ServiceInterface<PersistenceSer
     public abstract Object[] findAll(Class cls)throws Exception;
     public abstract Object find(Class cls, int id)throws Exception;
     public static  <T> T[] castTo(Object[] l, Class<? extends T[]> cls) {
+        System.out.println("ListLength: "+l.length);
         if (l == null || l.length == 0){
-            return (T[])new Object[]{};
+            return null;
         }
         return Arrays.copyOf(l, l.length, cls);
     }

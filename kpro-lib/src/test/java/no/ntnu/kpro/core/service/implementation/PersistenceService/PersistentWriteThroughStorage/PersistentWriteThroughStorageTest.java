@@ -15,6 +15,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 import no.ntnu.kpro.core.model.ModelProxy.IUser;
 import no.ntnu.kpro.core.model.User;
+import no.ntnu.kpro.core.service.interfaces.PersistenceService;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -180,6 +181,7 @@ public class PersistentWriteThroughStorageTest {
             assertEquals(user.getName(), readUser.getName());
         } catch (Exception ex) {
             Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
+            fail();
         }
     }
 
@@ -188,13 +190,14 @@ public class PersistentWriteThroughStorageTest {
         try {
             User user = new User("Nicklas", "");
             em.save(user);
-            IUser[] users = em.castTo(em.findAll(User.class), IUser[].class);
+            IUser[] users = PersistenceService.castTo(em.findAll(User.class), IUser[].class);
             assertEquals(1, users.length);
             em.delete(users[0]);
-            users = em.castTo(em.findAll(User.class), IUser[].class);
-            assertEquals(0, users.length);
+            users = PersistenceService.castTo(em.findAll(User.class), IUser[].class);
+            assertNull(users);
         } catch (Exception ex) {
             Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
+            fail();
         }
         
     }

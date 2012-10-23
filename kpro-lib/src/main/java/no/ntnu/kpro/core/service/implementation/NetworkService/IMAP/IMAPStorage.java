@@ -76,7 +76,7 @@ public class IMAPStorage {
             store.close();
             return messages;
         } catch (Exception ex) {
-            ex.printStackTrace();
+//            ex.printStackTrace();
             for (NetworkService.Callback cb : listeners) {
                 cb.mailReceivedError(ex);
             }

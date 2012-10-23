@@ -21,6 +21,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import no.ntnu.kpro.core.helpers.EnumHelper;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp.BoxName;
 import org.spongycastle.cms.jcajce.JcaSimpleSignerInfoGeneratorBuilder;
 import org.spongycastle.mail.smime.SMIMESignedGenerator;
@@ -301,59 +302,59 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
     public static class XOMessageSorter {
 
-        public static Comparator<XOMessage> getSendingPriority() {
-            return new Comparator<XOMessage>() {
-                public int compare(XOMessage o1, XOMessage o2) {
-                    int p = o1.priority.compareTo(o2.priority);
-                    return p == 0 ? o2.date.compareTo(o1.date) : p;
+        public static Comparator<IXOMessage> getSendingPriority() {
+            return new Comparator<IXOMessage>() {
+                public int compare(IXOMessage o1, IXOMessage o2) {
+                    int p = o1.getPriority().compareTo(o2.getPriority());
+                    return p == 0 ? o2.getDate().compareTo(o1.getDate()) : p;
                 }
             };
         }
 
-        public static Comparator<XOMessage> getDateComparator(final boolean descending) {
-            return new Comparator<XOMessage>() {
-                public int compare(XOMessage o1, XOMessage o2) {
-                    return descending ? o2.date.compareTo(o1.date) : o1.date.compareTo(o2.date);
+        public static Comparator<IXOMessage> getDateComparator(final boolean descending) {
+            return new Comparator<IXOMessage>() {
+                public int compare(IXOMessage o1, IXOMessage o2) {
+                    return descending ? o2.getDate().compareTo(o1.getDate()) : o1.getDate().compareTo(o2.getDate());
                 }
             };
         }
 
-        public static Comparator<XOMessage> getSenderComparator(final boolean descending) {
-            return new Comparator<XOMessage>() {
-                public int compare(XOMessage o1, XOMessage o2) {
-                    return descending ? o2.from.compareToIgnoreCase(o1.from) : o1.from.compareTo(o2.from);
+        public static Comparator<IXOMessage> getSenderComparator(final boolean descending) {
+            return new Comparator<IXOMessage>() {
+                public int compare(IXOMessage o1, IXOMessage o2) {
+                    return descending ? o2.getFrom().compareToIgnoreCase(o1.getFrom()) : o1.getFrom().compareTo(o2.getFrom());
                 }
             };
         }
 
-        public static Comparator<XOMessage> getPriorityComparator(final boolean descending) {
-            return new Comparator<XOMessage>() {
-                public int compare(XOMessage o1, XOMessage o2) {
+        public static Comparator<IXOMessage> getPriorityComparator(final boolean descending) {
+            return new Comparator<IXOMessage>() {
+                public int compare(IXOMessage o1, IXOMessage o2) {
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
             };
         }
 
-        public static Comparator<XOMessage> getLabelComparator(boolean descending) {
-            return new Comparator<XOMessage>() {
-                public int compare(XOMessage o1, XOMessage o2) {
+        public static Comparator<IXOMessage> getLabelComparator(boolean descending) {
+            return new Comparator<IXOMessage>() {
+                public int compare(IXOMessage o1, IXOMessage o2) {
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
             };
         }
 
-        public static Comparator<XOMessage> getTypeComparator(boolean descending) {
-            return new Comparator<XOMessage>() {
-                public int compare(XOMessage o1, XOMessage o2) {
+        public static Comparator<IXOMessage> getTypeComparator(boolean descending) {
+            return new Comparator<IXOMessage>() {
+                public int compare(IXOMessage o1, IXOMessage o2) {
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
             };
         }
 
-        public static Comparator<XOMessage> getSubjectComparator(final boolean descending) {
-            return new Comparator<XOMessage>() {
-                public int compare(XOMessage o1, XOMessage o2) {
-                    return descending ? o2.subject.compareToIgnoreCase(o1.subject) : o1.subject.compareTo(o2.subject);
+        public static Comparator<IXOMessage> getSubjectComparator(final boolean descending) {
+            return new Comparator<IXOMessage>() {
+                public int compare(IXOMessage o1, IXOMessage o2) {
+                    return descending ? o2.getSubject().compareToIgnoreCase(o1.getSubject()) : o1.getSubject().compareTo(o2.getSubject());
                 }
             };
         }

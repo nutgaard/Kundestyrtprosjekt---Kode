@@ -5,6 +5,7 @@
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
 import android.content.Context;
+import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,16 +63,17 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
     public NetworkServiceImp(final String username, final String password, final String mailAdr, Properties properties, Context context) {
         cache = new IMAPCache(properties, username, password);
         this.persistence = PersistenceServiceFactory.createMessageStorage(new User(username, password), context);
+        Date lastSeen = new Date(0);
         try {
             IXOMessage[] savedMessages = PersistenceService.castTo(this.persistence.findAll(XOMessage.class), IXOMessage[].class);
             for (IXOMessage message : savedMessages) {
                 System.out.println("Found saved message: " + message);
                 message.getBoxAffiliation().getBox().add(message);
                 cache.cache(message.getId(), message);
-
+                lastSeen = message.getDate();
             }
         } catch (Exception ex) {
-            Logger.getLogger(NetworkServiceImp.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(NetworkServiceImp.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Could not load messages from disk");
         }
         this.smtp = new SMTP(username, password, mailAdr, properties, new Authenticator() {
@@ -85,13 +87,13 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(username, password);
             }
-        }, listeners, 10, cache);
+        }, lastSeen, listeners, 10, cache);
         IMAPStrategy ss = new IMAPPush(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(username, password);
             }
-        }, listeners, cache);
+        }, lastSeen, listeners, cache);
         this.imap = new IMAP(ss);
         listeners.add(this);
     }

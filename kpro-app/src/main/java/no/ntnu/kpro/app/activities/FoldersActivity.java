@@ -21,6 +21,8 @@ import javax.mail.Address;
 import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.app.XOMessageAdapter;
 import no.ntnu.kpro.core.helpers.EnumHelper;
+import no.ntnu.kpro.core.model.Box;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
@@ -32,7 +34,7 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
 public class FoldersActivity extends MenuActivity implements NetworkService.Callback, View.OnClickListener {
 
     static final String TAG = "KPRO-GUI-FOLDERS";
-    List<XOMessage> messages;
+    List<IXOMessage> messages;
     Spinner sprFolders;
     ListView lstFolder;
     SortCondition sortCon = SortCondition.DATE_DESC;

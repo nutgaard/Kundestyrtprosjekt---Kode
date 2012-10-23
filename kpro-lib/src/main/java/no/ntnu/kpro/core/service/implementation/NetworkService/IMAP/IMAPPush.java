@@ -43,19 +43,21 @@ public class IMAPPush extends IMAPStrategy implements MessageCountListener {
     private List<NetworkService.Callback> listeners;
     private IMAPFolder inbox;
     private boolean run = true;
+    private Date fetchAfter;
 
-    public IMAPPush(final Properties props, final Authenticator auth, final List<NetworkService.Callback> listeners, IMAPCache cache) {
+    public IMAPPush(final Properties props, final Authenticator auth, Date fetchAfter, final List<NetworkService.Callback> listeners, IMAPCache cache) {
         super(cache);
         this.props = props;
         this.auth = auth;
         this.session = Session.getInstance(props, auth);
         this.listeners = listeners;
+        this.fetchAfter = fetchAfter;
     }
 
     public void run() {
         System.out.println("Fetching existing messages");
         IMAPStorage pull = new IMAPStorage(props, auth, listeners, cache);
-        pull.getAllMessages(NetworkServiceImp.BoxName.INBOX, new ReceivedDateTerm(ComparisonTerm.GT, new Date(0)));
+        pull.getAllMessages(NetworkServiceImp.BoxName.INBOX, new ReceivedDateTerm(ComparisonTerm.GT, fetchAfter));
         System.out.println("Starting IMAPPush");
         Store store = null;
         while (run) {

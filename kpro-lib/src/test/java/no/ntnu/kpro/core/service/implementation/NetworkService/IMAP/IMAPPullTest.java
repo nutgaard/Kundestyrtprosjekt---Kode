@@ -6,18 +6,14 @@ package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 
 
 
-import com.sun.mail.imap.IMAPMessage;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Properties;
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.search.SearchTerm;
-import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
-import no.ntnu.kpro.core.utilities.Pair;
 import org.junit.*;
 import static org.mockito.Mockito.*;
 
@@ -44,7 +40,7 @@ public class IMAPPullTest {
             }
         };
         LinkedList<NetworkService.Callback> l = new LinkedList<NetworkService.Callback>();
-        puller = new IMAPPull(p, a, 1, store, new IMAPCache(p, "kprothales", "kprothales2012"));
+        puller = new IMAPPull(p, a, new Date(0), 1, store, new IMAPCache(p, "kprothales", "kprothales2012"));
         
         pullerThread = new Thread(puller);
     }
