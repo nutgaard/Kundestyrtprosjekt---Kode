@@ -29,4 +29,23 @@
             android:summary="Select visible security labels for a new message"
             android:entryValues="@array/security_labels_values"/>
     </PreferenceCategory>
+    
+    <PreferenceCategory android:title="Location data">
+        <ListPreference
+            android:key="update_interval_time"
+            android:title="Update interval (time)"
+            android:summary="Select how often location data is fetched (Seconds)"
+            android:defaultValue="20"
+            android:inputType="number" />
+        
+        <ListPreference
+            android:key="update_interval_distance"
+            android:title="Update interval (distance)"
+            android:summary="Select how much distance you must travel before new data is pulled (Meters)"
+            android:defaultValue="10"
+            android:inputType="number" />
+    </PreferenceCategory>        
+   
+    
+    
 </PreferenceScreen>

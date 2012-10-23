@@ -86,7 +86,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private ListView lstAttachments;
     private Attachments attachments;
     private List<String> attachmentsVisualRepresentation;
-   
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -186,8 +185,8 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     public void mailSentError(XOMessage message, Exception ex) {
         runOnUiThread(new Runnable() {
             public void run() {
-                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Something went wrong", Toast.LENGTH_SHORT);
-                errorMess.show();
+//                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Something went wrong", Toast.LENGTH_SHORT);
+//                errorMess.show();
             }
         });
     }
@@ -195,8 +194,8 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     public void mailReceived(XOMessage message) {
         runOnUiThread(new Runnable() {
             public void run() {
-                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Message Received, but I dont care", Toast.LENGTH_SHORT);
-                errorMess.show();
+//                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Message Received, but I dont care", Toast.LENGTH_SHORT);
+//                errorMess.show();
             }
         });
     }
@@ -204,8 +203,8 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     public void mailReceivedError(Exception ex) {
         runOnUiThread(new Runnable() {
             public void run() {
-                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Message Received with error, but I dont care", Toast.LENGTH_SHORT);
-                errorMess.show();
+//                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Message Received with error, but I dont care", Toast.LENGTH_SHORT);
+//                errorMess.show();
             }
         });
 
@@ -238,21 +237,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         if (doIntermediateValidation()) {
                             if (doSendButtonValidation()) {
                                 XOMessage m = new XOMessage("MyMailAddress@gmail.com", txtReceiver.getText().toString(), txtSubject.getText().toString(), txtMessageBody.getText().toString(), selectedSecurity, selectedPriority, selectedType, new Date());
-//                                getServiceProvider().getNetworkService().
-
-                                //Is not necessary to have this when callback is implemented, as mailSent() will be called
-                                Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent.", Toast.LENGTH_SHORT);
-                                confirm.show();
-                                resetFields();
-//                                try{
-//                                    resetFields();
-//                                    MainTabActivity act;
-//                                    act = (MainTabActivity) getParent();
-//                                    act.switchTab(0);
-//                                }
-//                                catch(Exception e){
-//                                    Log.i("KPRO", "Tab change failed");
-//                                }
                             }
                         }
 
@@ -430,7 +414,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         btnAddAttachment.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                String[] items = new String[]{"Image From Camera", "Video From Camera", "Image From Phone"};
+                String[] items = new String[]{"Image From Camera", "Video From Camera", "Image From Phone", "Location"};
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(SendMessageActivity.this, android.R.layout.select_dialog_item, items);
                 AlertDialog.Builder builder = new AlertDialog.Builder(SendMessageActivity.this);
 
@@ -471,6 +455,8 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                             intent.setAction(Intent.ACTION_GET_CONTENT);
                             intent.addCategory(Intent.CATEGORY_OPENABLE);
                             startActivityForResult(intent, FETCH_IMAGE_ACTIVITY_REQUEST_CODE);
+                        } else if (item == 3){
+                            addNewLocationToMessage();
                         }
                     }
                 });
@@ -617,12 +603,11 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private void logMe(String message) {
         Log.d("SendMessage", message);
     }
-    
-     //GPS / WIFI -Location Manager//
+    //GPS / WIFI -Location Manager//
     LocationManager locationManager;
     private final int locationUpdateInterval = 5000; //Milliseconds
     private final int locationDistance = 5; //Meters.
-    
+    private Location currentLocation = null;
 
     private void startLocationFetching() {
         Criteria criteria = new Criteria();
@@ -630,31 +615,27 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         criteria.setBearingRequired(false);
         criteria.setSpeedRequired(false);
         criteria.setCostAllowed(true);
-        
+
         String serviceString = Context.LOCATION_SERVICE;
-        locationManager = (LocationManager)getSystemService(serviceString);
+        locationManager = (LocationManager) getSystemService(serviceString);
         String bestProvider = locationManager.getBestProvider(criteria, true);
         Location location = locationManager.getLastKnownLocation(bestProvider);
         addLocationListener(locationManager, bestProvider);
         
-        
-        addNewLocationToMessage(location);
-    }
-    
-    private void updateLocation(){
-        
     }
 
-    private void addNewLocationToMessage(Location location) {
-        String locLongString;
-        
-        if(location != null){
-            double lat = location.getLatitude();
-            double lng = location.getLongitude();
-            locLongString = "Lat: " + lat + "\nLong: " +lng;
+    private void addNewLocationToMessage() {
+        String locLongString = "";
+
+        if (currentLocation != null) {
+            double lat = currentLocation.getLatitude();
+            double lng = currentLocation.getLongitude();
+            locLongString += "\n" + getString(R.string.myLocationNow) + "\n";
+            locLongString += getString(R.string.locationLatitude) + lat + "\n";
+            locLongString += getString(R.string.locationLongditude)+ lng;
             this.txtMessageBody.setText(txtMessageBody.getText() + locLongString);
-            
-        }else{
+
+        } else {
             Toast locationNotFound = Toast.makeText(SendMessageActivity.this, R.string.noLocationFoundError, RESULT_OK);
             locationNotFound.show();
         }
@@ -662,10 +643,9 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
     private void addLocationListener(LocationManager locationManager, String bestProvider) {
         LocationListener locationListener = new LocationListener() {
-
             public void onLocationChanged(Location lctn) {
-                addNewLocationToMessage(lctn);
-                            
+                SendMessageActivity.this.currentLocation = lctn;
+
             }
 
             public void onStatusChanged(String string, int i, Bundle bundle) {
@@ -680,9 +660,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         };
-        
+
         locationManager.requestLocationUpdates(bestProvider, locationUpdateInterval, locationDistance, locationListener);
     }
-    
-    
 }
