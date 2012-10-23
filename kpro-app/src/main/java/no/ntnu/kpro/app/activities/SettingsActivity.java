@@ -12,6 +12,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import java.util.prefs.Preferences;
 import no.ntnu.kpro.app.R;
 
 /**
@@ -29,6 +30,8 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         String strategy = prefs.getString("message_retrieval", "Push");
         String s = prefs.getString("security_labels_available", "NATO_CONFIDENTIAL");
 
+        
+        
         Log.i("Settings", strategy);
         Log.i("Settings", s);
         CharSequence[] labels = s.split(getResources().getString(R.string.separator));

@@ -30,6 +30,34 @@
             android:entryValues="@array/security_labels_values"/>
     </PreferenceCategory>
     
+    <PreferenceCategory android:title="Instant message attributes">
+        <EditTextPreference 
+            android:key="standard_receiver"
+            android:summary="Set standard receiver"
+            android:title="Standard receiver"/>
+        <ListPreference
+            android:key="standard_security_label"
+            android:title="Standard security label"
+            android:summary="Set standard security label"
+            android:entries="@array/security_labels"
+            android:entryValues="@array/security_labels_values"
+            android:defaultValue="UNCLASSIFIED" />
+        <ListPreference
+            android:key="standard_priority"
+            android:title="Standard priority"
+            android:summary="Set standard priority"
+            android:entries="@array/priorities"
+            android:entryValues="@array/priorities_values"
+            android:defaultValue="Override" />
+        <ListPreference
+            android:key="standard_type"
+            android:title="Standard type"
+            android:summary="Set standard type"
+            android:entries="@array/types"
+            android:entryValues="@array/types_values"
+            android:defaultValue="Operation" />
+    </PreferenceCategory>
+    
     <PreferenceCategory android:title="Location data">
         <ListPreference
             android:key="update_interval_time"

@@ -10,6 +10,34 @@
         <item>Push</item>
         <item>Pull</item>
     </string-array>
+    <string-array name="priorities">
+        <item>Deferred</item>
+        <item>Routine</item>
+        <item>Priority</item>
+        <item>Immediate</item>
+        <item>Flash</item>
+        <item>Override</item>
+    </string-array>
+    <string-array name="priorities_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string-array name="types">
+        <item>Exercise</item>
+        <item>Operation</item>
+        <item>Project</item>
+        <item>Drill</item>
+    </string-array>
+    <string-array name="types_values">
+        <item>Exercise</item>
+        <item>Operation</item>
+        <item>Project</item>
+        <item>Drill</item>
+    </string-array>
     <string-array name="security_labels">
         <item>UGRADERT</item>
         <item>BEGRENSET</item>
