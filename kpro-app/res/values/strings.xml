@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hello">Hello World, ConfigureMorse!</string>
-    <string name="app_name">XOMail</string>
+    <string name="app_name">XOXOmail</string>
     <string name="messageTextToFlash">Message text to morse via flash</string>
     <string name="morseFlashNow">Morse/Flash the message now!</string>    
     <string name="forwardButtonString">Forward</string>

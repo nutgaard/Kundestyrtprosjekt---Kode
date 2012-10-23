@@ -141,6 +141,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     }
 
     public void mailSent(XOMessage message, Address[] invalidAddress) {
+        super.mailSent(message, invalidAddress);
         runOnUiThread(new Runnable() {
 
             public void run() {
@@ -151,6 +152,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     }
 
     public void mailSentError(XOMessage message, Exception ex) {
+        super.mailSentError(message, ex);
         runOnUiThread(new Runnable() {
 
             public void run() {
@@ -161,6 +163,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     }
 
     public void mailReceived(XOMessage message) {
+        super.mailReceived(message);
         runOnUiThread(new Runnable() {
 
             public void run() {
@@ -171,6 +174,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     }
 
     public void mailReceivedError(Exception ex) {
+        super.mailReceivedError(ex);
         runOnUiThread(new Runnable() {
 
             public void run() {

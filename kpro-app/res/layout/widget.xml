@@ -4,9 +4,10 @@
               android:layout_height="fill_parent"
               android:orientation="horizontal"
               android:weightSum="100"
+              android:background="@color/grayTransparent"
               android:padding="10sp"
 >
-    <ImageView android:src="@drawable/emergency_button"
+    <ImageView android:src="@drawable/logo"
                android:id="@+id/instant_message_image"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
@@ -14,5 +15,5 @@
     <TextView android:id="@+id/txt_new_messages_widget"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-              android:text="1 new message"/>
+              android:text="Send instant message"/>
 </LinearLayout>

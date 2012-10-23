@@ -9,4 +9,5 @@
     <color name="buttonsBackground">#303030</color>
     <color name="SIOLabelRed">#ff0000</color>
     <color name="SIOLabelBlack">#000000</color>
+    <color name="grayTransparent">#99404040</color>
 </resources>

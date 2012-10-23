@@ -236,14 +236,17 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
     }
 
     public void mailSent(XOMessage message, Address[] invalidAddress) {
+        super.mailSent(message, invalidAddress);
         Log.i(TAG, "Mail sent");
     }
 
     public void mailSentError(XOMessage message, Exception ex) {
+        super.mailSentError(message, ex);
         Log.i(TAG, "Mail sent error");
     }
 
     public void mailReceived(XOMessage message) {
+        super.mailReceived(message);
         runOnUiThread(new Runnable() {
             public void run() {
                 Log.d(TAG, "Mail received in UI");
@@ -259,6 +262,7 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
     }
 
     public void mailReceivedError(Exception ex) {
+        super.mailReceivedError(ex);
         final Exception e = ex;
         FoldersActivity.this.runOnUiThread(new Runnable() {
             public void run() {

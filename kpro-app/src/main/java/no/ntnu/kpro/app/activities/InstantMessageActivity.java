@@ -10,8 +10,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import javax.mail.Address;
 import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.app.activities.WrapperActivity;
+import no.ntnu.kpro.core.model.XOMessage;
 
 /**
  *

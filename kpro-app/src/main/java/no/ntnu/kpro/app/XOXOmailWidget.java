@@ -27,6 +27,7 @@ public class XOXOmailWidget extends AppWidgetProvider{
 
             // Create an Intent to launch ExampleActivity
             Intent intent = new Intent(context, MainTabActivity.class);
+            intent.putExtra("parent", "widget");
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
             // Get the layout for the App Widget and attach an on-click listener
