@@ -10,10 +10,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.security.cert.Certificate;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.Security;
+import java.security.cert.X509Certificate;
 import java.util.Properties;
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
@@ -82,8 +84,11 @@ public class CryptoHandler {
     } 
     
     public Key getKey(String Alias, char[] password) throws Exception {
-        Key key;
         return ks.getKey(Alias, password);
+    }
+    public  Certificate getCert(String Alias) throws Exception {
+        
+        return ks.getCertificate(Alias);
     }
     
     private static String encryptString(Key keyString, String inputString) {
