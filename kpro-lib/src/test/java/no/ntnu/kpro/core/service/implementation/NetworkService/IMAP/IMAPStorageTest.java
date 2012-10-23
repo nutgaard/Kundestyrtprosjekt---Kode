@@ -69,7 +69,7 @@ public class IMAPStorageTest {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(USER_NAME, USER_PASSWORD);
             }
-        }, new LinkedList<NetworkService.Callback>(), new HashMap<String, Pair<IMAPMessage, XOMessage>>());
+        }, new LinkedList<NetworkService.Callback>(), new IMAPCache(props, USER_NAME, USER_PASSWORD));
     }
 
     @After
@@ -159,7 +159,7 @@ public class IMAPStorageTest {
     @Test     
     public void errorCallbackTest() throws Exception {
         final List<Exception> m = new LinkedList<Exception>();
-        store = new IMAPStorage(null, null, new LinkedList<NetworkService.Callback>(), new HashMap<String, Pair<IMAPMessage, XOMessage>>());
+        store = new IMAPStorage(null, null, new LinkedList<NetworkService.Callback>(), new IMAPCache(props, USER_NAME, USER_PASSWORD));
         store.addCallback(new NetworkService.Callback() {
             public void mailSent(XOMessage message, Address[] invalidAddress) {
             }

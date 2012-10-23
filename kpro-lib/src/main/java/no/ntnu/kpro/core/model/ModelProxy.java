@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp.BoxName;
 
 /**
  *
@@ -81,6 +82,8 @@ public class ModelProxy {
 
         String toString();
 
+        public BoxName getBoxAffiliation();
+        public void setBoxAffiliation(BoxName box);
         void writeToParcel(Parcel parcel, int i);
     }
 }

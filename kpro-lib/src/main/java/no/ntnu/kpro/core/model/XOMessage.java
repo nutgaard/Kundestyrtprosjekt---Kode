@@ -5,7 +5,6 @@
 package no.ntnu.kpro.core.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
@@ -14,8 +13,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.Session;
@@ -24,6 +21,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import no.ntnu.kpro.core.helpers.EnumHelper;
+import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp.BoxName;
 import org.spongycastle.cms.jcajce.JcaSimpleSignerInfoGeneratorBuilder;
 import org.spongycastle.mail.smime.SMIMESignedGenerator;
 
@@ -48,6 +46,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
     private final Date date;
     private boolean opened = false;
     private String id;
+    private String boxAffiliation;
 
     public XOMessage() {
         this("", "", "", "", XOMessageSecurityLabel.CHOOSE_ONE);
@@ -73,7 +72,12 @@ public class XOMessage implements ModelProxy.IXOMessage {
         this.type = type;
         this.date = date;
     }
-
+    public void setBoxAffiliation(BoxName box){
+        this.boxAffiliation = box.toString();
+    }
+    public BoxName getBoxAffiliation() {
+        return BoxName.valueOf(boxAffiliation);
+    }
     public XOMessage(Parcel in) throws ParseException {
         this(in.readString(), in.readString(), in.readString(), in.readString(),
                 EnumHelper.getEnumValue(XOMessageSecurityLabel.class, in.readString()),

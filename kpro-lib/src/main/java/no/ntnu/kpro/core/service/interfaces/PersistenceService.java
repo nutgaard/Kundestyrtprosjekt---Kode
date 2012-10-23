@@ -4,6 +4,8 @@
  */
 package no.ntnu.kpro.core.service.interfaces;
 
+import java.util.Arrays;
+
 /**
  *
  * @author Aleksander Sj�fjell
@@ -53,5 +55,10 @@ public abstract class PersistenceService extends ServiceInterface<PersistenceSer
     public abstract void delete(Object o);
     public abstract Object[] findAll(Class cls)throws Exception;
     public abstract Object find(Class cls, int id)throws Exception;
-    public abstract <T> T[] castTo(Object[] l, Class<? extends T[]> cls);
+    public static  <T> T[] castTo(Object[] l, Class<? extends T[]> cls) {
+        if (l == null || l.length == 0){
+            return (T[])new Object[]{};
+        }
+        return Arrays.copyOf(l, l.length, cls);
+    }
 }

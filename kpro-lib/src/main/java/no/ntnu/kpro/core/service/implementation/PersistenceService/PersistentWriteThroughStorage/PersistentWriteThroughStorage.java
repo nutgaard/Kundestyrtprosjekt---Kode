@@ -46,12 +46,7 @@ public class PersistentWriteThroughStorage extends PersistenceService {
         getIndex();
     }
 
-    public  <T> T[] castTo(Object[] l, Class<? extends T[]> cls) {
-        if (l == null || l.length == 0){
-            return (T[])new Object[]{};
-        }
-        return Arrays.copyOf(l, l.length, cls);
-    }
+    
 
     public synchronized Object manage(Object o) throws Exception {
         Object p;

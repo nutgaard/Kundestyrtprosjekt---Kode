@@ -21,6 +21,7 @@ import javax.mail.event.MessageCountEvent;
 import javax.mail.event.MessageCountListener;
 import javax.mail.search.ComparisonTerm;
 import javax.mail.search.ReceivedDateTerm;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessage;
 
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAPStrategy;
@@ -43,7 +44,7 @@ public class IMAPPush extends IMAPStrategy implements MessageCountListener {
     private IMAPFolder inbox;
     private boolean run = true;
 
-    public IMAPPush(final Properties props, final Authenticator auth, final List<NetworkService.Callback> listeners, Map<String, Pair<IMAPMessage, XOMessage>> cache) {
+    public IMAPPush(final Properties props, final Authenticator auth, final List<NetworkService.Callback> listeners, IMAPCache cache) {
         super(cache);
         this.props = props;
         this.auth = auth;
@@ -108,13 +109,13 @@ public class IMAPPush extends IMAPStrategy implements MessageCountListener {
         try {
             for (IMAPMessage m : messages) {
                 IMAPMessage im = (IMAPMessage) m;
-                if (cache.containsKey(im.getMessageID())) {
+                if (cache.contains(im.getMessageID())) {
                     continue;
                 }
                 for (NetworkService.Callback cb : listeners) {
                     XOMessage xo = Converter.convertToXO(m);
                     cb.mailReceived(xo);
-                    cache.put(im.getMessageID(), new Pair<IMAPMessage, XOMessage>(m, xo));
+                    cache.cache(im.getMessageID(), im, xo);
                 }
             }
         } catch (Exception ex) {

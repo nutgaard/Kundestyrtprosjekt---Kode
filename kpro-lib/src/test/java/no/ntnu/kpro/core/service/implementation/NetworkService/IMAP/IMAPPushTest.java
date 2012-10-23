@@ -74,7 +74,7 @@ public class IMAPPushTest {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(USER_NAME, USER_PASSWORD);
             }
-        }, new LinkedList<NetworkService.Callback>(), new HashMap<String, Pair<IMAPMessage, XOMessage>>());
+        }, new LinkedList<NetworkService.Callback>(), new IMAPCache(props, USER_NAME, USER_PASSWORD));
         pusherThread = new Thread(pusher);
         pusherThread.start();
     }

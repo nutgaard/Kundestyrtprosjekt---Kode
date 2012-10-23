@@ -44,8 +44,7 @@ public class IMAPPullTest {
             }
         };
         LinkedList<NetworkService.Callback> l = new LinkedList<NetworkService.Callback>();
-        Map<String, Pair<IMAPMessage, XOMessage>> c = new HashMap<String, Pair<IMAPMessage, XOMessage>>();
-        puller = new IMAPPull(p, a, 1, store, c);
+        puller = new IMAPPull(p, a, 1, store, new IMAPCache(p, "kprothales", "kprothales2012"));
         
         pullerThread = new Thread(puller);
     }

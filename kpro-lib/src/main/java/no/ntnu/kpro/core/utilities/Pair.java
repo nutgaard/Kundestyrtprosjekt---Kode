@@ -10,8 +10,8 @@ package no.ntnu.kpro.core.utilities;
  */
 public class Pair<S, T> {
 
-    S first;
-    T second;
+    public S first;
+    public T second;
 
     public Pair(S f, T s) {
         this.first = f;

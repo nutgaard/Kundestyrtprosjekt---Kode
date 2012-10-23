@@ -141,23 +141,9 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     }
 
     public void mailSent(XOMessage message, Address[] invalidAddress) {
-        runOnUiThread(new Runnable() {
-
-            public void run() {
-                Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent", Toast.LENGTH_SHORT);
-                confirm.show();
-            }
-        });
     }
 
     public void mailSentError(XOMessage message, Exception ex) {
-        runOnUiThread(new Runnable() {
-
-            public void run() {
-                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Something went wrong", Toast.LENGTH_SHORT);
-                errorMess.show();
-            }
-        });
     }
 
     public void mailReceived(XOMessage message) {

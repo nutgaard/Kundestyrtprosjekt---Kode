@@ -4,18 +4,15 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
-import com.sun.mail.imap.IMAPMessage;
-import java.util.Map;
-import no.ntnu.kpro.core.model.XOMessage;
-import no.ntnu.kpro.core.utilities.Pair;
+import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPCache;
 
 /**
  *
  * @author Nicklas
  */
 public abstract class IMAPStrategy implements Runnable {
-    protected Map<String, Pair<IMAPMessage, XOMessage>> cache;
-    public IMAPStrategy(Map<String, Pair<IMAPMessage, XOMessage>> cache) {
+    protected IMAPCache cache;
+    public IMAPStrategy(IMAPCache cache) {
         this.cache = cache;
     }
     

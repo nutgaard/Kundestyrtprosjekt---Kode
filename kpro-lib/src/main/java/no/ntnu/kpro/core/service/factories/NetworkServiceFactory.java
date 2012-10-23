@@ -5,7 +5,6 @@
 package no.ntnu.kpro.core.service.factories;
 
 import android.content.Context;
-import java.util.List;
 import java.util.Properties;
 import javax.mail.Address;
 import no.ntnu.kpro.core.model.XOMessage;

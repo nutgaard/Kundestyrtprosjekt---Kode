@@ -15,6 +15,7 @@ import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.search.SearchTerm;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp.BoxName;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
@@ -31,9 +32,9 @@ public class IMAPStorage {
     private Properties props;
     private Authenticator auth;
     private List<NetworkService.Callback> listeners;
-    private Map<String, Pair<IMAPMessage, XOMessage>> cache;
+    private IMAPCache cache;
 
-    public IMAPStorage(final Properties props, final Authenticator auth, List<NetworkService.Callback> listeners, Map<String, Pair<IMAPMessage, XOMessage>> cache) {
+    public IMAPStorage(final Properties props, final Authenticator auth, List<NetworkService.Callback> listeners, IMAPCache cache) {
         this.props = props;
         this.auth = auth;
         this.listeners = listeners;
@@ -53,26 +54,34 @@ public class IMAPStorage {
             Message[] messages = folder.search(search);
 //            System.out.println("Found " + messages.length + " messages");
             for (Message m : messages) {
-                IMAPMessage im = (IMAPMessage)m;
-                if (cache.containsKey(im.getMessageID())) {
-//                    System.out.println("Message allready cached");
+                if (cache == null) {
+                    break;
+                }
+                IMAPMessage im = (IMAPMessage) m;
+                if (cache.containsIMAPMessage(im.getMessageID())) {
+                    System.out.println("Message allready fully cached");
+                    continue;
+                }else if (cache.contains(im.getMessageID())){
+                    System.out.println("Message was mediumcached, updating");
+                    cache.update(im.getMessageID(), im);
                     continue;
                 }
 //                System.out.println("Found message: " + m);
                 for (NetworkService.Callback cb : listeners) {
                     XOMessage xo = Converter.convertToXO(m);
                     cb.mailReceived(xo);
-                    cache.put(im.getMessageID(), new Pair<IMAPMessage, XOMessage>(im, xo));
+                    cache.cache(im.getMessageID(), im, xo);
                 }
-            }
+            }   
             store.close();
             return messages;
         } catch (Exception ex) {
-//            System.out.println("Listeners: " + listeners);
+            ex.printStackTrace();
             for (NetworkService.Callback cb : listeners) {
                 cb.mailReceivedError(ex);
             }
         }
+        System.out.println("Exeption... Returning null");
         return null;
     }
 

@@ -16,7 +16,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.search.ComparisonTerm;
 import javax.mail.search.ReceivedDateTerm;
-import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAPStrategy;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
@@ -34,13 +34,13 @@ public class IMAPPull extends IMAPStrategy {
     private Date lastReceived = new Date(0);
     private boolean run = true;
 
-    IMAPPull(final Properties props, final Authenticator auth, int intervalInSeconds, final IMAPStorage store, Map<String, Pair<IMAPMessage, XOMessage>> cache) {
+    IMAPPull(final Properties props, final Authenticator auth, int intervalInSeconds, final IMAPStorage store, IMAPCache cache) {
         super(cache);
         this.storage = store;
         this.intervalInMillies = intervalInSeconds * 1000;
     }
 
-    public IMAPPull(final Properties props, final Authenticator auth, List<NetworkService.Callback> listener, int intervalInSeconds, Map<String, Pair<IMAPMessage, XOMessage>> cache) {
+    public IMAPPull(final Properties props, final Authenticator auth, List<NetworkService.Callback> listener, int intervalInSeconds, IMAPCache cache) {
         this(props, auth, intervalInSeconds, new IMAPStorage(props, auth, listener, cache), cache);
     }
 
