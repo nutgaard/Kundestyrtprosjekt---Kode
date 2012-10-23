@@ -12,5 +12,4 @@ public enum AttachmentType {
     IMAGE,
     VIDEO,
     GPS_LOCATION;
-    
 }
