@@ -15,7 +15,7 @@
         <item>SendMessageActivity</item>
     </string-array>
     
-    <!--SendMessageActivity-->
+    <!--SENDMESSAGEACTIVITY-->
     <string name="messageReceiverHint">To</string>
     <string name="messageSubjectHint">Subject</string>
     <string name="messageSecurityLabelInfo">Security Label</string>
@@ -33,7 +33,15 @@
     <string name="invalidSecurityLabelError">You have to set a security label on the message before it can be sent. </string>
     <string name="invalidMessageSubjectError">I´m sorry. The subject can not be empty. </string>
     <string name="invalidMessageBodyError">Please add a message body. </string>  
-            
+    
+    <!--Location-->
+    <string name="myLocationNow">My location now is</string>
+    <string name="noLocationFoundError">No location found. Please turn on WIFI, 3G or GPS </string>
+    <string name="locationLongditude">Longditude: </string>
+    <string name="locationLatitude">Latitude: </string>
+    <string name="locationAccuracy">And accuracy is: </string>
+    
+    <!--END SENDMESSAGEACTIVITY STRINGS-->
             
     <!-- Preferences strings -->
     <string name="message_retrieval_default">Push</string>
