@@ -7,8 +7,10 @@ package no.ntnu.kpro.core.service.implementation.NetworkService.crypto;
 import android.content.Context;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.Security;
@@ -65,7 +67,8 @@ public class CryptoHandler {
         _ks.store(fos, password);
         return _ks;
     } 
-    public KeyStore setupKeyStore(String userName, char[] password) throws Exception{
+    public KeyStore setupKeyStore(String userName, char[] password) throws Exception{ 
+         try {
         KeyStore _ks = KeyStore.getInstance(KeyStore.getDefaultType());
         File dir = c.getDir("", c.MODE_PRIVATE);
         File file = new File(dir, "keyStore");
@@ -73,9 +76,17 @@ public class CryptoHandler {
         _ks.load(fis, password);
         fis.close();
         return _ks;
-        
+         } catch (FileNotFoundException e) {
+             return createKeyStore(password);
+         }
     } 
-    public static void encrypt(String keyString, String inputString) {
+    
+    public Key getKey(String Alias, char[] password) throws Exception {
+        Key key;
+        return ks.getKey(Alias, password);
+    }
+    
+    private static String encryptString(Key keyString, String inputString) {
         /*
          * This will use a supplied key, and encrypt the data
          * This is the equivalent of DES/CBC/PKCS5Padding
@@ -83,7 +94,7 @@ public class CryptoHandler {
         BlockCipher engine = new DESEngine();
         BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(engine);
 
-        byte[] key = keyString.getBytes();
+        byte[] key = keyString.getEncoded();
         byte[] input = inputString.getBytes();
 
         cipher.init(true, new KeyParameter(key));
@@ -96,10 +107,15 @@ public class CryptoHandler {
         } catch (Exception ce) {
             System.err.println(ce);
         }
+        return bytArrayToHex(cipherText);
     }
-        public void test(){
-           
+    private static String  bytArrayToHex(byte[] a) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : a) {
+            sb.append(String.format("%02x", b & 0xff));
         }
+        return sb.toString();
+    }
 
     public static void setDefaultMailcap() {
         MailcapCommandMap _mailcap =
