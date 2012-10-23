@@ -100,15 +100,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/sprType"
             android:text="Add attachment"/>
-        
+
         <!--ATTACHMENTS LIST-->
         <ListView
             android:id="@+id/lstAttachments"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_below="@id/btnAddAttachment">
         </ListView>
-    
+
         <!-- MESSAGE TEXT -->
         <EditText
             android:id="@+id/txtMessage"
@@ -121,7 +121,7 @@
             android:maxLength="500"
             android:hint="Message text"
             android:gravity="top|left"/>    
-    
+
         <!-- SEND BUTTON-->
         <Button
             android:id="@+id/btnSend"
