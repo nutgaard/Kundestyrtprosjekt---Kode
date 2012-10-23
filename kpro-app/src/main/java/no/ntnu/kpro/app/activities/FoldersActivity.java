@@ -235,22 +235,24 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
         Log.i(TAG, "Adding click listener to message list");
     }
 
+    @Override
     public void mailSent(XOMessage message, Address[] invalidAddress) {
         super.mailSent(message, invalidAddress);
         Log.i(TAG, "Mail sent");
     }
 
+    @Override
     public void mailSentError(XOMessage message, Exception ex) {
         super.mailSentError(message, ex);
         Log.i(TAG, "Mail sent error");
     }
 
+    @Override
     public void mailReceived(XOMessage message) {
         super.mailReceived(message);
         runOnUiThread(new Runnable() {
             public void run() {
                 Log.d(TAG, "Mail received in UI");
-                Toast.makeText(FoldersActivity.this, "1 new message", Toast.LENGTH_LONG).show();
                 if (selectedBox.equals(BoxOption.INBOX)) {
                     messages = serviceProvider.getNetworkService().getInbox();
                     sortOnCondition();
@@ -261,10 +263,11 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
         });
     }
 
+    @Override
     public void mailReceivedError(Exception ex) {
         super.mailReceivedError(ex);
         final Exception e = ex;
-        FoldersActivity.this.runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             public void run() {
                 Log.i(TAG, "Mail received error in UI");
                 //Log.i(TAG, e.getMessage());

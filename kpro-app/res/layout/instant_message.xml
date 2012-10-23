@@ -33,6 +33,9 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     android:layout_width="fill_parent"
                     android:layout_height="80dp"
+                    android:layout_marginLeft="10dip"
+                    android:layout_marginRight="10dip"
+                    android:layout_marginTop="10dip"
                     android:orientation="vertical" 
                     android:id="@+id/attributes"
                     android:background="@drawable/btn_black"
@@ -40,7 +43,7 @@
             
         <!-- From Label -->
         <TextView
-            android:id="@+id/lblFrom"
+            android:id="@+id/lblReceiver"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
@@ -48,8 +51,7 @@
             android:paddingLeft="2dp"
             android:textSize="14sp"
             android:maxLines="1"
-            android:lines="1"
-            android:textStyle="bold" />
+            android:lines="1" />
         <!-- Security label -->
         <TextView
             android:id="@+id/lblSecurityLabel"
@@ -92,17 +94,7 @@
                   android:maxLines="1"  
                   android:textSize="12dp"
                   android:textColor="@color/white"
-                  android:layout_below="@id/lblFrom"/>
- 
-        <!-- Mail date -->
-        <TextView android:id="@+id/lblDate"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:text="@string/defaultDate"
-                  android:textColor="@color/white"
-                  android:paddingLeft="2dp"
-                  android:textSize="12sp"
-                  android:layout_below="@id/lblSubject"/>
+                  android:layout_below="@id/lblReceiver"/>
                 
     </RelativeLayout>
     <LinearLayout
