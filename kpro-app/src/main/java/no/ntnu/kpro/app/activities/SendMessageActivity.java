@@ -4,6 +4,9 @@
  */
 package no.ntnu.kpro.app.activities;
 
+import no.ntnu.kpro.app.adapters.ExpandableListAdapter;
+import no.ntnu.kpro.core.model.ExpandableListGroup;
+import no.ntnu.kpro.core.model.ExpandableListChild;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -75,6 +79,9 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private ListView lstAttachments;
     private Attachments attachments;
     private List<String> attachmentsVisualRepresentation;
+    
+    
+    
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,12 +122,14 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         this.images = new ArrayList<Uri>();
         this.videos = new ArrayList<Uri>();
 
-        //Attachments//
-        lstAttachments = (ListView) findViewById(R.id.lstAttachments);
-        attachments = new Attachments();
-        addAttachmentsListener(lstAttachments);
+//        //Attachments//
+//        lstAttachments = (ListView) findViewById(R.id.lstAttachments);
+//        attachments = new Attachments();
+//        addAttachmentsListener(lstAttachments);
 
         startLocationFetching();
+        
+        this.fillExpandableList();
 
     }
 
@@ -449,7 +458,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                             intent.setAction(Intent.ACTION_GET_CONTENT);
                             intent.addCategory(Intent.CATEGORY_OPENABLE);
                             startActivityForResult(intent, FETCH_IMAGE_ACTIVITY_REQUEST_CODE);
-                        } else if (item == 3){
+                        } else if (item == 3) {
                             addNewLocationToMessage();
                         }
                     }
@@ -615,7 +624,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         String bestProvider = locationManager.getBestProvider(criteria, true);
         Location location = locationManager.getLastKnownLocation(bestProvider);
         addLocationListener(locationManager, bestProvider);
-        
+
     }
 
     private void addNewLocationToMessage() {
@@ -626,7 +635,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             double lng = currentLocation.getLongitude();
             locLongString += "\n" + getString(R.string.myLocationNow) + "\n";
             locLongString += getString(R.string.locationLatitude) + lat + "\n";
-            locLongString += getString(R.string.locationLongditude)+ lng;
+            locLongString += getString(R.string.locationLongditude) + lng;
             this.txtMessageBody.setText(txtMessageBody.getText() + locLongString);
 
         } else {
@@ -657,4 +666,57 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         locationManager.requestLocationUpdates(bestProvider, locationUpdateInterval, locationDistance, locationListener);
     }
+    private ExpandableListAdapter expAdapter;
+    private ArrayList<ExpandableListGroup> expListItems;
+    private ExpandableListView expandList;
+
+    //Expandable list example:
+    private void fillExpandableList() {
+        expandList = (ExpandableListView) findViewById(R.id.ExpList);
+        expListItems = SetStandardGroups();
+        expAdapter = new ExpandableListAdapter(SendMessageActivity.this, expListItems);
+        expandList.setAdapter(expAdapter);
+    }
+    
+    public ArrayList<ExpandableListGroup> SetStandardGroups() {
+    	ArrayList<ExpandableListGroup> list = new ArrayList<ExpandableListGroup>();
+    	ArrayList<ExpandableListChild> list2 = new ArrayList<ExpandableListChild>();
+        ExpandableListGroup gru1 = new ExpandableListGroup();
+        gru1.setName("Comedy");
+        ExpandableListChild ch1_1 = new ExpandableListChild();
+        ch1_1.setName("A movie");
+        ch1_1.setTag(null);
+        list2.add(ch1_1);
+        ExpandableListChild ch1_2 = new ExpandableListChild();
+        ch1_2.setName("An other movie");
+        ch1_2.setTag(null);
+        list2.add(ch1_2);
+        ExpandableListChild ch1_3 = new ExpandableListChild();
+        ch1_3.setName("And an other movie");
+        ch1_3.setTag(null);
+        list2.add(ch1_3);
+        gru1.setItems(list2);
+        list2 = new ArrayList<ExpandableListChild>();
+        
+        ExpandableListGroup gru2 = new ExpandableListGroup();
+        gru2.setName("Action");
+        ExpandableListChild ch2_1 = new ExpandableListChild();
+        ch2_1.setName("A movie");
+        ch2_1.setTag(null);
+        list2.add(ch2_1);
+        ExpandableListChild ch2_2 = new ExpandableListChild();
+        ch2_2.setName("An other movie");
+        ch2_2.setTag(null);
+        list2.add(ch2_2);
+        ExpandableListChild ch2_3 = new ExpandableListChild();
+        ch2_3.setName("And an other movie");
+        ch2_3.setTag(null);
+        list2.add(ch2_3);
+        gru2.setItems(list2);
+        list.add(gru1);
+        list.add(gru2);
+        
+        return list;
+    }
+
 }
