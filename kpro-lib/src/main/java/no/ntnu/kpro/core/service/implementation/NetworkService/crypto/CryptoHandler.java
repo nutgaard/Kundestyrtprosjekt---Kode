@@ -115,9 +115,9 @@ public class CryptoHandler {
         later.setTime(later.getTime() + 9000000000l);
         X509v1CertificateBuilder Cgen = new X509v1CertificateBuilder(us, BigInteger.ZERO, now, later, us, publicKeyInfo);
         Certificate[] chain = null;
-        ks.setCertificateEntry(null, null);
-        ks.setKeyEntry(userName + "-Private",  ourKey.getPrivate(), password, chain);
-        ks.setKeyEntry(userName + "-Public", ourKey.getPublic(), password, chain);
+//        ks.setCertificateEntry(null, null);
+//        ks.setKeyEntry(userName + "-Private",  ourKey.getPrivate(), password, chain);
+//        ks.setKeyEntry(userName + "-Public", ourKey.getPublic(), password, chain);
         return ks;
     }
     
