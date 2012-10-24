@@ -145,24 +145,6 @@ public class CreateInstantMessageActivity extends MenuActivity implements Networ
 //        getServiceProvider().register(this);
     }
 
-    public void mailSent(XOMessage message, Address[] invalidAddress) {
-        Toast confirm = Toast.makeText(CreateInstantMessageActivity.this, "Message sent", Toast.LENGTH_SHORT);
-        confirm.show();
-    }
-
-    public void mailSentError(XOMessage message, Exception ex) {
-        Toast errorMess = Toast.makeText(CreateInstantMessageActivity.this, "Something went wrong", Toast.LENGTH_SHORT);
-        errorMess.show();
-    }
-
-    public void mailReceived(XOMessage message) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void mailReceivedError(Exception ex) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     private void addBtnSendClickListener(Button btnSend) {
         btnSend.setOnClickListener(
                 new View.OnClickListener() {

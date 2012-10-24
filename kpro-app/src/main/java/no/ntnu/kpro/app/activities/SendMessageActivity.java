@@ -163,14 +163,31 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     }
 
     public void mailSent(XOMessage message, Address[] invalidAddress) {
+        super.mailSent(message, invalidAddress);
+        runOnUiThread(new Runnable() {
+
+            public void run() {
+                Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent", Toast.LENGTH_SHORT);
+                confirm.show();
+            }
+        });
     }
 
     public void mailSentError(XOMessage message, Exception ex) {
+        super.mailSentError(message, ex);
+        runOnUiThread(new Runnable() {
 
+            public void run() {
+//                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Something went wrong", Toast.LENGTH_SHORT);
+//                errorMess.show();
+            }
+        });
     }
 
     public void mailReceived(XOMessage message) {
+        super.mailReceived(message);
         runOnUiThread(new Runnable() {
+
             public void run() {
 //                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Message Received, but I dont care", Toast.LENGTH_SHORT);
 //                errorMess.show();
@@ -179,7 +196,9 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     }
 
     public void mailReceivedError(Exception ex) {
+        super.mailReceivedError(ex);
         runOnUiThread(new Runnable() {
+
             public void run() {
 //                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Message Received with error, but I dont care", Toast.LENGTH_SHORT);
 //                errorMess.show();
@@ -191,6 +210,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private void addBtnSendClickListener(Button btnSend) {
         btnSend.setOnClickListener(
                 new View.OnClickListener() {
+
                     public void onClick(View view) {
                         while (!isConnected()) {
                             Thread.yield();
@@ -325,6 +345,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private void addTextChangedListeners() {
         txtReceiver.addTextChangedListener(
                 new TextWatcher() {
+
                     public void onTextChanged(CharSequence cs, int i, int i1, int i2) {
                         SendMessageActivity.this.textEnteredInReceiver = true;
                     }
@@ -341,6 +362,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         txtMessageBody.addTextChangedListener(
                 new TextWatcher() {
+
                     public void beforeTextChanged(CharSequence cs, int i, int i1, int i2) {
                     }
 
@@ -361,6 +383,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         final SendMessageActivity t = this;
         receiver.setOnFocusChangeListener(
                 new OnFocusChangeListener() {
+
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
                         if (!hasFocus) {
@@ -374,6 +397,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         final SendMessageActivity t = this;
         receiver.setOnFocusChangeListener(
                 new OnFocusChangeListener() {
+
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
                         if (!hasFocus) {
@@ -391,6 +415,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private void addAttachmentClickListener(Button btnAddAttachment) {
 
         btnAddAttachment.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View view) {
                 String[] items = new String[]{"Image From Camera", "Video From Camera", "Image From Phone", "Location"};
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(SendMessageActivity.this, android.R.layout.select_dialog_item, items);
@@ -400,6 +425,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                 builder.setAdapter(adapter, null);
 
                 builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+
                     public void onClick(DialogInterface dialog, int item) {
                         if (item == 0) {
                             // create Intent to take a picture and return control to the calling application
@@ -433,7 +459,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                             intent.setAction(Intent.ACTION_GET_CONTENT);
                             intent.addCategory(Intent.CATEGORY_OPENABLE);
                             startActivityForResult(intent, FETCH_IMAGE_ACTIVITY_REQUEST_CODE);
-                        } else if (item == 3){
+                        } else if (item == 3) {
                             addNewLocationToMessage();
                         }
                     }
@@ -509,6 +535,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private void addAttachmentsListener(ListView attachments) {
         logMe("InsideAttachmentsListener");
         attachments.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
                 logMe("AttachmentClicked");
                 Toast confirm = Toast.makeText(SendMessageActivity.this, "Item " + i, Toast.LENGTH_SHORT);
@@ -599,7 +626,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         String bestProvider = locationManager.getBestProvider(criteria, true);
         Location location = locationManager.getLastKnownLocation(bestProvider);
         addLocationListener(locationManager, bestProvider);
-        
+
     }
 
     private void addNewLocationToMessage() {
@@ -610,7 +637,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             double lng = currentLocation.getLongitude();
             locLongString += "\n" + getString(R.string.myLocationNow) + "\n";
             locLongString += getString(R.string.locationLatitude) + lat + "\n";
-            locLongString += getString(R.string.locationLongditude)+ lng;
+            locLongString += getString(R.string.locationLongditude) + lng;
             this.txtMessageBody.setText(txtMessageBody.getText() + locLongString);
 
         } else {
@@ -621,6 +648,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
     private void addLocationListener(LocationManager locationManager, String bestProvider) {
         LocationListener locationListener = new LocationListener() {
+
             public void onLocationChanged(Location lctn) {
                 SendMessageActivity.this.currentLocation = lctn;
 

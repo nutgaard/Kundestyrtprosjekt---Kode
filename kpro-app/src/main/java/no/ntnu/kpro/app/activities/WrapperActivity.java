@@ -5,6 +5,7 @@
 package no.ntnu.kpro.app.activities;
 
 import android.app.Activity;
+import android.app.ActivityGroup;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -12,13 +13,17 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
+import javax.mail.Address;
+import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.ServiceProvider;
+import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 /**
  *
  * @author Nicklas & Ida
  */
-public abstract class WrapperActivity extends Activity {
+public abstract class WrapperActivity extends ActivityGroup implements NetworkService.Callback{
 
     protected ServiceProvider mServiceProvider;
     private ServiceConnection mConnection;
@@ -77,5 +82,41 @@ public abstract class WrapperActivity extends Activity {
                 WrapperActivity.this.onServiceDisconnected(mServiceProvider);
             }
         };
+    }
+    
+    public void mailSent(XOMessage message, Address[] invalidAddress) {
+        runOnUiThread(new Runnable() {
+
+            public void run() {
+                Toast.makeText(WrapperActivity.this, "Message sent", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void mailSentError(XOMessage message, Exception ex) {
+        runOnUiThread(new Runnable() {
+
+            public void run() {
+                Toast.makeText(WrapperActivity.this, "Message sending error", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void mailReceived(XOMessage message) {
+        runOnUiThread(new Runnable() {
+
+            public void run() {
+                Toast.makeText(WrapperActivity.this, "1 new message", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void mailReceivedError(Exception ex) {
+        runOnUiThread(new Runnable() {
+
+            public void run() {
+                Toast.makeText(WrapperActivity.this, "Message recieve error", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
