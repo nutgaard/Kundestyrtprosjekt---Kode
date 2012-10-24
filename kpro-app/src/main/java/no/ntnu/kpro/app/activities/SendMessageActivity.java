@@ -235,6 +235,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         if (doIntermediateValidation()) {
                             if (doSendButtonValidation()) {
                                 XOMessage m = new XOMessage("MyMailAddress@gmail.com", txtReceiver.getText().toString(), txtSubject.getText().toString(), txtMessageBody.getText().toString(), selectedSecurity, selectedPriority, selectedType, new Date());
+                                getServiceProvider().getNetworkService().send(m);
                             }
                         }
 
