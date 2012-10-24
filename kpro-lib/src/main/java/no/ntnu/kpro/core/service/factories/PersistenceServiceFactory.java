@@ -26,10 +26,12 @@ public class PersistenceServiceFactory {
     }
     public static PersistenceService createMessageStorage(User user, Context c){
         try {
-            return new PersistentWriteThroughStorage(user, FileCryptoFactory.getProcessor(FileCryptoFactory.Crypto.NONE), (c != null)?c.getDir("/", c.MODE_PRIVATE):new File("/"));
+            File f = (c!=null)?c.getFilesDir():new File("/");
+            System.out.println("Opening Persistencelayer at: "+f);
+            return new PersistentWriteThroughStorage(user, FileCryptoFactory.getProcessor(FileCryptoFactory.Crypto.NONE), f);
         } catch (Exception ex) {
             Logger.getLogger(PersistenceServiceFactory.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
-        return null;
     }
 }
