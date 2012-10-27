@@ -58,9 +58,6 @@ public class ContactsActivity extends WrapperActivity {
         Contact christian = new Contact("Christian", "Christian@thales.no", 2);
         Contact stig = new Contact("Stig", "Stig@thales.no", 2);
         
-        
-        
-        
         elements.add(lars);
         elements.add(magnus);
         elements.add(aleksander);
@@ -69,96 +66,17 @@ public class ContactsActivity extends WrapperActivity {
         elements.add(nicklas);
         elements.add(christian);
         elements.add(stig);
+        
+        
        
 
-        Collections.sort(elements); // Must be sorted!
+        //Collections.sort(elements); // Must be sorted!
 
         // listview
         myListView = (ListView) findViewById(R.id.lstContacts);
-        //myListView.setFastScrollEnabled(true);
-        MyIndexerAdapter<String> adapter = new MyIndexerAdapter<String>(
-                getApplicationContext(), android.R.layout.simple_list_item_1,
-                elements);
+        //myListView.setFastScrollEnabled
 
         ContactsAdapter conAdapter = new ContactsAdapter(ContactsActivity.this, elements);
         myListView.setAdapter(conAdapter);
-
-
-    }
-
-    class MyIndexerAdapter<T> extends ArrayAdapter<T> implements SectionIndexer {
-
-        ArrayList<String> myElements;
-        HashMap<String, Integer> alphaIndexer;
-        String[] sections;
-
-        public MyIndexerAdapter(Context context, int textViewResourceId,
-                List<T> objects) {
-            super(context, textViewResourceId, objects);
-            myElements = (ArrayList<String>) objects;
-            // here is the tricky stuff
-            alphaIndexer = new HashMap<String, Integer>();
-            // in this hashmap we will store here the positions for
-            // the sections
-
-            int size = elements.size();
-            for (int i = size - 1; i >= 0; i--) {
-                String element = elements.get(i);
-                alphaIndexer.put(element.substring(0, 1), i);
-                //We store the first letter of the word, and its index.
-                //The Hashmap will replace the value for identical keys are putted in
-            }
-
-            // now we have an hashmap containing for each first-letter
-            // sections(key), the index(value) in where this sections begins
-
-            // we have now to build the sections(letters to be displayed)
-            // array .it must contains the keys, and must (I do so...) be
-            // ordered alphabetically
-
-            Set<String> keys = alphaIndexer.keySet(); // set of letters ...sets
-            // cannot be sorted...
-
-            Iterator<String> it = keys.iterator();
-            ArrayList<String> keyList = new ArrayList<String>(); // list can be
-            // sorted
-
-            while (it.hasNext()) {
-                String key = it.next();
-                keyList.add(key);
-            }
-
-            Collections.sort(keyList);
-
-            sections = new String[keyList.size()]; // simple conversion to an
-            // array of object
-            keyList.toArray(sections);
-
-            // ooOO00K !
-
-        }
-
-        @Override
-        public int getPositionForSection(int section) {
-            // Log.v("getPositionForSection", ""+section);
-            String letter = sections[section];
-
-            return alphaIndexer.get(letter);
-        }
-
-        @Override
-        public int getSectionForPosition(int position) {
-
-            // you will notice it will be never called (right?)
-            Log.v("getSectionForPosition", "called");
-            return 0;
-        }
-
-        @Override
-        public Object[] getSections() {
-
-            return sections; // to string will be called each object, to display
-            // the letter
-        }
-    }
+}
 }
