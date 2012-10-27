@@ -35,16 +35,16 @@ public class XOMessage implements ModelProxy.IXOMessage {
     public static String LABEL = "SIO-Label";
     public static String PRIORITY = "MMHS-Primary-Precedence";
     public static String TYPE = "MMHS-Message-Type";
-    private final String from;
-    private final String to;
-    private final String subject;
-    private final List<InputStream> attachments;
-    private final String htmlBody;
-    private final String strippedBody;
-    private final XOMessageSecurityLabel grading;
-    private final XOMessagePriority priority;
-    private final XOMessageType type;
-    private final Date date;
+    private String from;
+    private String to;
+    private String subject;
+    private List<InputStream> attachments;
+    private String htmlBody;
+    private String strippedBody;
+    private String grading;
+    private String priority;
+    private String type;
+    private Date date;
     private boolean opened = false;
     private String id;
     private String boxAffiliation;
@@ -68,9 +68,9 @@ public class XOMessage implements ModelProxy.IXOMessage {
         this.attachments = new LinkedList<InputStream>();
         this.htmlBody = body;
         this.strippedBody = body.replaceAll("\\<.*?>", "");
-        this.grading = grading;
-        this.priority = priority;
-        this.type = type;
+        this.grading = grading.name();
+        this.priority = priority.name();
+        this.type = type.name();
         this.date = date;
     }
     public void setBoxAffiliation(BoxName box){
@@ -125,17 +125,17 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
     @Override
     public XOMessageSecurityLabel getGrading() {
-        return grading;
+        return XOMessageSecurityLabel.valueOf(grading);
     }
 
     @Override
     public XOMessagePriority getPriority() {
-        return priority;
+        return XOMessagePriority.valueOf(priority);
     }
 
     @Override
     public XOMessageType getType() {
-        return type;
+        return XOMessageType.valueOf(type);
     }
 
     @Override
@@ -246,7 +246,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
         mm.setContent(message.getStrippedBody(), "UTF-8");
         mm.setHeader("Content-Type", "text/plain; charset=UTF-8");
         mm.addHeader(PRIORITY, message.priority.toString());
-        mm.addHeader(LABEL, message.grading.getHeaderValue());
+        mm.addHeader(LABEL, XOMessageSecurityLabel.valueOf(message.grading).getHeaderValue());
         mm.addHeader(TYPE, message.type.toString());
         mm.setSentDate(message.date);
         return mm;

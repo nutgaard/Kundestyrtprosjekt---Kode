@@ -58,11 +58,11 @@
             <artifactId>activation</artifactId>
             <version>1.0</version>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>xstream</groupId>
             <artifactId>xstream</artifactId>
             <version>1.2.2</version>
-        </dependency>
+        </dependency>-->
             
         <!--        <dependency>
             <groupId>com.google</groupId>

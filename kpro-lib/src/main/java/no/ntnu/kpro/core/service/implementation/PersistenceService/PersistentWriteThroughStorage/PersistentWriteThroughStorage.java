@@ -7,7 +7,7 @@ package no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWr
 import com.thoughtworks.xstream.XStream;
 import java.io.*;
 import java.lang.reflect.Proxy;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import no.ntnu.kpro.core.model.Attachments;
@@ -227,7 +227,7 @@ public class PersistentWriteThroughStorage extends PersistenceService {
         return base;
     }
 
-    private void getIndex() throws Exception {
+    private synchronized void getIndex() throws Exception {
         File base = getBaseDir();
         File[] indL = base.listFiles(new NameFilter("index"));
         File ind;
@@ -245,13 +245,13 @@ public class PersistentWriteThroughStorage extends PersistenceService {
         is.close();
         data = postProcessor.unprocess(data);
         if (data.length == 0) {
-            this.index = new ConcurrentHashMap<String, Integer>();
+            this.index = new HashMap<String, Integer>();
         } else {
-            this.index = (ConcurrentHashMap<String, Integer>) xstream.fromXML(new ByteArrayInputStream(data));
+            this.index = (HashMap<String, Integer>) xstream.fromXML(new ByteArrayInputStream(data));
         }
     }
 
-    private void saveIndex() throws Exception {
+    private synchronized void saveIndex() throws Exception {
         File base = getBaseDir();
         File[] indL = base.listFiles(new NameFilter("index"));
         File ind;

@@ -4,21 +4,6 @@
  */
 package no.ntnu.kpro.core.service.interfaces;
 
-import android.content.Context;
-import android.util.Log;
-import com.thoughtworks.xstream.XStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import no.ntnu.kpro.core.service.interfaces.PersistenceService.Callback;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 /**
  *
  * @author magnus
