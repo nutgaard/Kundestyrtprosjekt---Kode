@@ -676,8 +676,8 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     
     ArrayList<ExpandableListGroup> listGroups;
     private ArrayList<ExpandableListGroup> setExpandableListItems() {
-    	listGroups = new ArrayList<ExpandableListGroup>();
-    	
+    	listGroups = new ArrayList<ExpandableListGroup>();    	
+        
         ArrayList<ExpandableListChild> children = new ArrayList<ExpandableListChild>();
        
         ExpandableListGroup attachmentsGroup = new ExpandableListGroup();
@@ -693,8 +693,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private void addAttachmentToDropDown(String name, Uri uri){
         ExpandableListChild child = new ExpandableListChild(name, uri);
         
-        
-        children.add(child1_1);
+       //
         
     }
     
