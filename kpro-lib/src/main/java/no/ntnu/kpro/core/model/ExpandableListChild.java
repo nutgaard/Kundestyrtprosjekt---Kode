@@ -21,11 +21,12 @@ public class ExpandableListChild {
         }
 	
 	public String getName() {
-		return name;
+		return name + " ( " + uri.getLastPathSegment() + ")";
 	}
 	
 	public Uri getUri() {
 		return this.uri;
+                
 	}
 	
 }
