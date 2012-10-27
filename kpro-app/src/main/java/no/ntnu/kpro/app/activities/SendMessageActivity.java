@@ -38,12 +38,13 @@ import java.util.regex.Pattern;
 import javax.mail.Address;
 import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.core.helpers.EnumHelper;
-import no.ntnu.kpro.core.model.AttachmentType;
 import no.ntnu.kpro.core.model.Attachments;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageType;
+import no.ntnu.kpro.core.model.attachment.Attachment;
+import no.ntnu.kpro.core.model.attachment.ImageAttachment;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
@@ -468,7 +469,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                addAttachment(attachmentUri, AttachmentType.IMAGE);
+                addAttachment(new ImageAttachment(attachmentUri));
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the image capture
             } else {
@@ -476,27 +477,17 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             }
         }
 
-        if (requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                addAttachment(attachmentUri, AttachmentType.VIDEO);
-            } else if (resultCode == RESULT_CANCELED) {
-                // User cancelled the video capture
-            } else {
-                // Video capture failed, advise user
-            }
-        }
-
         if (requestCode == FETCH_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Uri path = data.getData();
-                addAttachment(path, AttachmentType.IMAGE);
+                addAttachment(new ImageAttachment(path));
                 //super.onActivityResult(requestCode, resultCode, data);
             }
         }
     }
 
-    private void addAttachment(Uri attachmentUri, AttachmentType type) {
-        String visualRepresentation = attachments.addAttachment(attachmentUri, type);
+    private void addAttachment(Attachment attachment) {
+        String visualRepresentation = attachments.addAttachment(attachment);
         ArrayAdapter<String> adapter = getCurrentAdapter();
         logMe("Size first of Adapter" + adapter.getCount());
         this.getCurrentAdapter().add(visualRepresentation);
