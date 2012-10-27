@@ -315,8 +315,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         boolean isValidSecurityLabel = sprSecurityLabel.getSelectedItemPosition() != 0;
 
-        String sendMessageErrorToastMessage = "";
-
         boolean isValidDataFields = isValidEmail && isValidSubject && isValidMessage && isValidSecurityLabel;
         if (isValidDataFields) {
             return true;
@@ -409,7 +407,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         btnAddAttachment.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                String[] items = new String[]{"Image From Camera", "Video From Camera", "Image From Phone", "Location"};
+                String[] items = new String[]{"Image From Camera", "Image From Phone", "Location"};
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(SendMessageActivity.this, android.R.layout.select_dialog_item, items);
                 AlertDialog.Builder builder = new AlertDialog.Builder(SendMessageActivity.this);
 
@@ -419,45 +417,38 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                 builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         if (item == 0) {
-                            // create Intent to take a picture and return control to the calling application
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-                            attachmentUri = FileHelper.getOutputMediaFileUri(FileHelper.MEDIA_TYPE_IMAGE); // create a file to save the image
-                            intent.putExtra(MediaStore.EXTRA_OUTPUT, attachmentUri); // set the image file name
-
-                            Log.d("SendMessage", "The file uri of imagei is: " + attachmentUri.getEncodedPath());
-
-                            // start the image capture Intent
-                            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-
+                            startFetchImageFromCameraActivity();
                         } else if (item == 1) {
-                            //create new Intent
-                            Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-
-                            attachmentUri = FileHelper.getOutputMediaFileUri(FileHelper.MEDIA_TYPE_VIDEO);  // create a file to save the video
-                            Log.d("SendMessage", "File uri is:" + attachmentUri.getPath());
-                            intent.putExtra(MediaStore.EXTRA_OUTPUT, attachmentUri);  // set the image file name
-
-                            intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1); // set the video image quality to high
-
-                            // start the Video Capture Intent
-                            startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
-
+                            startFetchImageFromPhoneActivity();
                         } else if (item == 2) {
-                            //Create intent
+                            addNewLocationToMessage();
+                        }
+                    }
+
+                    private void startFetchImageFromPhoneActivity() {
+                          //Create intent
                             Intent intent = new Intent();
                             intent.setType("image/*");
                             intent.setAction(Intent.ACTION_GET_CONTENT);
                             intent.addCategory(Intent.CATEGORY_OPENABLE);
                             startActivityForResult(intent, FETCH_IMAGE_ACTIVITY_REQUEST_CODE);
-                        } else if (item == 3) {
-                            addNewLocationToMessage();
-                        }
+                    }
+
+                    private void startFetchImageFromCameraActivity() {
+                        // create Intent to take a picture and return control to the calling application
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                        attachmentUri = FileHelper.getOutputMediaFileUri(FileHelper.MEDIA_TYPE_IMAGE); // create a file to save the image
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, attachmentUri); // set the image file name
+
+                        Log.d("SendMessage", "The file uri of imagei is: " + attachmentUri.getEncodedPath());
+
+                        // start the image capture Intent
+                        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
                     }
                 });
 
                 AlertDialog dialog = builder.create();
-
                 dialog.show();
             }
         });
@@ -505,20 +496,39 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private Location currentLocation = null;
 
     private void startLocationFetching() {
+        String serviceString = Context.LOCATION_SERVICE;
+        locationManager = (LocationManager) getSystemService(serviceString);
+        addLocationListener(locationManager);
+
+    }
+
+    private void addLocationListener(LocationManager locationManager) {
         Criteria criteria = new Criteria();
         criteria.setAltitudeRequired(false);
         criteria.setBearingRequired(false);
         criteria.setSpeedRequired(false);
         criteria.setCostAllowed(true);
+        
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location lctn) {
+                SendMessageActivity.this.currentLocation = lctn;
 
-        String serviceString = Context.LOCATION_SERVICE;
-        locationManager = (LocationManager) getSystemService(serviceString);
+            }
+
+            public void onStatusChanged(String string, int i, Bundle bundle) {
+            }
+
+            public void onProviderEnabled(String string) {
+            }
+
+            public void onProviderDisabled(String string) {
+            }
+        };
         String bestProvider = locationManager.getBestProvider(criteria, true);
-        Location location = locationManager.getLastKnownLocation(bestProvider);
-        addLocationListener(locationManager, bestProvider);
-
+        locationManager.requestLocationUpdates(bestProvider, locationUpdateInterval, locationDistance, locationListener);
     }
-
+    
+    
     private void addNewLocationToMessage() {
         String locLongString = "";
 
@@ -535,26 +545,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             locationNotFound.show();
         }
     }
-
-    private void addLocationListener(LocationManager locationManager, String bestProvider) {
-        LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location lctn) {
-                SendMessageActivity.this.currentLocation = lctn;
-
-            }
-
-            public void onStatusChanged(String string, int i, Bundle bundle) {
-            }
-
-            public void onProviderEnabled(String string) {
-            }
-
-            public void onProviderDisabled(String string) {
-            }
-        };
-
-        locationManager.requestLocationUpdates(bestProvider, locationUpdateInterval, locationDistance, locationListener);
-    }
+    
     private ExpandableListAdapter expAdapter;
     private ArrayList<ExpandableListGroup> expListItems;
     private ExpandableListView expandList;
