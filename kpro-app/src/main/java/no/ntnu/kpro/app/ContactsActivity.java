@@ -30,39 +30,46 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
-<<<<<<< HEAD
+
 import no.ntnu.kpro.app.activities.SendMessageActivity;
-=======
+
 import no.ntnu.kpro.app.adapters.ContactsAdapter;
->>>>>>> 9a6ab9612d93f5c28700d3ec66f295aff7691caf
+import no.ntnu.kpro.core.model.Contact;
+
 
 public class ContactsActivity extends WrapperActivity {
 
     ListView myListView;
-    ArrayList<String> elements;
+    ArrayList<Contact> elements;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contacts);
 
-        // elements
-        String s = "QWERTZUIOPASDFGHJKLYXCVBNM";
-        Random r = new Random();
-        elements = new ArrayList<String>();
-        //     for (int i = 0; i < 300; i++) {
+        elements = new ArrayList<Contact>();
 
-        //                      elements.add(s.substring(r.nextInt(s.length())));
-
-//                }
-        elements.add("lars@gmail.com");
-        elements.add("magnus@gmail.com");
-        elements.add("aleksander@gmail.com");
-        elements.add("ida@gmail.com");
-        elements.add("kristin@gmail.com");
-        elements.add("nicklas@gmail.com");
-        elements.add("christian@thales.no");
-        elements.add("stig@thales.no");
+        Contact lars = new Contact("Lars", "lars.hoysaeter@gmail.com", 1);
+        Contact magnus = new Contact("Magnus", "magnus@gmail.com", 2);
+        Contact aleksander = new Contact("Aleksander", "aleksander@gmail.com", 2);
+        Contact ida = new Contact("Ida", "Ida@gmail.com", 2);
+        Contact kristin = new Contact("Kristin", "Kristin@gmail.com", 2);
+        Contact nicklas = new Contact("Nicklas", "Nicklas@gmail.com", 2);
+        Contact christian = new Contact("Christian", "Christian@thales.no", 2);
+        Contact stig = new Contact("Stig", "Stig@thales.no", 2);
+        
+        
+        
+        
+        elements.add(lars);
+        elements.add(magnus);
+        elements.add(aleksander);
+        elements.add(ida);
+        elements.add(kristin);
+        elements.add(nicklas);
+        elements.add(christian);
+        elements.add(stig);
+       
 
         Collections.sort(elements); // Must be sorted!
 
@@ -72,11 +79,10 @@ public class ContactsActivity extends WrapperActivity {
         MyIndexerAdapter<String> adapter = new MyIndexerAdapter<String>(
                 getApplicationContext(), android.R.layout.simple_list_item_1,
                 elements);
-<<<<<<< HEAD
-=======
+
         ContactsAdapter conAdapter = new ContactsAdapter(ContactsActivity.this, elements);
         myListView.setAdapter(conAdapter);
->>>>>>> 9a6ab9612d93f5c28700d3ec66f295aff7691caf
+
 
     }
 
