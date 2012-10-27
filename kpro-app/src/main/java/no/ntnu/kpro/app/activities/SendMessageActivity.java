@@ -482,9 +482,9 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         if (requestCode == FETCH_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-               Uri path = data.getData();
+                Uri path = data.getData();
                 addAttachment(new ImageAttachment(path));
-                addAttachmentToDropDown("Image from Phone", attachmentUri);
+                addAttachmentToDropDown("Image from Phone", data.getData());
                 fillExpandableList();
                 //super.onActivityResult(requestCode, resultCode, data);
             }
@@ -544,15 +544,12 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             }
 
             public void onStatusChanged(String string, int i, Bundle bundle) {
-                throw new UnsupportedOperationException("Not supported yet.");
             }
 
             public void onProviderEnabled(String string) {
-                throw new UnsupportedOperationException("Not supported yet.");
             }
 
             public void onProviderDisabled(String string) {
-                throw new UnsupportedOperationException("Not supported yet.");
             }
         };
 
@@ -571,8 +568,17 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         OnChildClickListener childClickListener = new OnChildClickListener() {
             public boolean onChildClick(ExpandableListView elv, View view, int i, int i1, long l) {
-                logMe("I is in childclick");
-                Toast t = Toast.makeText(SendMessageActivity.this, "I clicked parent: " + i + ", child: " + i1, Toast.LENGTH_LONG);
+                ExpandableListChild currentChild = children.get(i1);
+                Uri uri = currentChild.getUri();
+                
+                Toast t = Toast.makeText(SendMessageActivity.this, "Clicked parent:" + i + ". Child: " + i1, Toast.LENGTH_LONG);
+                logMe("Starting intent...");
+                logMe("Uri is: " + currentChild.getUri().toString());
+                Intent showImageIntent = new Intent();
+                showImageIntent.setAction(Intent.ACTION_VIEW);
+                showImageIntent.setDataAndType(currentChild.getUri(), "image/jpg");
+                startActivity(showImageIntent);
+                logMe("Intent starting over");
                 t.show();
                 return true;
             }
