@@ -40,6 +40,7 @@
     <string name="locationLongditude">Longditude: </string>
     <string name="locationLatitude">Latitude: </string>
     <string name="locationAccuracy">And accuracy is: </string>
+    <string name="noLocationProviderFound">Unable to find a location provider. I am  sorry ... </string>
     
     <!--END SENDMESSAGEACTIVITY STRINGS-->
             

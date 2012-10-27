@@ -426,12 +426,12 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                     }
 
                     private void startFetchImageFromPhoneActivity() {
-                          //Create intent
-                            Intent intent = new Intent();
-                            intent.setType("image/*");
-                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                            intent.addCategory(Intent.CATEGORY_OPENABLE);
-                            startActivityForResult(intent, FETCH_IMAGE_ACTIVITY_REQUEST_CODE);
+                        //Create intent
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+                        startActivityForResult(intent, FETCH_IMAGE_ACTIVITY_REQUEST_CODE);
                     }
 
                     private void startFetchImageFromCameraActivity() {
@@ -508,7 +508,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         criteria.setBearingRequired(false);
         criteria.setSpeedRequired(false);
         criteria.setCostAllowed(true);
-        
+
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location lctn) {
                 SendMessageActivity.this.currentLocation = lctn;
@@ -525,19 +525,26 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             }
         };
         String bestProvider = locationManager.getBestProvider(criteria, true);
+
+        if (bestProvider == null) {
+            Toast noProviderFoundMessage = Toast.makeText(SendMessageActivity.this, getString(R.string.noLocationProviderFound), RESULT_OK);
+            noProviderFoundMessage.show();
+        }
+
         locationManager.requestLocationUpdates(bestProvider, locationUpdateInterval, locationDistance, locationListener);
     }
-    
-    
+
     private void addNewLocationToMessage() {
         String locLongString = "";
 
         if (currentLocation != null) {
             double lat = currentLocation.getLatitude();
             double lng = currentLocation.getLongitude();
+
             locLongString += "\n" + getString(R.string.myLocationNow) + "\n";
             locLongString += getString(R.string.locationLatitude) + lat + "\n";
-            locLongString += getString(R.string.locationLongditude) + lng;
+            locLongString += getString(R.string.locationLongditude) + lng + "\n";
+            locLongString += "Accuracy is " + currentLocation.getAccuracy() + " meters";
             this.txtMessageBody.setText(txtMessageBody.getText() + locLongString);
 
         } else {
@@ -545,7 +552,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             locationNotFound.show();
         }
     }
-    
     private ExpandableListAdapter expAdapter;
     private ArrayList<ExpandableListGroup> expListItems;
     private ExpandableListView expandList;
@@ -561,7 +567,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             public boolean onChildClick(ExpandableListView elv, View view, int i, int i1, long l) {
                 ExpandableListChild currentChild = children.get(i1);
                 Uri uri = currentChild.getUri();
-                
+
                 Toast t = Toast.makeText(SendMessageActivity.this, "Clicked parent:" + i + ". Child: " + i1, Toast.LENGTH_LONG);
                 logMe("Starting intent...");
                 logMe("Uri is: " + currentChild.getUri().toString());
