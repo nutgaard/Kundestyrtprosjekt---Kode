@@ -674,29 +674,14 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         expandList.setOnChildClickListener(childClickListener);
     }
     
+    ArrayList<ExpandableListGroup> listGroups;
     private ArrayList<ExpandableListGroup> setExpandableListItems() {
-    	ArrayList<ExpandableListGroup> listGroups = new ArrayList<ExpandableListGroup>();
+    	listGroups = new ArrayList<ExpandableListGroup>();
     	
         ArrayList<ExpandableListChild> children = new ArrayList<ExpandableListChild>();
        
         ExpandableListGroup attachmentsGroup = new ExpandableListGroup();
         attachmentsGroup.setName("Attachments");
-        
-        
-        ExpandableListChild child1_1 = new ExpandableListChild();
-        child1_1.setName("1.1");
-        child1_1.setTag(null);
-        children.add(child1_1);
-        
-        ExpandableListChild child1_2 = new ExpandableListChild();
-        child1_2.setName("1.2");
-        child1_2.setTag(null);
-        children.add(child1_2);
-        
-        ExpandableListChild child1_3 = new ExpandableListChild();
-        child1_3.setName("1.3");
-        child1_3.setTag(null);
-        children.add(child1_3);
         
         attachmentsGroup.setItems(children);
         
@@ -705,9 +690,11 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         return listGroups;
     }
     
-    private void addAttachmentToDropDown(String name, String tag){
-        ExpandableListChild child = new ExpandableListChild();
+    private void addAttachmentToDropDown(String name, Uri uri){
+        ExpandableListChild child = new ExpandableListChild(name, uri);
         
+        
+        children.add(child1_1);
         
     }
     
