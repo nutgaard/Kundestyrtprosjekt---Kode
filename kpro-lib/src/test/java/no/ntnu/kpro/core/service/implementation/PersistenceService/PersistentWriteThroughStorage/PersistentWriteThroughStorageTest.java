@@ -42,7 +42,7 @@ public class PersistentWriteThroughStorageTest {
     @BeforeClass
     public static void setUpClass() {
         try {
-            baseDir = new File("/test");
+            baseDir = new File("./test");
             System.out.println("Base: "+baseDir.getAbsolutePath());
 //            em = PersistentWriteThroughStorage.create(good, FileCryptoFactory.getProcessor(FileCryptoFactory.Crypto.NONE), baseDir);
 
@@ -79,7 +79,7 @@ public class PersistentWriteThroughStorageTest {
     // @Test
     // public void hello() {}
 
-   // @Test
+    @Test
     public void noSavingFile() {
         System.out.println("Test:noSavingFile");
         try {
@@ -93,7 +93,7 @@ public class PersistentWriteThroughStorageTest {
         }
     }
 
-    //@Test
+    @Test
     public void savingUnmanagedObjects() {
         System.out.println("Test:savingUnmanagedObjects");
         try {
@@ -108,7 +108,7 @@ public class PersistentWriteThroughStorageTest {
             Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    //@Test
+    @Test
     public void verifiedSavedContent() {
         System.out.println("Test:verifiedSavedContent");
         try {
@@ -128,7 +128,7 @@ public class PersistentWriteThroughStorageTest {
             Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    //@Test
+    @Test
     public void savingManagedObjects() {
         try {
             IUser u = (IUser) em.manage(new User("GoodGuysFriend", ""));
@@ -141,7 +141,7 @@ public class PersistentWriteThroughStorageTest {
             Logger.getLogger(PersistentWriteThroughStorageTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    //@Test
+    @Test
     public void fetchUnsaved() {
         try {
             IUser u = (IUser)em.find(User.class, Integer.MAX_VALUE);
@@ -151,7 +151,7 @@ public class PersistentWriteThroughStorageTest {
         }
     }
             
-   // @Test
+    @Test
     public void updatingFile() {
         try {
             IUser u = (IUser) em.manage(new User("GoodGuysFriend", ""));
@@ -172,7 +172,7 @@ public class PersistentWriteThroughStorageTest {
 
     }
 
-//    @Test
+    @Test
     public void readingFile() {
         try {
             User user = new User("Nicklas", "");
@@ -185,7 +185,7 @@ public class PersistentWriteThroughStorageTest {
         }
     }
 
-   // @Test
+    @Test
     public void deleteFile() {
         try {
             User user = new User("Nicklas", "");
