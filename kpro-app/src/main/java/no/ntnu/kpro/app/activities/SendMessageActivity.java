@@ -4,18 +4,15 @@
  */
 package no.ntnu.kpro.app.activities;
 
-import no.ntnu.kpro.app.adapters.ExpandableListAdapter;
-import no.ntnu.kpro.core.model.ExpandableListGroup;
-import no.ntnu.kpro.core.model.ExpandableListChild;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.LocationManager;
-import android.net.Uri;
-import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -29,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -41,12 +39,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.Address;
 import no.ntnu.kpro.app.R;
+import no.ntnu.kpro.app.adapters.ExpandableListAdapter;
 import no.ntnu.kpro.core.helpers.EnumHelper;
 import no.ntnu.kpro.core.model.AttachmentType;
 import no.ntnu.kpro.core.model.Attachments;
+import no.ntnu.kpro.core.model.ExpandableListChild;
+import no.ntnu.kpro.core.model.ExpandableListGroup;
 import no.ntnu.kpro.core.model.XOMessage;
-import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 import no.ntnu.kpro.core.model.XOMessagePriority;
+import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 import no.ntnu.kpro.core.model.XOMessageType;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
@@ -80,9 +81,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private Attachments attachments;
     private List<String> attachmentsVisualRepresentation;
     
-    
-    
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -540,24 +538,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             }
         });
     }
-//    private void updateAttachments() {
-//        logMe("Starting to update attachments ...");
-//        
-//        ArrayAdapter<String> adapter;
-//        if (lstAttachments.getAdapter() == null) {
-//            logMe("Attachments Adapter was null. Creating new one..");
-//            adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, attachments.getAttachments());
-//            lstAttachments.setAdapter(adapter);
-//        }else{            
-//            logMe("Used already existing attachments Adapter");
-//            adapter = (ArrayAdapter<String>) lstAttachments.getAdapter();
-//        }
-//        logMe("Number of elements in attachments BEFORE changed:" + adapter);
-//        adapter.notifyDataSetChanged();
-//        logMe("Number of elements in attachments AFTER changed:" + attachments.getAttachments().size());
-//        adapter.getCount();
-//        
-//    }
+
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
 
@@ -673,50 +654,59 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     //Expandable list example:
     private void fillExpandableList() {
         expandList = (ExpandableListView) findViewById(R.id.ExpList);
-        expListItems = SetStandardGroups();
+        expListItems = setExpandableListItems();
         expAdapter = new ExpandableListAdapter(SendMessageActivity.this, expListItems);
         expandList.setAdapter(expAdapter);
+        
+        OnChildClickListener childClickListener = new OnChildClickListener() {
+
+            public boolean onChildClick(ExpandableListView elv, View view, int i, int i1, long l) {
+                logMe("I is in childclick");
+                Toast t = Toast.makeText(SendMessageActivity.this, "I clicked parent: " + i + ", child: " + i1, Toast.LENGTH_LONG);  
+                t.show();
+                return true;
+            }
+        };
+        expandList.setOnChildClickListener(childClickListener);
     }
     
-    public ArrayList<ExpandableListGroup> SetStandardGroups() {
-    	ArrayList<ExpandableListGroup> list = new ArrayList<ExpandableListGroup>();
-    	ArrayList<ExpandableListChild> list2 = new ArrayList<ExpandableListChild>();
-        ExpandableListGroup gru1 = new ExpandableListGroup();
-        gru1.setName("Comedy");
-        ExpandableListChild ch1_1 = new ExpandableListChild();
-        ch1_1.setName("A movie");
-        ch1_1.setTag(null);
-        list2.add(ch1_1);
-        ExpandableListChild ch1_2 = new ExpandableListChild();
-        ch1_2.setName("An other movie");
-        ch1_2.setTag(null);
-        list2.add(ch1_2);
-        ExpandableListChild ch1_3 = new ExpandableListChild();
-        ch1_3.setName("And an other movie");
-        ch1_3.setTag(null);
-        list2.add(ch1_3);
-        gru1.setItems(list2);
-        list2 = new ArrayList<ExpandableListChild>();
+    private ArrayList<ExpandableListGroup> setExpandableListItems() {
+    	ArrayList<ExpandableListGroup> listGroups = new ArrayList<ExpandableListGroup>();
+    	
+        ArrayList<ExpandableListChild> children = new ArrayList<ExpandableListChild>();
+       
+        ExpandableListGroup attachmentsGroup = new ExpandableListGroup();
+        attachmentsGroup.setName("Attachments");
         
-        ExpandableListGroup gru2 = new ExpandableListGroup();
-        gru2.setName("Action");
-        ExpandableListChild ch2_1 = new ExpandableListChild();
-        ch2_1.setName("A movie");
-        ch2_1.setTag(null);
-        list2.add(ch2_1);
-        ExpandableListChild ch2_2 = new ExpandableListChild();
-        ch2_2.setName("An other movie");
-        ch2_2.setTag(null);
-        list2.add(ch2_2);
-        ExpandableListChild ch2_3 = new ExpandableListChild();
-        ch2_3.setName("And an other movie");
-        ch2_3.setTag(null);
-        list2.add(ch2_3);
-        gru2.setItems(list2);
-        list.add(gru1);
-        list.add(gru2);
         
-        return list;
+        ExpandableListChild child1_1 = new ExpandableListChild();
+        child1_1.setName("1.1");
+        child1_1.setTag(null);
+        children.add(child1_1);
+        
+        ExpandableListChild child1_2 = new ExpandableListChild();
+        child1_2.setName("1.2");
+        child1_2.setTag(null);
+        children.add(child1_2);
+        
+        ExpandableListChild child1_3 = new ExpandableListChild();
+        child1_3.setName("1.3");
+        child1_3.setTag(null);
+        children.add(child1_3);
+        
+        attachmentsGroup.setItems(children);
+        
+        listGroups.add(attachmentsGroup);     
+        
+        return listGroups;
     }
+    
+    private void addAttachmentToDropDown(String name, String tag){
+        ExpandableListChild child = new ExpandableListChild();
+        
+        
+    }
+    
+    
 
 }
