@@ -11,10 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
 import no.ntnu.kpro.app.R;
+import no.ntnu.kpro.core.model.Contact;
 /**
  *
  * @author Kristin
@@ -33,7 +33,7 @@ public class ContactsAdapter extends ArrayAdapter{
         View rowView = convertView;
         ContactsAdapter.ContactsView conView = null;
         
-        Object contact = contacts.get(position);
+        Contact contact = (Contact)contacts.get(position);
         Log.d(TAG, "Adding contact");
 
         if (rowView == null) {
@@ -49,8 +49,8 @@ public class ContactsAdapter extends ArrayAdapter{
         } else {
             conView = (ContactsAdapter.ContactsView) rowView.getTag();
         }
-        conView.name.setText("Kristin Tønnesen");
-        conView.address.setText("kristintonnesen@gmail.com");
+        conView.name.setText(contact.getName());
+        conView.address.setText(contact.getEmail());
         // Transfer the stock data from the data object
         // to the view objects
 
