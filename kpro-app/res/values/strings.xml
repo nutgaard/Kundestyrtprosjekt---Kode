@@ -35,12 +35,12 @@
     <string name="invalidMessageBodyError">Please add a message body. </string>  
     
     <!--Location-->
-    <string name="myLocationNow">My location now is</string>
+    <string name="myLocationNow">My location now is now</string>
     <string name="noLocationFoundError">No location found. Please turn on WIFI, 3G or GPS </string>
     <string name="locationLongditude">Longditude: </string>
     <string name="locationLatitude">Latitude: </string>
     <string name="locationAccuracy">And accuracy is: </string>
-    <string name="noLocationProviderFound">Unable to find a location provider. I am  sorry ... </string>
+    <string name="noLocationProviderFound">You have a fucked up phone. Do not use this on demo day, because you will not be able to add location data. </string>
     
     <!--END SENDMESSAGEACTIVITY STRINGS-->
             
