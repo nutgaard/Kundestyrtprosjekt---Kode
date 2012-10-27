@@ -30,7 +30,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
+<<<<<<< HEAD
 import no.ntnu.kpro.app.activities.SendMessageActivity;
+=======
+import no.ntnu.kpro.app.adapters.ContactsAdapter;
+>>>>>>> 9a6ab9612d93f5c28700d3ec66f295aff7691caf
 
 public class ContactsActivity extends WrapperActivity {
 
@@ -68,6 +72,11 @@ public class ContactsActivity extends WrapperActivity {
         MyIndexerAdapter<String> adapter = new MyIndexerAdapter<String>(
                 getApplicationContext(), android.R.layout.simple_list_item_1,
                 elements);
+<<<<<<< HEAD
+=======
+        ContactsAdapter conAdapter = new ContactsAdapter(ContactsActivity.this, elements);
+        myListView.setAdapter(conAdapter);
+>>>>>>> 9a6ab9612d93f5c28700d3ec66f295aff7691caf
 
     }
 
