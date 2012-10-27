@@ -42,6 +42,9 @@ public class IMAPTest {
     @Test
     public void startNstop() throws Exception {
         imap.start();
+        synchronized (this) {
+            wait(500);
+        }
         imap.halt();
         synchronized (this) {
             wait(500);

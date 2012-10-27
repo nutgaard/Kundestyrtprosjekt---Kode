@@ -10,12 +10,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.math.BigInteger;
 import java.security.cert.Certificate;
 import java.security.Key;
+import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAKey;
+import java.security.interfaces.RSAPublicKey;
+import java.util.Date;
 import java.util.Properties;
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
@@ -27,12 +32,22 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import no.ntnu.kpro.core.model.XOMessage;
+import org.spongycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.spongycastle.asn1.x500.X500Name;
+import org.spongycastle.asn1.x509.AlgorithmIdentifier;
+import org.spongycastle.asn1.x509.RSAPublicKeyStructure;
+import org.spongycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.spongycastle.crypto.AsymmetricCipherKeyPair;
 import org.spongycastle.crypto.BlockCipher;
 import org.spongycastle.crypto.BufferedBlockCipher;
+import org.spongycastle.crypto.KeyGenerationParameters;
 import org.spongycastle.crypto.engines.DESEngine;
+import org.spongycastle.crypto.generators.RSAKeyPairGenerator;
 import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
+import org.spongycastle.cert.X509v1CertificateBuilder;
+import org.spongycastle.crypto.params.RSAKeyParameters;
 
 
 /**
@@ -50,7 +65,7 @@ public class CryptoHandler {
     public CryptoHandler(String userName, char[] password, Context context){
         try {
         c = context;
-        ks = setupKeyStore(userName, password);
+        ks = setupLocalKeyStore(userName, password);
         }
         catch (Exception e){
             
@@ -61,27 +76,50 @@ public class CryptoHandler {
     }
     
     
-    public static KeyStore createKeyStore(char[] password) throws Exception{
+    public KeyStore createKeyStore(String userName, char[] password) throws Exception{
         KeyStore _ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        File file = new File("", "keyStore");
+        File file = new File("", userName);
         FileOutputStream fos = new FileOutputStream(file);
         _ks.load(null, password);
         _ks.store(fos, password);
-        return _ks;
+        //return _ks;
+        return cheatMethodForGettingAKeySetAndCert(_ks,userName, password);
     } 
-    public KeyStore setupKeyStore(String userName, char[] password) throws Exception{ 
+    private KeyStore setupLocalKeyStore(String userName, char[] password) throws Exception{ 
          try {
         KeyStore _ks = KeyStore.getInstance(KeyStore.getDefaultType());
         File dir = c.getDir("", c.MODE_PRIVATE);
-        File file = new File(dir, "keyStore");
+        File file = new File(dir, userName);
         java.io.FileInputStream fis = new java.io.FileInputStream(file);
         _ks.load(fis, password);
         fis.close();
         return _ks;
          } catch (FileNotFoundException e) {
-             return createKeyStore(password);
+             return createKeyStore(userName, password);
          }
     } 
+    private KeyStore cheatMethodForGettingAKeySetAndCert(KeyStore ks,String userName,char[] password){
+        KeyGenerationParameters param = new KeyGenerationParameters(null, 256);
+        RSAKeyPairGenerator gen = new RSAKeyPairGenerator();
+        gen.init(param);
+        AsymmetricCipherKeyPair ourKey = gen.generateKeyPair();
+         RSAKeyParameters publicKey = (RSAKeyParameters) ourKey.getPublic();
+       RSAPublicKeyStructure rsaPublicKey = new RSAPublicKeyStructure(publicKey.getModulus(), publicKey.getExponent()); 
+        AlgorithmIdentifier rsaEncryption = new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption, null); 
+        SubjectPublicKeyInfo publicKeyInfo = new SubjectPublicKeyInfo(rsaEncryption, rsaPublicKey);
+
+        
+        X500Name us = new X500Name(userName);
+        Date now = new Date();
+        Date later = new Date();
+        later.setTime(later.getTime() + 9000000000l);
+        X509v1CertificateBuilder Cgen = new X509v1CertificateBuilder(us, BigInteger.ZERO, now, later, us, publicKeyInfo);
+        Certificate[] chain = null;
+//        ks.setCertificateEntry(null, null);
+//        ks.setKeyEntry(userName + "-Private",  ourKey.getPrivate(), password, chain);
+//        ks.setKeyEntry(userName + "-Public", ourKey.getPublic(), password, chain);
+        return ks;
+    }
     
     public Key getKey(String Alias, char[] password) throws Exception {
         return ks.getKey(Alias, password);

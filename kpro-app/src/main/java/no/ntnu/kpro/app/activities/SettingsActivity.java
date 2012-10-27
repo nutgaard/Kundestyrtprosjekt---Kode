@@ -12,7 +12,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import java.util.prefs.Preferences;
 import no.ntnu.kpro.app.R;
 
 /**

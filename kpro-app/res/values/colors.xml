@@ -10,4 +10,9 @@
     <color name="SIOLabelRed">#ff0000</color>
     <color name="SIOLabelBlack">#000000</color>
     <color name="grayTransparent">#99404040</color>
+    
+    <!--Teststrings for expandablelist-->
+    <color name="Black">#000000</color>
+    <color name="ExpandChildBackground">#FFAFABAB</color>
+    <color name="ExpandGroupBackground">#FF7C7C7C</color>
 </resources>

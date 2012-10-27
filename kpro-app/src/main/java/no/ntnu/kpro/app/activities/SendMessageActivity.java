@@ -5,14 +5,14 @@
 package no.ntnu.kpro.app.activities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.LocationManager;
-import android.net.Uri;
-import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -25,6 +25,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -37,13 +39,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.Address;
 import no.ntnu.kpro.app.R;
+import no.ntnu.kpro.app.adapters.ExpandableListAdapter;
 import no.ntnu.kpro.core.helpers.EnumHelper;
-import no.ntnu.kpro.core.model.AttachmentType;
 import no.ntnu.kpro.core.model.Attachments;
+import no.ntnu.kpro.core.model.ExpandableListChild;
+import no.ntnu.kpro.core.model.ExpandableListGroup;
 import no.ntnu.kpro.core.model.XOMessage;
-import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 import no.ntnu.kpro.core.model.XOMessagePriority;
+import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 import no.ntnu.kpro.core.model.XOMessageType;
+import no.ntnu.kpro.core.model.attachment.Attachment;
+import no.ntnu.kpro.core.model.attachment.ImageAttachment;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
@@ -75,7 +81,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private ListView lstAttachments;
     private Attachments attachments;
     private List<String> attachmentsVisualRepresentation;
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,12 +121,14 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         this.images = new ArrayList<Uri>();
         this.videos = new ArrayList<Uri>();
 
-        //Attachments//
-        lstAttachments = (ListView) findViewById(R.id.lstAttachments);
-        attachments = new Attachments();
-        addAttachmentsListener(lstAttachments);
+//        //Attachments//
+//        lstAttachments = (ListView) findViewById(R.id.lstAttachments);
+//        attachments = new Attachments();
+//        addAttachmentsListener(lstAttachments);
 
         startLocationFetching();
+        
+        this.fillExpandableList();
 
     }
 
@@ -479,7 +487,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                addAttachment(attachmentUri, AttachmentType.IMAGE);
+                addAttachment(new ImageAttachment(attachmentUri));
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the image capture
             } else {
@@ -487,27 +495,17 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             }
         }
 
-        if (requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                addAttachment(attachmentUri, AttachmentType.VIDEO);
-            } else if (resultCode == RESULT_CANCELED) {
-                // User cancelled the video capture
-            } else {
-                // Video capture failed, advise user
-            }
-        }
-
         if (requestCode == FETCH_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Uri path = data.getData();
-                addAttachment(path, AttachmentType.IMAGE);
+                addAttachment(new ImageAttachment(path));
                 //super.onActivityResult(requestCode, resultCode, data);
             }
         }
     }
 
-    private void addAttachment(Uri attachmentUri, AttachmentType type) {
-        String visualRepresentation = attachments.addAttachment(attachmentUri, type);
+    private void addAttachment(Attachment attachment) {
+        String visualRepresentation = attachments.addAttachment(attachment);
         ArrayAdapter<String> adapter = getCurrentAdapter();
         logMe("Size first of Adapter" + adapter.getCount());
         this.getCurrentAdapter().add(visualRepresentation);
@@ -543,24 +541,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             }
         });
     }
-//    private void updateAttachments() {
-//        logMe("Starting to update attachments ...");
-//        
-//        ArrayAdapter<String> adapter;
-//        if (lstAttachments.getAdapter() == null) {
-//            logMe("Attachments Adapter was null. Creating new one..");
-//            adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, attachments.getAttachments());
-//            lstAttachments.setAdapter(adapter);
-//        }else{            
-//            logMe("Used already existing attachments Adapter");
-//            adapter = (ArrayAdapter<String>) lstAttachments.getAdapter();
-//        }
-//        logMe("Number of elements in attachments BEFORE changed:" + adapter);
-//        adapter.notifyDataSetChanged();
-//        logMe("Number of elements in attachments AFTER changed:" + attachments.getAttachments().size());
-//        adapter.getCount();
-//        
-//    }
+
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
 
@@ -670,4 +651,66 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         locationManager.requestLocationUpdates(bestProvider, locationUpdateInterval, locationDistance, locationListener);
     }
+    private ExpandableListAdapter expAdapter;
+    private ArrayList<ExpandableListGroup> expListItems;
+    private ExpandableListView expandList;
+
+    //Expandable list example:
+    private void fillExpandableList() {
+        expandList = (ExpandableListView) findViewById(R.id.ExpList);
+        expListItems = setExpandableListItems();
+        expAdapter = new ExpandableListAdapter(SendMessageActivity.this, expListItems);
+        expandList.setAdapter(expAdapter);
+        
+        OnChildClickListener childClickListener = new OnChildClickListener() {
+
+            public boolean onChildClick(ExpandableListView elv, View view, int i, int i1, long l) {
+                logMe("I is in childclick");
+                Toast t = Toast.makeText(SendMessageActivity.this, "I clicked parent: " + i + ", child: " + i1, Toast.LENGTH_LONG);  
+                t.show();
+                return true;
+            }
+        };
+        expandList.setOnChildClickListener(childClickListener);
+    }
+    
+    private ArrayList<ExpandableListGroup> setExpandableListItems() {
+    	ArrayList<ExpandableListGroup> listGroups = new ArrayList<ExpandableListGroup>();
+    	
+        ArrayList<ExpandableListChild> children = new ArrayList<ExpandableListChild>();
+       
+        ExpandableListGroup attachmentsGroup = new ExpandableListGroup();
+        attachmentsGroup.setName("Attachments");
+        
+        
+        ExpandableListChild child1_1 = new ExpandableListChild();
+        child1_1.setName("1.1");
+        child1_1.setTag(null);
+        children.add(child1_1);
+        
+        ExpandableListChild child1_2 = new ExpandableListChild();
+        child1_2.setName("1.2");
+        child1_2.setTag(null);
+        children.add(child1_2);
+        
+        ExpandableListChild child1_3 = new ExpandableListChild();
+        child1_3.setName("1.3");
+        child1_3.setTag(null);
+        children.add(child1_3);
+        
+        attachmentsGroup.setItems(children);
+        
+        listGroups.add(attachmentsGroup);     
+        
+        return listGroups;
+    }
+    
+    private void addAttachmentToDropDown(String name, String tag){
+        ExpandableListChild child = new ExpandableListChild();
+        
+        
+    }
+    
+    
+
 }
