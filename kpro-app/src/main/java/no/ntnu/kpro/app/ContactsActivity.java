@@ -19,11 +19,22 @@ import java.util.Set;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
+<<<<<<< HEAD
+import no.ntnu.kpro.app.activities.SendMessageActivity;
+=======
+import no.ntnu.kpro.app.adapters.ContactsAdapter;
+>>>>>>> 9a6ab9612d93f5c28700d3ec66f295aff7691caf
 
 public class ContactsActivity extends WrapperActivity {
 
@@ -52,7 +63,7 @@ public class ContactsActivity extends WrapperActivity {
         elements.add("nicklas@gmail.com");
         elements.add("christian@thales.no");
         elements.add("stig@thales.no");
-       
+
         Collections.sort(elements); // Must be sorted!
 
         // listview
@@ -61,7 +72,11 @@ public class ContactsActivity extends WrapperActivity {
         MyIndexerAdapter<String> adapter = new MyIndexerAdapter<String>(
                 getApplicationContext(), android.R.layout.simple_list_item_1,
                 elements);
-        myListView.setAdapter(adapter);
+<<<<<<< HEAD
+=======
+        ContactsAdapter conAdapter = new ContactsAdapter(ContactsActivity.this, elements);
+        myListView.setAdapter(conAdapter);
+>>>>>>> 9a6ab9612d93f5c28700d3ec66f295aff7691caf
 
     }
 
