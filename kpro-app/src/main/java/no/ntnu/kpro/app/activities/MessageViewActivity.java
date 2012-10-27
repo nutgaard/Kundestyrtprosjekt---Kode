@@ -138,7 +138,10 @@ public class MessageViewActivity extends WrapperActivity {
             TextView lblFrom = (TextView) findViewById(R.id.lblFrom);
             lblFrom.setText(to);
         }
-
+        
+        Button btnAttachments = (Button) findViewById(R.id.btnAttachments);
+        btnAttachments.setVisibility(View.GONE);
+        
         // Subject
         String subject = currentMessage.getSubject();
         TextView lblSubject = (TextView) findViewById(R.id.lblSubject);
