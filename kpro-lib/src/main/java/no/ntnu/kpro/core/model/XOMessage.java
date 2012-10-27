@@ -20,7 +20,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import no.ntnu.kpro.core.helpers.EnumHelper;
+import no.ntnu.kpro.core.utilities.EnumHelper;
 import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp.BoxName;
 import org.spongycastle.cms.jcajce.JcaSimpleSignerInfoGeneratorBuilder;

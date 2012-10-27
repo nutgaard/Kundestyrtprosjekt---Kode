@@ -11,7 +11,7 @@ import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import no.ntnu.kpro.core.helpers.EnumHelper;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
@@ -28,7 +28,7 @@ public class Converter {
     public static String PRIORITY = "MMHS-Primary-Precedence";
     public static String TYPE = "MMHS-Message-Type";
 
-    public static MimeMessage convertToMime(Session session, XOMessage message) throws Exception {
+    public static MimeMessage convertToMime(Session session, IXOMessage message) throws Exception {
         MimeMessage mm = new MimeMessage(session);
         mm.setFrom(new InternetAddress(message.getFrom()));
         mm.setRecipients(Message.RecipientType.TO, InternetAddress.parse(message.getTo()));

@@ -4,15 +4,13 @@
  */
 package no.ntnu.kpro.app.activities;
 
-import no.ntnu.kpro.app.activities.SendMessageActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import no.ntnu.kpro.app.R;
-import no.ntnu.kpro.app.R;
-import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 
 /**
  *
@@ -34,7 +32,7 @@ public class MessageOperationActivity extends SendMessageActivity {
         super.onCreate(savedInstanceState);
         Intent i = getIntent();
         String mode = i.getStringExtra("mode");
-        XOMessage message = i.getParcelableExtra("message");
+        IXOMessage message = i.getParcelableExtra("message");
         
 
         String receiver = message.getFrom();

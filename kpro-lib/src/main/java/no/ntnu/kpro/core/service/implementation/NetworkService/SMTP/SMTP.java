@@ -11,6 +11,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.Authenticator;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
@@ -21,7 +22,7 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
 public class SMTP extends Thread {
 
     boolean run = false;
-    private final List<XOMessage> queue;
+    private final List<IXOMessage> queue;
     private final SMTPSender sender;
 
     public SMTP(final String username, final String password, final String mailAdr, final Properties props, final Authenticator auth, List<NetworkService.Callback> listener) {
@@ -29,7 +30,7 @@ public class SMTP extends Thread {
     }
 
     public SMTP(SMTPSender sender) {
-        this.queue = Collections.synchronizedList(new LinkedList<XOMessage>());
+        this.queue = Collections.synchronizedList(new LinkedList<IXOMessage>());
         this.sender = sender;
         start();
     }
@@ -38,7 +39,10 @@ public class SMTP extends Thread {
         return this.sender;
     }
 
-    public void send(XOMessage msg) {
+    public void send(IXOMessage msg) {
+        if (msg == null) {
+            return;
+        }
 //        System.out.println("Adding message");
         if (!run) {
             start();
@@ -86,7 +90,7 @@ public class SMTP extends Thread {
                 }
             }
 //                System.out.println("Pusher waked");
-            XOMessage msg;
+            IXOMessage msg;
             synchronized (queue) {
                 msg = queue.remove(0);
             }

@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 import javax.mail.Address;
 import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.app.adapters.ExpandableListAdapter;
-import no.ntnu.kpro.core.helpers.EnumHelper;
+import no.ntnu.kpro.core.utilities.EnumHelper;
 import no.ntnu.kpro.core.model.Attachments;
 import no.ntnu.kpro.core.model.ExpandableListChild;
 import no.ntnu.kpro.core.model.ExpandableListGroup;

@@ -20,7 +20,7 @@ import java.util.List;
 import javax.mail.Address;
 import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.app.XOMessageAdapter;
-import no.ntnu.kpro.core.helpers.EnumHelper;
+import no.ntnu.kpro.core.utilities.EnumHelper;
 import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessage;
@@ -144,7 +144,7 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
         lstFolder.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
-                XOMessage currentMessage = (XOMessage) parent.getItemAtPosition(position);
+                IXOMessage currentMessage = (IXOMessage) parent.getItemAtPosition(position);
 
                 // Launching new Activity on selecting single List Item
                 Intent i = new Intent(getApplicationContext(), MessageViewActivity.class);
@@ -238,19 +238,19 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
     }
 
     @Override
-    public void mailSent(XOMessage message, Address[] invalidAddress) {
+    public void mailSent(IXOMessage message, Address[] invalidAddress) {
         super.mailSent(message, invalidAddress);
         Log.i(TAG, "Mail sent");
     }
 
     @Override
-    public void mailSentError(XOMessage message, Exception ex) {
+    public void mailSentError(IXOMessage message, Exception ex) {
         super.mailSentError(message, ex);
         Log.i(TAG, "Mail sent error");
     }
 
     @Override
-    public void mailReceived(XOMessage message) {
+    public void mailReceived(IXOMessage message) {
         super.mailReceived(message);
         runOnUiThread(new Runnable() {
             public void run() {

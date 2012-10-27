@@ -71,22 +71,24 @@ public class IMAPPush extends IMAPStrategy implements MessageCountListener {
                 inbox = (IMAPFolder) store.getFolder("Inbox");
                 inbox.open(Folder.READ_ONLY);
                 inbox.addMessageCountListener(this);
-                
+
                 while (run) {
 //                    System.out.println("Waiting for change");
                     if (!inbox.isOpen() && run) {
                         System.out.println("Reopen folder");
                         inbox.open(Folder.READ_ONLY);
-                    } 
+                    }
 //                    else {
 //                        break;
 //                    }
                     System.out.println("Waiting");
-                    inbox.idle();
+                    if (run) {
+                        inbox.idle();
+                    }
                 }
 
             } catch (Exception e) {
-                System.out.println("Exception found: "+e.getMessage());
+                System.out.println("Exception found: " + e.getMessage());
                 e.printStackTrace();
             }
         }

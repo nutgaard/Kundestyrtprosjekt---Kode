@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Properties;
 import javax.mail.*;
 import javax.mail.internet.MimeMessage;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
@@ -86,16 +87,16 @@ public class IMAPPushTest {
 
 //    @Test
     public void mailReceived() throws Exception {
-        final List<XOMessage> m = new LinkedList<XOMessage>();
+        final List<IXOMessage> m = new LinkedList<IXOMessage>();
         pusher.addCallback(new NetworkService.Callback() {
 
-            public void mailSent(XOMessage message, Address[] invalidAddress) {
+            public void mailSent(IXOMessage message, Address[] invalidAddress) {
             }
 
-            public void mailSentError(XOMessage message, Exception ex) {
+            public void mailSentError(IXOMessage message, Exception ex) {
             }
 
-            public void mailReceived(XOMessage message) {
+            public void mailReceived(IXOMessage message) {
                 m.add(message);
             }
 

@@ -7,7 +7,6 @@ package no.ntnu.kpro.core.service.interfaces;
 import javax.mail.Address;
 import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
-import no.ntnu.kpro.core.model.XOMessage;
 
 /**
  *
@@ -16,13 +15,13 @@ import no.ntnu.kpro.core.model.XOMessage;
 public abstract class NetworkService extends ServiceInterface<NetworkService.Callback> {
 
     public interface Callback {
-        public void mailSent(XOMessage message, Address[] invalidAddress);
-        public void mailSentError(XOMessage message, Exception ex);
-        public void mailReceived(XOMessage message);
+        public void mailSent(IXOMessage message, Address[] invalidAddress);
+        public void mailSentError(IXOMessage message, Exception ex);
+        public void mailReceived(IXOMessage message);
         public void mailReceivedError(Exception ex);
     }
 //    public boolean sendMail(final String recipient, final String subject, final String body);
-    public abstract void send(XOMessage message);
+    public abstract void send(IXOMessage message);
     public abstract Box<IXOMessage> getOutbox();
     public abstract Box<IXOMessage> getInbox();
     public abstract void close();

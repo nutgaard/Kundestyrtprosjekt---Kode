@@ -13,7 +13,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import javax.mail.Address;
-import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
@@ -76,15 +76,15 @@ public class WrapperTabActivity extends ActivityGroup implements NetworkService.
         };
     }
 
-    public void mailSent(XOMessage message, Address[] invalidAddress) {
+    public void mailSent(IXOMessage message, Address[] invalidAddress) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void mailSentError(XOMessage message, Exception ex) {
+    public void mailSentError(IXOMessage message, Exception ex) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void mailReceived(XOMessage message) {
+    public void mailReceived(IXOMessage message) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

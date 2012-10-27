@@ -15,6 +15,7 @@ import java.util.Properties;
 import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
@@ -71,18 +72,18 @@ public class SMTPSenderTest {
 
     @Test
     public void sendMailTest() {
-        XOMessage m = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.UGRADERT, XOMessagePriority.DEFERRED, XOMessageType.DRILL, new Date());
+        IXOMessage m = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.UGRADERT, XOMessagePriority.DEFERRED, XOMessageType.DRILL, new Date());
         sender.addListener(new NetworkService.Callback() {
 
-            public void mailSent(XOMessage message, Address[] invalidAddress) {
+            public void mailSent(IXOMessage message, Address[] invalidAddress) {
                 
             }
 
-            public void mailSentError(XOMessage message, Exception ex) {
+            public void mailSentError(IXOMessage message, Exception ex) {
                 
             }
 
-            public void mailReceived(XOMessage message) {
+            public void mailReceived(IXOMessage message) {
                 
             }
 
@@ -97,17 +98,17 @@ public class SMTPSenderTest {
     @Test
     public void callbackTest() throws InterruptedException {
         XOMessage m = new XOMessage(EMAIL_USER_ADDRESS, EMAIL_TO, EMAIL_SUBJECT, EMAIL_TEXT, XOMessageSecurityLabel.UGRADERT, XOMessagePriority.DEFERRED, XOMessageType.DRILL, new Date());
-        final List<XOMessage> ml = new LinkedList<XOMessage>();
+        final List<IXOMessage> ml = new LinkedList<IXOMessage>();
         sender.addListener(new NetworkService.Callback() {
-            public void mailSent(XOMessage message, Address[] invalidAddress) {
+            public void mailSent(IXOMessage message, Address[] invalidAddress) {
                 ml.add(message);
             }
 
-            public void mailSentError(XOMessage message, Exception ex) {
+            public void mailSentError(IXOMessage message, Exception ex) {
                 ml.add(message);
             }
 
-            public void mailReceived(XOMessage message) {
+            public void mailReceived(IXOMessage message) {
 //                ml.add(message);
             }
 
@@ -121,7 +122,7 @@ public class SMTPSenderTest {
             wait(100);
         }
         assertEquals(1, ml.size());
-        XOMessage r = ml.get(0);
+        IXOMessage r = ml.get(0);
         assertEquals(m.getFrom(), r.getFrom());
         assertEquals(m.getTo(), r.getTo());
         assertEquals(m.getHtmlBody(), r.getHtmlBody());

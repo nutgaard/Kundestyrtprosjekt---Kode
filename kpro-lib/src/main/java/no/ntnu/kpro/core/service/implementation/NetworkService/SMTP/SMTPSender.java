@@ -9,6 +9,7 @@ import javax.mail.*;
 import javax.mail.event.TransportEvent;
 import javax.mail.event.TransportListener;
 import javax.mail.internet.MimeMessage;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.service.interfaces.NetworkService.Callback;
@@ -30,7 +31,7 @@ public class SMTPSender {
         this.listener = listener;
     }
 
-    public boolean sendMail(XOMessage msg) {
+    public boolean sendMail(IXOMessage msg) {
         try {
             Session session = Session.getInstance(this.props, this.auth);
             MimeMessage message = Converter.convertToMime(session, msg);

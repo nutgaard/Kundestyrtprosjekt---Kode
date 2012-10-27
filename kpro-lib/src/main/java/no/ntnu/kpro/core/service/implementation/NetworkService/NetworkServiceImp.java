@@ -61,6 +61,9 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
     }
 
     public NetworkServiceImp(final String username, final String password, final String mailAdr, Properties properties, Context context) {
+        for (BoxName bn : BoxName.values()){
+            bn.getBox().clear();
+        }
         cache = new IMAPCache(properties, username, password);
         this.persistence = PersistenceServiceFactory.createMessageStorage(new User(username, password), context);
         Date lastSeen = new Date(0);
@@ -98,7 +101,7 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
         listeners.add(this);
     }
 
-    public void send(XOMessage msg) {
+    public void send(IXOMessage msg) {
         this.smtp.send(msg);
     }
 
@@ -117,15 +120,15 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
         imap.halt();
     }
 
-    public void mailSent(XOMessage message, Address[] invalidAddress) {
+    public void mailSent(IXOMessage message, Address[] invalidAddress) {
         getOutbox().add(message);
         message.setBoxAffiliation(BoxName.SENT);
     }
 
-    public void mailSentError(XOMessage message, Exception ex) {
+    public void mailSentError(IXOMessage message, Exception ex) {
     }
 
-    public void mailReceived(XOMessage message) {
+    public void mailReceived(IXOMessage message) {
         getInbox().add(message);
         try {
             System.out.println("Saving GOD DAMNIT");

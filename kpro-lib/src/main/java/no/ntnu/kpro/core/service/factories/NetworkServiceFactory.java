@@ -7,7 +7,7 @@ package no.ntnu.kpro.core.service.factories;
 import android.content.Context;
 import java.util.Properties;
 import javax.mail.Address;
-import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
@@ -39,15 +39,15 @@ public class NetworkServiceFactory {
         System.out.println("ei");
         ns.addListener(new NetworkService.Callback() {
 
-            public void mailSent(XOMessage message, Address[] invalidAddress) {
+            public void mailSent(IXOMessage message, Address[] invalidAddress) {
                 System.out.println("Mailsent: "+message);
             }
 
-            public void mailSentError(XOMessage message, Exception ex) {
+            public void mailSentError(IXOMessage message, Exception ex) {
                 System.out.println("MailsentError: "+message);
             }
 
-            public void mailReceived(XOMessage message) {
+            public void mailReceived(IXOMessage message) {
                 System.err.println("Mailreceived: "+message);
             }
 

@@ -8,9 +8,7 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.DummySSLSocketFactory;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import com.sun.mail.imap.IMAPMessage;
 import java.security.Security;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -22,10 +20,9 @@ import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
-import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
-import no.ntnu.kpro.core.utilities.Pair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -88,15 +85,15 @@ public class IMAPStorageTest {
         message.setText(EMAIL_TEXT);
         store.addCallback(new NetworkService.Callback() {
 
-            public void mailSent(XOMessage message, Address[] invalidAddress) {
+            public void mailSent(IXOMessage message, Address[] invalidAddress) {
                 
             }
 
-            public void mailSentError(XOMessage message, Exception ex) {
+            public void mailSentError(IXOMessage message, Exception ex) {
                 
             }
 
-            public void mailReceived(XOMessage message) {
+            public void mailReceived(IXOMessage message) {
                 
             }
 
@@ -117,15 +114,15 @@ public class IMAPStorageTest {
 
     @Test
     public void callbackTest() throws Exception {
-        final List<XOMessage> m = new LinkedList<XOMessage>();
+        final List<IXOMessage> m = new LinkedList<IXOMessage>();
         store.addCallback(new NetworkService.Callback() {
-            public void mailSent(XOMessage message, Address[] invalidAddress) {
+            public void mailSent(IXOMessage message, Address[] invalidAddress) {
             }
 
-            public void mailSentError(XOMessage message, Exception ex) {
+            public void mailSentError(IXOMessage message, Exception ex) {
             }
 
-            public void mailReceived(XOMessage message) {
+            public void mailReceived(IXOMessage message) {
                 System.out.println("MAILRECEIVED");
                 m.add(message);
             }
@@ -161,13 +158,13 @@ public class IMAPStorageTest {
         final List<Exception> m = new LinkedList<Exception>();
         store = new IMAPStorage(null, null, new LinkedList<NetworkService.Callback>(), new IMAPCache(props, USER_NAME, USER_PASSWORD));
         store.addCallback(new NetworkService.Callback() {
-            public void mailSent(XOMessage message, Address[] invalidAddress) {
+            public void mailSent(IXOMessage message, Address[] invalidAddress) {
             }
 
-            public void mailSentError(XOMessage message, Exception ex) {
+            public void mailSentError(IXOMessage message, Exception ex) {
             }
 
-            public void mailReceived(XOMessage message) {
+            public void mailReceived(IXOMessage message) {
                 
             }
 

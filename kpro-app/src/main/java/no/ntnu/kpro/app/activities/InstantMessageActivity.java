@@ -15,7 +15,8 @@ import android.widget.TextView;
 import java.util.Date;
 import javax.mail.Address;
 import no.ntnu.kpro.app.R;
-import no.ntnu.kpro.core.helpers.EnumHelper;
+import no.ntnu.kpro.core.utilities.EnumHelper;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
@@ -91,7 +92,7 @@ public class InstantMessageActivity extends WrapperActivity implements View.OnCl
         String text = ((EditText)findViewById(R.id.txtMessage)).getText().toString();
         String subject = text.length() >= 60 ? text.substring(0, 59) : text;
         
-        XOMessage m = new XOMessage("MyMailAddress@gmail.com", lblReceiver, subject, text, secLabel, priority, type, new Date());
+        IXOMessage m = new XOMessage("MyMailAddress@gmail.com", lblReceiver, subject, text, secLabel, priority, type, new Date());
         getServiceProvider().getNetworkService().send(m);
     }
     
@@ -119,7 +120,7 @@ public class InstantMessageActivity extends WrapperActivity implements View.OnCl
 //        });
 
     @Override
-    public void mailSent(XOMessage message, Address[] invalidAddress) {
+    public void mailSent(IXOMessage message, Address[] invalidAddress) {
         super.mailSent(message, invalidAddress);
         EditText txtMessage = (EditText)findViewById(R.id.txtMessage);
         txtMessage.setText("");

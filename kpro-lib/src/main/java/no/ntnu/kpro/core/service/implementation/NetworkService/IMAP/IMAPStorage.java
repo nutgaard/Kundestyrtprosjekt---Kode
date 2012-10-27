@@ -61,18 +61,18 @@ public class IMAPStorage {
                 if (cache.containsIMAPMessage(im.getMessageID())) {
                     System.out.println("Message allready fully cached");
                     continue;
-                }else if (cache.contains(im.getMessageID())){
+                } else if (cache.contains(im.getMessageID())) {
                     System.out.println("Message was mediumcached, updating");
                     cache.update(im.getMessageID(), im);
                     continue;
+                } else {
+                    for (NetworkService.Callback cb : listeners) {
+                        XOMessage xo = Converter.convertToXO(m);
+                        cb.mailReceived(xo);
+                        cache.cache(im.getMessageID(), im, xo);
+                    }
                 }
-//                System.out.println("Found message: " + m);
-                for (NetworkService.Callback cb : listeners) {
-                    XOMessage xo = Converter.convertToXO(m);
-                    cb.mailReceived(xo);
-                    cache.cache(im.getMessageID(), im, xo);
-                }
-            }   
+            }
             store.close();
             return messages;
         } catch (Exception ex) {

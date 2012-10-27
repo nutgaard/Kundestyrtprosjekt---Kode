@@ -4,7 +4,6 @@
  */
 package no.ntnu.kpro.app.activities;
 
-import android.app.Activity;
 import android.app.ActivityGroup;
 import android.app.Service;
 import android.content.ComponentName;
@@ -15,7 +14,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 import javax.mail.Address;
-import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
@@ -84,7 +83,7 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
         };
     }
     
-    public void mailSent(XOMessage message, Address[] invalidAddress) {
+    public void mailSent(IXOMessage message, Address[] invalidAddress) {
         runOnUiThread(new Runnable() {
 
             public void run() {
@@ -93,7 +92,7 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
         });
     }
 
-    public void mailSentError(XOMessage message, Exception ex) {
+    public void mailSentError(IXOMessage message, Exception ex) {
         runOnUiThread(new Runnable() {
 
             public void run() {
@@ -102,7 +101,7 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
         });
     }
 
-    public void mailReceived(XOMessage message) {
+    public void mailReceived(IXOMessage message) {
         runOnUiThread(new Runnable() {
 
             public void run() {

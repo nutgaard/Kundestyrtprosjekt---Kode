@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.core.model.Box;
-import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 import no.ntnu.kpro.core.model.XOMessageType;
@@ -32,7 +32,7 @@ public class MessageViewActivity extends WrapperActivity {
 
     final static String TAG = "KPRO-GUI-MESSAGEVIEW";
     Box messages;
-    XOMessage currentMessage;
+    IXOMessage currentMessage;
     String folder = "Inbox";
     Button btnPrevious;
     Button btnNext;
@@ -94,7 +94,7 @@ public class MessageViewActivity extends WrapperActivity {
         Log.i(TAG, "Getting previous message");
         enableButtons();
         if (messages.getPrevious(currentMessage) != null) {
-            XOMessage newM = (XOMessage) messages.getPrevious(currentMessage);
+            IXOMessage newM = (IXOMessage) messages.getPrevious(currentMessage);
             currentMessage = newM;
             currentMessage.setOpened(true);
             if (messages.getPrevious(currentMessage) == null) {
@@ -109,7 +109,7 @@ public class MessageViewActivity extends WrapperActivity {
         Log.i(TAG, "Getting next message");
         enableButtons();
         if (messages.getNext(currentMessage) != null) {
-            XOMessage newM = (XOMessage) messages.getNext(currentMessage);
+            IXOMessage newM = (IXOMessage) messages.getNext(currentMessage);
             currentMessage = newM;
             currentMessage.setOpened(true);
             if (messages.getNext(currentMessage) == null) {

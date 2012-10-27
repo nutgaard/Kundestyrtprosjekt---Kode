@@ -15,7 +15,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 
 /**
  *
@@ -45,7 +45,7 @@ public class XOMessageAdapter extends ArrayAdapter {
         View rowView = convertView;
         XOMessageView xoView = null;
 
-        XOMessage message = (XOMessage) messages.get(position);
+        IXOMessage message = (IXOMessage) messages.get(position);
         Log.d(TAG, "Got message: "+message);
         if (rowView == null) {
             // Get a new instance of the row layout view

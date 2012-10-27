@@ -11,12 +11,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.Toast;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import no.ntnu.kpro.app.R;
-import no.ntnu.kpro.core.model.XOMessage;
 /**
  *
  * @author Administrator
