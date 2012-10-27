@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.Address;
+import no.ntnu.kpro.app.ContactsActivity;
 import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.app.adapters.ExpandableListAdapter;
 import no.ntnu.kpro.core.helpers.EnumHelper;
@@ -69,6 +71,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private Spinner sprType;
     private Button btnAddAttachment;
     private Button btnSend;
+    private ImageButton btnContacts;
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     boolean textEnteredInReceiver = false;
     boolean textEnteredInMessageBody = false;
@@ -100,12 +103,14 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         btnAddAttachment = (Button) findViewById(R.id.btnAddAttachment);
         btnSend = (Button) findViewById(R.id.btnSend);
+        btnContacts = (ImageButton) findViewById(R.id.btnContacts);
 
         //Add text changed listeners to all fields, so that we can check if fields has been written to.
         addTextChangedListeners();
 
         //Add listener to the send button.
         addBtnSendClickListener(btnSend);
+        addBtnContactsClickListener(btnContacts);
         addReceiverOnFocusChangedListener(txtReceiver);
         addSubjectOnFocusChangedListener(txtSubject);
 
@@ -239,6 +244,17 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                     }
                 });
     }
+
+    private void addBtnContactsClickListener(ImageButton btnContacts) {
+        btnContacts.setOnClickListener(
+                new View.OnClickListener() {
+                    public void onClick(View view) {
+                        Intent i = new Intent(SendMessageActivity.this, ContactsActivity.class);
+                        startActivityForResult(i, 1337);
+                    }
+                });
+    }
+    
 
     private void resetFields() {
         txtReceiver.setText("");
@@ -401,6 +417,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 67;
     private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 73;
     private static final int FETCH_IMAGE_ACTIVITY_REQUEST_CODE = 77;
+    private static final int FETCH_CONTACT_REQUEST_CODE = 1337;
     private Uri attachmentUri;
 
     private void addAttachmentClickListener(Button btnAddAttachment) {
@@ -426,12 +443,12 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                     }
 
                     private void startFetchImageFromPhoneActivity() {
-                          //Create intent
-                            Intent intent = new Intent();
-                            intent.setType("image/*");
-                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                            intent.addCategory(Intent.CATEGORY_OPENABLE);
-                            startActivityForResult(intent, FETCH_IMAGE_ACTIVITY_REQUEST_CODE);
+                        //Create intent
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+                        startActivityForResult(intent, FETCH_IMAGE_ACTIVITY_REQUEST_CODE);
                     }
 
                     private void startFetchImageFromCameraActivity() {
@@ -480,6 +497,14 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                 //super.onActivityResult(requestCode, resultCode, data);
             }
         }
+        if(requestCode == FETCH_CONTACT_REQUEST_CODE){
+            if(resultCode == RESULT_OK){
+                String email = "LOL";
+                email = data.getStringExtra("result");
+                txtReceiver.setText(email);
+            }
+            
+        }
     }
 
     private void addAttachment(Attachment attachment) {
@@ -508,7 +533,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         criteria.setBearingRequired(false);
         criteria.setSpeedRequired(false);
         criteria.setCostAllowed(true);
-        
+
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location lctn) {
                 SendMessageActivity.this.currentLocation = lctn;
@@ -527,8 +552,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         String bestProvider = locationManager.getBestProvider(criteria, true);
         locationManager.requestLocationUpdates(bestProvider, locationUpdateInterval, locationDistance, locationListener);
     }
-    
-    
+
     private void addNewLocationToMessage() {
         String locLongString = "";
 
@@ -545,7 +569,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             locationNotFound.show();
         }
     }
-    
     private ExpandableListAdapter expAdapter;
     private ArrayList<ExpandableListGroup> expListItems;
     private ExpandableListView expandList;
@@ -561,7 +584,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             public boolean onChildClick(ExpandableListView elv, View view, int i, int i1, long l) {
                 ExpandableListChild currentChild = children.get(i1);
                 Uri uri = currentChild.getUri();
-                
+
                 Toast t = Toast.makeText(SendMessageActivity.this, "Clicked parent:" + i + ". Child: " + i1, Toast.LENGTH_LONG);
                 logMe("Starting intent...");
                 logMe("Uri is: " + currentChild.getUri().toString());

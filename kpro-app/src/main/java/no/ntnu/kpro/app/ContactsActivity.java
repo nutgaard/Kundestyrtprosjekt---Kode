@@ -36,7 +36,6 @@ import no.ntnu.kpro.app.activities.SendMessageActivity;
 import no.ntnu.kpro.app.adapters.ContactsAdapter;
 import no.ntnu.kpro.core.model.Contact;
 
-
 public class ContactsActivity extends WrapperActivity {
 
     ListView myListView;
@@ -57,7 +56,7 @@ public class ContactsActivity extends WrapperActivity {
         Contact nicklas = new Contact("Nicklas", "Nicklas@gmail.com", 2);
         Contact christian = new Contact("Christian", "Christian@thales.no", 2);
         Contact stig = new Contact("Stig", "Stig@thales.no", 2);
-        
+
         elements.add(lars);
         elements.add(magnus);
         elements.add(aleksander);
@@ -66,9 +65,10 @@ public class ContactsActivity extends WrapperActivity {
         elements.add(nicklas);
         elements.add(christian);
         elements.add(stig);
-        
-        
-       
+
+
+
+
 
         //Collections.sort(elements); // Must be sorted!
 
@@ -78,5 +78,17 @@ public class ContactsActivity extends WrapperActivity {
 
         ContactsAdapter conAdapter = new ContactsAdapter(ContactsActivity.this, elements);
         myListView.setAdapter(conAdapter);
-}
+
+        myListView.setOnItemClickListener(new OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> av, View view, int i, long l) {
+                Contact c = (Contact)av.getItemAtPosition(i);
+                Intent returnIntent = new Intent();           
+                returnIntent.putExtra("result",c.getEmail());
+                setResult(RESULT_OK,returnIntent);     
+                finish();
+            }
+        }); 
+     
+    }
 }
