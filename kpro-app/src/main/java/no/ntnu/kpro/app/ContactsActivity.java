@@ -10,134 +10,69 @@ package no.ntnu.kpro.app;
  */
 import no.ntnu.kpro.app.activities.WrapperActivity;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
-import android.app.Activity;
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.ArrayAdapter;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.SectionIndexer;
+
+import no.ntnu.kpro.app.adapters.ContactsAdapter;
+import no.ntnu.kpro.core.model.Contact;
 
 public class ContactsActivity extends WrapperActivity {
 
     ListView myListView;
-    ArrayList<String> elements;
+    ArrayList<Contact> elements;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contacts);
 
-        // elements
-        String s = "QWERTZUIOPASDFGHJKLYXCVBNM";
-        Random r = new Random();
-        elements = new ArrayList<String>();
-        //     for (int i = 0; i < 300; i++) {
+        elements = new ArrayList<Contact>();
 
-        //                      elements.add(s.substring(r.nextInt(s.length())));
+        Contact lars = new Contact("Lars", "lars.hoysaeter@gmail.com", 1);
+        Contact magnus = new Contact("Magnus", "magnus@gmail.com", 2);
+        Contact aleksander = new Contact("Aleksander", "aleksander@gmail.com", 2);
+        Contact ida = new Contact("Ida", "Ida@gmail.com", 2);
+        Contact kristin = new Contact("Kristin", "Kristin@gmail.com", 2);
+        Contact nicklas = new Contact("Nicklas", "Nicklas@gmail.com", 2);
+        Contact christian = new Contact("Christian", "Christian@thales.no", 2);
+        Contact stig = new Contact("Stig", "Stig@thales.no", 2);
 
-//                }
-        elements.add("lars@gmail.com");
-        elements.add("magnus@gmail.com");
-        elements.add("aleksander@gmail.com");
-        elements.add("ida@gmail.com");
-        elements.add("kristin@gmail.com");
-        elements.add("nicklas@gmail.com");
-        elements.add("christian@thales.no");
-        elements.add("stig@thales.no");
-       
-        Collections.sort(elements); // Must be sorted!
+        elements.add(lars);
+        elements.add(magnus);
+        elements.add(aleksander);
+        elements.add(ida);
+        elements.add(kristin);
+        elements.add(nicklas);
+        elements.add(christian);
+        elements.add(stig);
+
+
+
+
+
+        //Collections.sort(elements); // Must be sorted!
 
         // listview
         myListView = (ListView) findViewById(R.id.lstContacts);
-        //myListView.setFastScrollEnabled(true);
-        MyIndexerAdapter<String> adapter = new MyIndexerAdapter<String>(
-                getApplicationContext(), android.R.layout.simple_list_item_1,
-                elements);
-        myListView.setAdapter(adapter);
+        //myListView.setFastScrollEnabled
 
-    }
+        ContactsAdapter conAdapter = new ContactsAdapter(ContactsActivity.this, elements);
+        myListView.setAdapter(conAdapter);
 
-    class MyIndexerAdapter<T> extends ArrayAdapter<T> implements SectionIndexer {
+        myListView.setOnItemClickListener(new OnItemClickListener() {
 
-        ArrayList<String> myElements;
-        HashMap<String, Integer> alphaIndexer;
-        String[] sections;
-
-        public MyIndexerAdapter(Context context, int textViewResourceId,
-                List<T> objects) {
-            super(context, textViewResourceId, objects);
-            myElements = (ArrayList<String>) objects;
-            // here is the tricky stuff
-            alphaIndexer = new HashMap<String, Integer>();
-            // in this hashmap we will store here the positions for
-            // the sections
-
-            int size = elements.size();
-            for (int i = size - 1; i >= 0; i--) {
-                String element = elements.get(i);
-                alphaIndexer.put(element.substring(0, 1), i);
-                //We store the first letter of the word, and its index.
-                //The Hashmap will replace the value for identical keys are putted in
+            public void onItemClick(AdapterView<?> av, View view, int i, long l) {
+                Contact c = (Contact)av.getItemAtPosition(i);
+                Intent returnIntent = new Intent();           
+                returnIntent.putExtra("result",c.getEmail());
+                setResult(RESULT_OK,returnIntent);     
+                finish();
             }
-
-            // now we have an hashmap containing for each first-letter
-            // sections(key), the index(value) in where this sections begins
-
-            // we have now to build the sections(letters to be displayed)
-            // array .it must contains the keys, and must (I do so...) be
-            // ordered alphabetically
-
-            Set<String> keys = alphaIndexer.keySet(); // set of letters ...sets
-            // cannot be sorted...
-
-            Iterator<String> it = keys.iterator();
-            ArrayList<String> keyList = new ArrayList<String>(); // list can be
-            // sorted
-
-            while (it.hasNext()) {
-                String key = it.next();
-                keyList.add(key);
-            }
-
-            Collections.sort(keyList);
-
-            sections = new String[keyList.size()]; // simple conversion to an
-            // array of object
-            keyList.toArray(sections);
-
-            // ooOO00K !
-
-        }
-
-        @Override
-        public int getPositionForSection(int section) {
-            // Log.v("getPositionForSection", ""+section);
-            String letter = sections[section];
-
-            return alphaIndexer.get(letter);
-        }
-
-        @Override
-        public int getSectionForPosition(int position) {
-
-            // you will notice it will be never called (right?)
-            Log.v("getSectionForPosition", "called");
-            return 0;
-        }
-
-        @Override
-        public Object[] getSections() {
-
-            return sections; // to string will be called each object, to display
-            // the letter
-        }
+        }); 
+     
     }
 }

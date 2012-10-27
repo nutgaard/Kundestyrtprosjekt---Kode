@@ -13,7 +13,7 @@ import android.net.Uri;
  * @author Nicklas
  */
 public class ImageAttachment extends Attachment {
-    public ImageAttachment(Uri uri){
+     public ImageAttachment(Uri uri){
         super(uri);
     }
     
