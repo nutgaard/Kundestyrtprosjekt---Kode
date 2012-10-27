@@ -77,10 +77,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     boolean textEnteredInMessageBody = false;
     XOMessagePriority defaultPriority = XOMessagePriority.ROUTINE;
     XOMessageType defaultType = XOMessageType.OPERATION;
-    //The lists containing the data fetched from the attachments getter.
-    private List<Uri> images;
-    private List<Uri> videos;
-    private List<Uri> sound;
     //Attachments//
     private ExpandableListView expList;
     private Attachments attachments;
@@ -118,9 +114,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         populateSpinners();
         setDefaultSpinnerValues();
-
-        this.images = new ArrayList<Uri>();
-        this.videos = new ArrayList<Uri>();
 
         //Attachments//
         expandList = (ExpandableListView) findViewById(R.id.ExpList);
@@ -471,31 +464,24 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         });
     }
 
+    private int imageCounter = 1;
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         logMe("ReqCode: " + requestCode + ". ResultCode:" + resultCode);
 
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
                 addAttachment(new ImageAttachment(attachmentUri));
-                addAttachmentToDropDown("Image from Camera", attachmentUri);
+                addAttachmentToDropDown(attachmentUri);
                 fillExpandableList();
-
-            } else if (resultCode == RESULT_CANCELED) {
-                // User cancelled the image capture
-            } else {
-                logMe("Something failed");
-            }
         }
 
-        if (requestCode == FETCH_IMAGE_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
+        if (requestCode == FETCH_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
                 Uri path = data.getData();
                 addAttachment(new ImageAttachment(path));
-                addAttachmentToDropDown("Image from Phone", data.getData());
+                addAttachmentToDropDown(data.getData());
                 fillExpandableList();
                 //super.onActivityResult(requestCode, resultCode, data);
-            }
         }
         if(requestCode == FETCH_CONTACT_REQUEST_CODE){
             if(resultCode == RESULT_OK){
@@ -550,7 +536,14 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             }
         };
         String bestProvider = locationManager.getBestProvider(criteria, true);
-        locationManager.requestLocationUpdates(bestProvider, locationUpdateInterval, locationDistance, locationListener);
+
+        if (bestProvider != null) {
+            locationManager.requestLocationUpdates(bestProvider, locationUpdateInterval, locationDistance, locationListener);
+        } else {
+            Toast noProviderFoundMessage = Toast.makeText(SendMessageActivity.this, getString(R.string.noLocationProviderFound), RESULT_OK);
+            noProviderFoundMessage.show();
+        }
+
     }
 
     private void addNewLocationToMessage() {
@@ -559,9 +552,11 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         if (currentLocation != null) {
             double lat = currentLocation.getLatitude();
             double lng = currentLocation.getLongitude();
+
             locLongString += "\n" + getString(R.string.myLocationNow) + "\n";
             locLongString += getString(R.string.locationLatitude) + lat + "\n";
-            locLongString += getString(R.string.locationLongditude) + lng;
+            locLongString += getString(R.string.locationLongditude) + lng + "\n";
+            locLongString += "Accuracy is " + currentLocation.getAccuracy() + " meters";
             this.txtMessageBody.setText(txtMessageBody.getText() + locLongString);
 
         } else {
@@ -584,7 +579,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             public boolean onChildClick(ExpandableListView elv, View view, int i, int i1, long l) {
                 ExpandableListChild currentChild = children.get(i1);
                 Uri uri = currentChild.getUri();
-
+                
                 Toast t = Toast.makeText(SendMessageActivity.this, "Clicked parent:" + i + ". Child: " + i1, Toast.LENGTH_LONG);
                 logMe("Starting intent...");
                 logMe("Uri is: " + currentChild.getUri().toString());
@@ -592,8 +587,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                 showImageIntent.setAction(Intent.ACTION_VIEW);
                 showImageIntent.setDataAndType(currentChild.getUri(), "image/jpg");
                 startActivity(showImageIntent);
-                logMe("Intent starting over");
-                t.show();
                 return true;
             }
         };
@@ -610,8 +603,17 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         return listGroups;
     }
 
-    private void addAttachmentToDropDown(String name, Uri uri) {
+    private void addAttachmentToDropDown(Uri uri) {
+        String name = "Image " + imageCounter++ + " (" + getImageFileLastPathSegment(uri) + ")";
         ExpandableListChild child = new ExpandableListChild(name, uri);
         children.add(child);
+    }
+    
+    private String getImageFileLastPathSegment(Uri uri){
+        String fileName = uri.getLastPathSegment();
+        if(!fileName.contains(".")){
+            fileName += ".jpg";
+        }
+        return fileName;
     }
 }
