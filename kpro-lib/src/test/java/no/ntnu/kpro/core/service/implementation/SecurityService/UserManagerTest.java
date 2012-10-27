@@ -55,13 +55,13 @@ public class UserManagerTest {
     // The methods must be annotated with annotation @Test. For example:
     //
 
-    @Test
+    //@Test
     public void createUser() {
         m.createUser(u);
         assertTrue(true);
     }
     
-    @Test
+    //@Test
     public void auth() {
         m.createUser(u);
         IUser u2 = m.authorize(u);
