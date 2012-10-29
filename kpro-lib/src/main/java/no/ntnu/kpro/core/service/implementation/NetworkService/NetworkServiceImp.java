@@ -4,6 +4,10 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import com.sun.mail.imap.IMAPMessage;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,12 +17,14 @@ import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAP;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPPull;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPPush;
 import no.ntnu.kpro.core.service.implementation.NetworkService.SMTP.SMTP;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.utilities.Pair;
+
 
 /**
  *
@@ -106,6 +112,11 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
 
     public void mailReceived(XOMessage message) {
         getInbox().add(message);
+        // Creating an intent for broadcasting message received
+        Intent i = new Intent("FlashOverride");
+        i.putExtra("message", message);
+        // Broadcasting intent
+        ServiceProvider.getInstance().getApplicationContext().sendBroadcast(i);
     }
 
     public void mailReceivedError(Exception ex) {
