@@ -90,6 +90,13 @@
                           android:layout_below="@id/lblSubject"/>
                 
             </RelativeLayout>
+            
+            <Button android:id="@+id/btnAttachments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show attachments"
+            />
+            
             <!-- Mail body -->
             <TextView android:id="@+id/lblText"
                       android:background="@color/white"
