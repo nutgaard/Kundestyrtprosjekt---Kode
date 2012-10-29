@@ -4,7 +4,10 @@
  */
 package no.ntnu.kpro.app.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -32,6 +35,16 @@ public class MainTabActivity extends WrapperActivity implements TabHost.OnTabCha
         Log.i(TAG, "Starting onCreate in MainTabActivity");
         Log.i(TAG, "Setting content view");
 
+//        IntentFilter intentFilter = new IntentFilter("FlashOverride");
+//        getApplicationContext().registerReceiver(new BroadcastReceiver() {
+//
+//            @Override
+//            public void onReceive(Context cntxt, Intent intent) {
+//                throw new UnsupportedOperationException("Not supported yet.");
+//            }
+//        }, null);
+       
+        
         // Finding the tabhost
         TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
 
