@@ -4,19 +4,28 @@
  */
 package no.ntnu.kpro.app.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.DialogPreference;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import no.ntnu.kpro.app.R;
+import no.ntnu.kpro.core.helpers.FileHelper;
 import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
@@ -38,11 +47,13 @@ public class MessageViewActivity extends WrapperActivity {
     Button btnNext;
     Button btnReply;
     Button btnForward;
+    Button btnAttachments;
+    List<String> attachmentsView;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(TAG, "Starting onCreate");
-        
+
         Intent i = getIntent();
         // Get what folder you came from and set the correct layout
         folder = i.getStringExtra("folder");
@@ -52,27 +63,29 @@ public class MessageViewActivity extends WrapperActivity {
             setContentView(R.layout.message_item_out);
         }
         Log.i(TAG, "Setting content view based on folder choice");
-        
+
         // Get the selected message and update the view
         currentMessage = i.getParcelableExtra("message");
         Log.i(TAG, "Fetching current message from parcelable");
-        
+
         Log.i(TAG, "Calling elements from id");
         btnPrevious = (Button) findViewById(R.id.btnPrevious);
         btnNext = (Button) findViewById(R.id.btnNext);
         btnReply = (Button) findViewById(R.id.btnReply);
         btnForward = (Button) findViewById(R.id.btnForward);
+        btnAttachments = (Button) findViewById(R.id.btnAttachments);
 
         Log.i(TAG, "Updating views and enabling buttons");
         updateViews();
         enableButtons();
+
     }
 
     // Create "popup" menu (shows by pressing MENU button) based on layout
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.layout.menu_message , menu);
+        inflater.inflate(R.layout.menu_message, menu);
         return true;
     }
 
@@ -88,7 +101,7 @@ public class MessageViewActivity extends WrapperActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-    
+
     // Get the previous message
     private void getPreviousMessage() {
         Log.i(TAG, "Getting previous message");
@@ -138,10 +151,9 @@ public class MessageViewActivity extends WrapperActivity {
             TextView lblFrom = (TextView) findViewById(R.id.lblFrom);
             lblFrom.setText(to);
         }
-        
-        Button btnAttachments = (Button) findViewById(R.id.btnAttachments);
-        btnAttachments.setVisibility(View.GONE);
-        
+
+        this.setUpAttachmentsViewState();
+
         // Subject
         String subject = currentMessage.getSubject();
         TextView lblSubject = (TextView) findViewById(R.id.lblSubject);
@@ -152,7 +164,7 @@ public class MessageViewActivity extends WrapperActivity {
         Date date = currentMessage.getDate();
         TextView lblDate = (TextView) findViewById(R.id.lblDate);
         lblDate.setText(dateFormat.format(date));
-        
+
         // Text
         String text = currentMessage.getStrippedBody();
         TextView lblText = (TextView) findViewById(R.id.lblText);
@@ -243,5 +255,43 @@ public class MessageViewActivity extends WrapperActivity {
                 startActivity(i);
             }
         });
+
+        btnAttachments.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MessageViewActivity.this, android.R.layout.select_dialog_item, attachmentsView);
+                AlertDialog.Builder builder = new AlertDialog.Builder(MessageViewActivity.this);
+
+                builder.setTitle("Choose attachment to view");
+                builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface di, int i) {
+                        Toast.makeText(MessageViewActivity.this, "Omg. I clicked:" + attachmentsView.get(i), Toast.LENGTH_LONG).show();
+                        Intent showImageIntent = new Intent();
+                        showImageIntent.setAction(Intent.ACTION_VIEW);
+                       // showImageIntent.setDataAndType(currentMessage.getAttachments(i).getUri(), "image/jpg");
+                        startActivity(showImageIntent);
+                    }
+                });
+                builder.show();
+            }
+        });
+    }
+
+    private void setUpAttachmentsViewState() {
+        if (currentMessage.getAttachments().isEmpty()) {
+            btnAttachments.setVisibility(View.GONE);
+            return;
+        }
+
+        Log.i(TAG, "Initializing attachment variables");
+        attachmentsView = new ArrayList<String>();
+
+        List<Uri> attachments = new ArrayList<Uri>(); //TODO: Fix so we fetch the real attachments.
+
+        for (Uri attachment : attachments) {
+            attachmentsView.add(FileHelper.getImageFileLastPathSegmentFromImage(attachment));
+        }
+
+
     }
 }
