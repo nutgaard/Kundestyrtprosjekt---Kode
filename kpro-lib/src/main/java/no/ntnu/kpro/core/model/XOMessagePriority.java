@@ -32,4 +32,7 @@ public enum XOMessagePriority {
     public String getNumValue(){
         return "" + this.numValue;
     }
+    public int getNumeric() {
+        return this.numValue;
+    }
 }

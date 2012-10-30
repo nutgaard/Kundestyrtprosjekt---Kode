@@ -95,6 +95,7 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
             System.out.println("Could not load messages from disk");
         }
         this.smtp = new SMTP(username, password, mailAdr, properties, new Authenticator() {
+
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(username, password);
@@ -107,6 +108,7 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
 //            }
 //        }, lastSeen, listeners, 10, cache);
         IMAPStrategy ss = new IMAPPush(properties, new Authenticator() {
+
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(username, password);
@@ -149,10 +151,12 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
             System.out.println("Saving GOD DAMNIT");
             message.setBoxAffiliation(BoxName.INBOX);
             this.persistence.save(message);
-            Intent i = new Intent("FlashOverride");
-            i.putExtra("message", message);
-            // Broadcasting intent
-            ServiceProvider.getInstance().getApplicationContext().sendBroadcast(i);
+            if (message.getPriority().getNumeric() >= 4) {
+                Intent i = new Intent("FlashOverride");
+                i.putExtra("message", message);
+                // Broadcasting intent
+                ServiceProvider.getInstance().getApplicationContext().sendBroadcast(i);
+            }
             getInbox().add(message);
             System.out.println("Received message with " + message.getAttachments().size() + " attachments");
         } catch (Exception ex) {
