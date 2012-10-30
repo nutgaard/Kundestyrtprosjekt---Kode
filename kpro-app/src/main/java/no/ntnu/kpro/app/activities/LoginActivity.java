@@ -1,21 +1,20 @@
 package no.ntnu.kpro.app.activities;
 
-import android.app.Activity;
-import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import no.ntnu.kpro.app.R;
-import no.ntnu.kpro.app.activities.WrapperActivity;
-import no.ntnu.kpro.core.service.implementation.SecurityService.UserManager;
+import no.ntnu.kpro.core.model.ModelProxy.IUser;
 import no.ntnu.kpro.core.model.User;
+import no.ntnu.kpro.core.service.implementation.SecurityService.UserManager;
 
 public class LoginActivity extends WrapperActivity {
-
+    final static String TAG = "KPRO-GUI-LOGIN";
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         final UserManager um = new UserManager(getBaseContext());
@@ -23,44 +22,28 @@ public class LoginActivity extends WrapperActivity {
         // setting default screen to login.xml
         setContentView(R.layout.login);
 
-
-
-        final User loginUser = new User();
-
-
-
-
-
-        //TextView registerScreen = (TextView) findViewById(R.id.link_to_register);
         Button login = (Button) findViewById(R.id.btnLogin);
 
         login.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-
+                final User loginUser = new User();
                 EditText username = (EditText) findViewById(R.id.usernameEdit);
                 EditText password = (EditText) findViewById(R.id.passwordEdit);
                 loginUser.setName(username.getText().toString());
-                Log.d("Username", username.getText().toString());
                 loginUser.setPassword(password.getText().toString());
-                Log.d("Password", password.getText().toString());
-               // um.createUser(loginUser);
+                Log.d(TAG, "Trying to log in");
+                IUser user = getServiceProvider().login(loginUser);
 
-                if (true) { //um.authorize(loginUser) != null
-
-
+                if (user != null) { //um.authorize(loginUser) != null
+                    Log.d(TAG, "Login successful");
                     Intent i = new Intent(getApplicationContext(), MainTabActivity.class);
                     startActivity(i);
+                } else {
+                    Log.d(TAG, "Login failed");
+                    TextView txtLoginMessage = (TextView) findViewById(R.id.txtLoginMessage);
+                    txtLoginMessage.setText("Incorrect login information");
                 }
             }
         });
-        // Listening to register new account link
-//        registerScreen.setOnClickListener(new View.OnClickListener() {
-// 
-//            public void onClick(View v) {
-//                // Switching to Register screen
-//                Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
-//                startActivity(i);
-//            }
-//        });
     }
 }
