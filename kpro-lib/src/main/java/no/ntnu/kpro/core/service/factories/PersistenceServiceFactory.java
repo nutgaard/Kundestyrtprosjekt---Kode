@@ -34,4 +34,49 @@ public class PersistenceServiceFactory {
             return null;
         }
     }
+    public static PersistenceService createImageStore(Context c) {
+        try {
+            File f = (c!=null)?c.getExternalFilesDir(null) :new File("./");
+            return new PersistenceService(f) {
+
+                @Override
+                public void close() {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public Object manage(Object o) throws Exception {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public Object unmanage(Object o) {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public void save(Object o) throws Exception {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public void delete(Object o) {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public Object[] findAll(Class cls) throws Exception {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+
+                @Override
+                public Object find(Class cls, int id) throws Exception {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+            };
+        }catch(Exception e) {
+            Logger.getLogger(PersistenceServiceFactory.class.getName()).log(Level.SEVERE, null, e);
+            return null;
+        }
+    }
 }

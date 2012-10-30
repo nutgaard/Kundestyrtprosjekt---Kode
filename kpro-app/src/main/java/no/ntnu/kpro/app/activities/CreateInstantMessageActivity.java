@@ -8,7 +8,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -32,14 +31,16 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import no.ntnu.kpro.app.R;
-import no.ntnu.kpro.core.utilities.EnumHelper;
-import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
+
+
+
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageType;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
+import no.ntnu.kpro.core.utilities.EnumHelper;
 
 /**
  *

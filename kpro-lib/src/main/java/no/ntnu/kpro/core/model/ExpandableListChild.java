@@ -6,7 +6,8 @@ package no.ntnu.kpro.core.model;
 
 import android.net.Uri;
 import android.util.Log;
-import no.ntnu.kpro.core.helpers.FileHelper;
+import no.ntnu.kpro.core.utilities.FileHelper;
+
 
 /**
  *

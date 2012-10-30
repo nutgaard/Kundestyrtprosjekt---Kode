@@ -40,7 +40,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
     private String from;
     private String to;
     private String subject;
-    private List<Uri> attachments;
+    private List<String> attachments;
     private String htmlBody;
     private String strippedBody;
     private String grading;
@@ -54,7 +54,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
     public XOMessage() {
         this("", "", "", "", XOMessageSecurityLabel.CHOOSE_ONE);
     }
-    
+
     public XOMessage(String from, String to, String subject, String body, XOMessageSecurityLabel label) {
         this(from, to, subject, body, label, XOMessagePriority.ROUTINE, XOMessageType.OPERATION, new Date());
     }
@@ -63,14 +63,16 @@ public class XOMessage implements ModelProxy.IXOMessage {
         this(from, to, subject, body, grading, priority, type, date, uris);
         this.id = id;
     }
+
     public XOMessage(String from, String to, String subject, String body, XOMessageSecurityLabel grading, XOMessagePriority priority, XOMessageType type, Date date, Uri... uris) {
         this(from, to, subject, body, grading, priority, type, date, Arrays.asList(uris));
     }
+
     public XOMessage(String from, String to, String subject, String body, XOMessageSecurityLabel grading, XOMessagePriority priority, XOMessageType type, Date date, List<Uri> uris) {
         this.from = from;
         this.to = to;
         this.subject = subject;
-        this.attachments = new LinkedList<Uri>();
+        this.attachments = new LinkedList<String>();
         addAttachment(uris);
         this.htmlBody = body;
         this.strippedBody = body.replaceAll("\\<.*?>", "");
@@ -79,19 +81,23 @@ public class XOMessage implements ModelProxy.IXOMessage {
         this.type = type.name();
         this.date = date;
     }
-    public void setBoxAffiliation(BoxName box){
+
+    public void setBoxAffiliation(BoxName box) {
         this.boxAffiliation = box.toString();
     }
+
     public BoxName getBoxAffiliation() {
         return BoxName.valueOf(boxAffiliation);
     }
+
     public XOMessage(Parcel in) throws ParseException {
         this(in.readString(), in.readString(), in.readString(), in.readString(),
                 EnumHelper.getEnumValue(XOMessageSecurityLabel.class, in.readString()),
                 EnumHelper.getEnumValue(XOMessagePriority.class, in.readString()),
                 EnumHelper.getEnumValue(XOMessageType.class, in.readString()),
                 new Date(in.readLong()));
-        this.opened = true;
+        in.readList(attachments, Uri.class.getClassLoader());
+        this.opened = false;
     }
 
     @Override
@@ -108,14 +114,23 @@ public class XOMessage implements ModelProxy.IXOMessage {
     public String getSubject() {
         return subject;
     }
-    public void addAttachment(List<Uri> uri){
-        this.attachments = uri;
+
+    public void addAttachment(List<Uri> uri) {
+        this.attachments.clear();
+        for (Uri u : uri) {
+            this.attachments.add(u.toString());
+        }
     }
 
     @Override
     public List<Uri> getAttachments() {
-        return this.attachments;
+        List<Uri> l = new LinkedList<Uri>();
+        for (String uriPath : attachments) {
+            l.add(Uri.parse(uriPath));
+        }
+        return l;
     }
+
     @Override
     public String getHtmlBody() {
         return htmlBody;
@@ -142,15 +157,15 @@ public class XOMessage implements ModelProxy.IXOMessage {
     }
 
     @Override
-    public boolean getOpened(){
+    public boolean getOpened() {
         return opened;
     }
-    
+
     @Override
-    public void setOpened(boolean opened){
+    public void setOpened(boolean opened) {
         this.opened = opened;
     }
-    
+
     @Override
     public int compareTo(XOMessage o) {
         if (this == o) {
@@ -165,7 +180,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
     public String getId() {
         return id;
     }
-    
+
     @Override
     public String toString() {
         return "XOMessage{" + "from=" + from + ", to=" + to + ", subject=" + subject + ", attachments=" + attachments + ", htmlBody=" + htmlBody + ", strippedBody=" + strippedBody + ", grading=" + grading + ", priority=" + priority + ", type=" + type + ", date=" + date + ", opened=" + opened + '}';
@@ -228,10 +243,6 @@ public class XOMessage implements ModelProxy.IXOMessage {
         return true;
     }
 
-    
-
-    
-
     @Override
     public int describeContents() {
         return 0;
@@ -247,25 +258,25 @@ public class XOMessage implements ModelProxy.IXOMessage {
         parcel.writeString(from);
         parcel.writeString(to);
         parcel.writeString(subject);
-        //parcel.writeList(attachments); 
         parcel.writeString(htmlBody);
         //parcel.writeString(strippedBody);
         parcel.writeString(grading.toString());
         parcel.writeString(priority.toString());
         parcel.writeString(type.toString());
         parcel.writeLong(date.getTime());
+        parcel.writeList(attachments);
     }
 
     public static MimeMessage convertToMime(Session session, XOMessage message) throws Exception {
         SMIMESignedGenerator gen = new SMIMESignedGenerator();
         X509Certificate signCert = null;
-        KeyPair         signKP   = null; 
+        KeyPair signKP = null;
         gen.addSignerInfoGenerator(new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC").build("SHA1withRSA", signKP.getPrivate(), signCert));
-        
+
         MimeBodyPart msg = new MimeBodyPart();
         msg.setText(message.getStrippedBody());
         MimeMultipart crypoedText = gen.generate(msg);
-        
+
         MimeMessage mm = new MimeMessage(session);
         mm.setFrom(new InternetAddress(message.getFrom()));
         mm.setRecipients(Message.RecipientType.TO, InternetAddress.parse(message.getTo()));
@@ -311,8 +322,8 @@ public class XOMessage implements ModelProxy.IXOMessage {
         }
         String s = secLabels[0];
         for (XOMessageSecurityLabel e : XOMessageSecurityLabel.values()) {
-            System.out.println("E: "+e);
-            System.out.println("S: "+s);
+            System.out.println("E: " + e);
+            System.out.println("S: " + s);
             if (s.equalsIgnoreCase(e.getHeaderValue())) {
                 return e;
             }
@@ -333,6 +344,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
         public static Comparator<IXOMessage> getSendingPriority() {
             return new Comparator<IXOMessage>() {
+
                 public int compare(IXOMessage o1, IXOMessage o2) {
                     int p = o1.getPriority().compareTo(o2.getPriority());
                     return p == 0 ? o2.getDate().compareTo(o1.getDate()) : p;
@@ -342,6 +354,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
         public static Comparator<IXOMessage> getDateComparator(final boolean descending) {
             return new Comparator<IXOMessage>() {
+
                 public int compare(IXOMessage o1, IXOMessage o2) {
                     return descending ? o2.getDate().compareTo(o1.getDate()) : o1.getDate().compareTo(o2.getDate());
                 }
@@ -350,6 +363,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
         public static Comparator<IXOMessage> getSenderComparator(final boolean descending) {
             return new Comparator<IXOMessage>() {
+
                 public int compare(IXOMessage o1, IXOMessage o2) {
                     return descending ? o2.getFrom().compareToIgnoreCase(o1.getFrom()) : o1.getFrom().compareTo(o2.getFrom());
                 }
@@ -358,6 +372,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
         public static Comparator<IXOMessage> getPriorityComparator(final boolean descending) {
             return new Comparator<IXOMessage>() {
+
                 public int compare(IXOMessage o1, IXOMessage o2) {
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
@@ -366,6 +381,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
         public static Comparator<IXOMessage> getLabelComparator(boolean descending) {
             return new Comparator<IXOMessage>() {
+
                 public int compare(IXOMessage o1, IXOMessage o2) {
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
@@ -374,6 +390,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
         public static Comparator<IXOMessage> getTypeComparator(boolean descending) {
             return new Comparator<IXOMessage>() {
+
                 public int compare(IXOMessage o1, IXOMessage o2) {
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
@@ -382,6 +399,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
         public static Comparator<IXOMessage> getSubjectComparator(final boolean descending) {
             return new Comparator<IXOMessage>() {
+
                 public int compare(IXOMessage o1, IXOMessage o2) {
                     return descending ? o2.getSubject().compareToIgnoreCase(o1.getSubject()) : o1.getSubject().compareTo(o2.getSubject());
                 }

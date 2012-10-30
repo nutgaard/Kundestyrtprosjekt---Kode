@@ -4,6 +4,7 @@ target
 *.iml
 *.jpg
 *.png
+*.log
 .settings
 .classpath
 .project

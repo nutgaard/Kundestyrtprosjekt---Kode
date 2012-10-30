@@ -4,6 +4,7 @@
  */
 package no.ntnu.kpro.core.service.interfaces;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public abstract class ServiceInterface<T> {
     protected List<T> listeners;
     
     public ServiceInterface() {
-        this.listeners = new LinkedList<T>();
+        this.listeners = Collections.synchronizedList(new LinkedList<T>());
     }
     public void addListener(T listener){
         if (!this.listeners.contains(listener)){

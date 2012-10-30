@@ -80,7 +80,7 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
         }
         cache = new IMAPCache(properties, username, password);
         this.persistence = PersistenceServiceFactory.createMessageStorage(new User(username, password), context);
-        Converter.setup(persistence);
+        Converter.setup(PersistenceServiceFactory.createImageStore(context));
         Date lastSeen = new Date(0);
         try {
             IXOMessage[] savedMessages = PersistenceService.castTo(this.persistence.findAll(XOMessage.class), IXOMessage[].class);

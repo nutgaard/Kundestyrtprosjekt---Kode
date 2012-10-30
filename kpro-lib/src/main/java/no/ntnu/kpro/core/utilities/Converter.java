@@ -135,14 +135,15 @@ public class Converter {
                         OutputStream os = new FileOutputStream(f);
 
                         System.out.println("writing to file");
-
-                        byte[] buffer = new byte[10240];
-                        int len;
-                        while ((len = is.read(buffer)) != -1) {
-                            os.write(buffer, 0, len);
-                        }
+                        part.getDataHandler().writeTo(os);
+//                        
+//                        byte[] buffer = new byte[10240];
+//                        int len;
+//                        while ((len = is.read(buffer)) != -1) {
+//                            os.write(buffer, 0, len);
+//                        }
                         is.close();
-                        os.close();
+//                        os.close();
                         attachments.add(Uri.parse(f.getPath()));
                     } else {
                         System.out.println("Unknown type: " + part.getContentType());

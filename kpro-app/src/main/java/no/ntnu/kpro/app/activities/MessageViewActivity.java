@@ -7,9 +7,9 @@ package no.ntnu.kpro.app.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.DialogPreference;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,11 +19,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.core.utilities.FileHelper;
 import no.ntnu.kpro.core.model.Box;
@@ -222,6 +224,7 @@ public class MessageViewActivity extends WrapperActivity {
         Log.i(TAG, "Adding button click listeners to previous/next/reply/forward");
         // Add click listener to Previous button
         btnPrevious.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View view) {
                 getPreviousMessage();
                 updateViews();
@@ -230,6 +233,7 @@ public class MessageViewActivity extends WrapperActivity {
 
         // Add click listener to Next button
         btnNext.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View view) {
                 getNextMessage();
                 updateViews();
@@ -238,6 +242,7 @@ public class MessageViewActivity extends WrapperActivity {
 
         // Add click listener to Reply button
         btnReply.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View view) {
                 Intent i = new Intent(getApplicationContext(), MessageOperationActivity.class);
                 i.putExtra("message", currentMessage);
@@ -248,6 +253,7 @@ public class MessageViewActivity extends WrapperActivity {
 
         // Add click listener to Forward button
         btnForward.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View view) {
                 Intent i = new Intent(getApplicationContext(), MessageOperationActivity.class);
                 i.putExtra("message", currentMessage);
@@ -257,6 +263,7 @@ public class MessageViewActivity extends WrapperActivity {
         });
 
         btnAttachments.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View view) {
 
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(MessageViewActivity.this, android.R.layout.select_dialog_item, attachmentsView);
@@ -264,12 +271,34 @@ public class MessageViewActivity extends WrapperActivity {
 
                 builder.setTitle("Choose attachment to view");
                 builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+
                     public void onClick(DialogInterface di, int i) {
-                        Toast.makeText(MessageViewActivity.this, "Omg. I clicked:" + attachmentsView.get(i), Toast.LENGTH_LONG).show();
-                        Intent showImageIntent = new Intent();
-                        showImageIntent.setAction(Intent.ACTION_VIEW);
-                       // showImageIntent.setDataAndType(currentMessage.getAttachments(i).getUri(), "image/jpg");
-                        startActivity(showImageIntent);
+                        MediaScannerConnection.scanFile(getApplicationContext(), new String[]{currentMessage.getAttachments().get(i).getEncodedPath()}, null, new MediaScannerConnection.OnScanCompletedListener() {
+                            @Override
+                            public void onScanCompleted(final String path, final Uri uri) {
+                                runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        Log.i("MediaScanner", "Scanned " + path + ":");
+                                        Log.i("MediaScanner", "-> uri=" + uri);
+                                        Toast.makeText(MessageViewActivity.this, "Omg. I clicked:" + uri, Toast.LENGTH_LONG).show();
+                                        Intent showImageIntent = new Intent();
+                                        showImageIntent.setAction(Intent.ACTION_VIEW);
+                                        Uri u = uri;
+                                        System.out.println("Promoting: " + u.toString());
+                                        InputStream is;
+                                        try {
+                                            is = getContentResolver().openInputStream(u);
+                                            System.out.println("Available: " + is.available());
+                                        } catch (Exception ex) {
+                                            Logger.getLogger(MessageViewActivity.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+
+                                        showImageIntent.setDataAndType(u, "image/jpg");
+                                        startActivity(showImageIntent);
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
                 builder.show();
@@ -287,7 +316,7 @@ public class MessageViewActivity extends WrapperActivity {
         Log.i(TAG, "Initializing attachment variables");
         attachmentsView = new ArrayList<String>();
 
-        
+
 
         for (Uri attachment : currentMessage.getAttachments()) {
             attachmentsView.add(FileHelper.getImageFileLastPathSegmentFromImage(attachment));
