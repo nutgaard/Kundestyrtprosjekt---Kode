@@ -110,6 +110,12 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
     }
 
     public void mailReceived(XOMessage message) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(WrapperActivity.this, "1 new message", Toast.LENGTH_LONG).show();
+            }
+        });
+
         Log.i("KPRO-GUI-WRAPPER", this.getLocalClassName());
         //Check if visible to limit to one
         ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
@@ -117,13 +123,13 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
         String topActivity = services.get(0).topActivity.toString();
         String pref = "ComponentInfo{no.ntnu.kpro.app/no.ntnu.kpro.app." + this.getLocalClassName() + "}";
         Log.i("KPRO-GUI-WRAPPER", pref + "=" + topActivity);
-        
+
         //
         if (topActivity.equals("ComponentInfo{no.ntnu.kpro.app/no.ntnu.kpro.app." + this.getLocalClassName() + "}")) {
             final XOMessage recMessage = message;
             runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(WrapperActivity.this, "1 new message", Toast.LENGTH_LONG).show();
+
                     XOMessagePriority priority = recMessage.getPriority();
                     Log.i("KPRO-GUI", priority.toString());
                     //Log.i("KPRO-GUI", recMessage.getSubject());
@@ -132,7 +138,7 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
 
                         final Dialog dialog = new Dialog(WrapperActivity.this);
                         dialog.setContentView(R.layout.dialog_flash_override);
-                        dialog.setTitle("XOXOmail: Important message received!");
+                        dialog.setTitle("XOXOmail: Important message!");
                         dialog.setCancelable(true);
 
                         TextView lblSubject = (TextView) dialog.findViewById(R.id.lblInstSubject);

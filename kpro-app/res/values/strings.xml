@@ -35,7 +35,7 @@
     <string name="invalidMessageBodyError">Please add a message body. </string>  
     
     <!--Location-->
-    <string name="myLocationNow">My location now is now</string>
+    <string name="myLocationNow">My location now is</string>
     <string name="noLocationFoundError">No location found. Please turn on WIFI, 3G or GPS </string>
     <string name="locationLongditude">Longditude: </string>
     <string name="locationLatitude">Latitude: </string>
