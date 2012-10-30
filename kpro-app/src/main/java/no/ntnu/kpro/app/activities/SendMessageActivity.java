@@ -282,7 +282,8 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         }
 
         //If we are in the receiver field, not show
-        //error message, as this is annoying, just return false.
+        //error message, as this is annoying, just return false. It is also annoying to
+        //
         if (isInReceiverField) {
             return false;
         }
@@ -487,8 +488,8 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         if (bestProvider != null) {
             locationManager.requestLocationUpdates(bestProvider, locationUpdateInterval, locationDistance, locationListener);
         } else {
-            Toast noProviderFoundMessage = Toast.makeText(SendMessageActivity.this, getString(R.string.noLocationProviderFound), RESULT_OK);
-            noProviderFoundMessage.show();
+            //Toast noProviderFoundMessage = Toast.makeText(SendMessageActivity.this, getString(R.string.noLocationProviderFound), RESULT_OK);
+            //noProviderFoundMessage.show();
         }
 
     }
