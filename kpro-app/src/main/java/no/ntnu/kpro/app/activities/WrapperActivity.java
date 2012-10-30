@@ -17,6 +17,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import javax.mail.Address;
 import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
@@ -30,6 +33,7 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  */
 public abstract class WrapperActivity extends ActivityGroup implements NetworkService.Callback {
 
+    private static List<String> dialogId = Collections.synchronizedList(new LinkedList<String>());
     protected ServiceProvider mServiceProvider;
     private ServiceConnection mConnection;
 
@@ -77,6 +81,7 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
 
     private ServiceConnection newServiceConnection() {
         return new ServiceConnection() {
+
             public void onServiceConnected(ComponentName cn, IBinder ib) {
                 ServiceProvider.LocalBinder lb = (ServiceProvider.LocalBinder) ib;
                 WrapperActivity.this.onServiceConnected(lb.getService());
@@ -87,9 +92,10 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
             }
         };
     }
-    
+
     public void mailSent(IXOMessage message, Address[] invalidAddress) {
         runOnUiThread(new Runnable() {
+
             public void run() {
                 Toast.makeText(WrapperActivity.this, "Message sent", Toast.LENGTH_LONG).show();
             }
@@ -98,6 +104,7 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
 
     public void mailSentError(IXOMessage message, Exception ex) {
         runOnUiThread(new Runnable() {
+
             public void run() {
                 Toast.makeText(WrapperActivity.this, "Message sending error", Toast.LENGTH_LONG).show();
             }
@@ -106,59 +113,67 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
 
     public void mailReceived(IXOMessage message) {
         final IXOMessage recMessage = message;
+        if (!dialogId.contains(recMessage.getId())) {
+            dialogId.add(recMessage.getId());
+            runOnUiThread(new Runnable() {
 
-        runOnUiThread(new Runnable() {
-            public void run() {
-                Toast.makeText(WrapperActivity.this, "1 new message", Toast.LENGTH_LONG).show();
-                XOMessagePriority priority = recMessage.getPriority();
-                Log.i("KPRO-GUI", priority.toString());
-                Log.i("KPRO-GUI", recMessage.getSubject());
-                Log.i("KPRO-GUI", recMessage.getStrippedBody());
-                if (priority.equals(XOMessagePriority.OVERRIDE) || priority.equals(XOMessagePriority.FLASH)) {
-                    
-                    final Dialog dialog = new Dialog(WrapperActivity.this);
-                    dialog.setContentView(R.layout.dialog_flash_override);
-                    dialog.setTitle("Important message received");
-                    dialog.setCancelable(true);
-                    
-                    TextView lblSubject = (TextView) dialog.findViewById(R.id.lblInstSubject);
-                    lblSubject.setText("Subject: " + recMessage.getSubject());
-                    
-                    TextView lblText = (TextView) dialog.findViewById(R.id.lblInstText);
-                    String text = recMessage.getStrippedBody().length() > 60 ? recMessage.getStrippedBody().substring(0, 59) : recMessage.getStrippedBody();
-                    lblText.setText("Text: " + text);
+                public void run() {
+                    Toast.makeText(WrapperActivity.this, "1 new message", Toast.LENGTH_LONG).show();
+                    XOMessagePriority priority = recMessage.getPriority();
+                    Log.i("KPRO-GUI", priority.toString());
+                    Log.i("KPRO-GUI", recMessage.getSubject());
+                    Log.i("KPRO-GUI", recMessage.getStrippedBody());
+                    if (priority.equals(XOMessagePriority.OVERRIDE) || priority.equals(XOMessagePriority.FLASH)) {
 
-                    Button btnOpen = (Button) dialog.findViewById(R.id.btnOpen);
-                    btnOpen.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View view) {
-                            Log.i("KPRO-GUI", "Clicking open");
-                            Intent i = new Intent(getApplicationContext(), MessageViewActivity.class);
-                            // sending data to new activity
+                        final Dialog dialog = new Dialog(WrapperActivity.this);
+                        dialog.setContentView(R.layout.dialog_flash_override);
+                        dialog.setTitle("Important message received");
+                        dialog.setCancelable(true);
 
-                            i.putExtra("folder", "Inbox");
-                            i.putExtra("message", recMessage);
-                            Log.i("KPRO-GUI", "Opening message " + recMessage.toString());
-                            recMessage.setOpened(true);
-                            startActivity(i);
-                            dialog.dismiss();
-                        }
-                    });
+                        TextView lblSubject = (TextView) dialog.findViewById(R.id.lblInstSubject);
+                        lblSubject.setText("Subject: " + recMessage.getSubject());
 
-                    Button btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
-                    btnCancel.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View view) {
-                            dialog.dismiss();
-                        }
-                    });
-                    
-                    dialog.show();
+                        TextView lblText = (TextView) dialog.findViewById(R.id.lblInstText);
+                        String text = recMessage.getStrippedBody().length() > 60 ? recMessage.getStrippedBody().substring(0, 59) : recMessage.getStrippedBody();
+                        lblText.setText("Text: " + text);
+
+                        Button btnOpen = (Button) dialog.findViewById(R.id.btnOpen);
+                        btnOpen.setOnClickListener(new View.OnClickListener() {
+
+                            public void onClick(View view) {
+                                Log.i("KPRO-GUI", "Clicking open");
+                                Intent i = new Intent(getApplicationContext(), MessageViewActivity.class);
+                                // sending data to new activity
+
+                                i.putExtra("folder", "Inbox");
+                                i.putExtra("message", recMessage);
+                                Log.i("KPRO-GUI", "Opening message " + recMessage.toString());
+                                recMessage.setOpened(true);
+                                startActivity(i);
+                                dialog.dismiss();
+                            }
+                        });
+
+                        Button btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
+                        btnCancel.setOnClickListener(new View.OnClickListener() {
+
+                            public void onClick(View view) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        dialog.show();
+                    }
                 }
-            }
-        });
+            });
+        }else {
+            System.out.println("Prevented double dialog");
+        }
     }
 
     public void mailReceivedError(Exception ex) {
         runOnUiThread(new Runnable() {
+
             public void run() {
                 Toast.makeText(WrapperActivity.this, "Message recieve error", Toast.LENGTH_LONG).show();
             }
