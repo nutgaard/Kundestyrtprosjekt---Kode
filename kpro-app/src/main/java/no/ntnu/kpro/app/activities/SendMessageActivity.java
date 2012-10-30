@@ -77,7 +77,12 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     //Attachments//
     private ExpandableListView expList;
     private Attachments attachments;
-    private List<String> attachmentsVisualRepresentation;
+    ArrayList<ExpandableListChild> attachmentsListChildren;
+    //Intents
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 67;
+    private static final int FETCH_IMAGE_ACTIVITY_REQUEST_CODE = 77;
+    private static final int FETCH_CONTACT_REQUEST_CODE = 1337;
+    private Uri attachmentUri;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -105,7 +110,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         addBtnSendClickListener(btnSend);
         addBtnContactsClickListener(btnContacts);
         addReceiverOnFocusChangedListener(txtReceiver);
-        addSubjectOnFocusChangedListener(txtSubject);
 
         addAttachmentClickListener(btnAddAttachment);
 
@@ -115,6 +119,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         //Attachments//
         expandList = (ExpandableListView) findViewById(R.id.ExpList);
         attachments = new Attachments();
+        attachmentsListChildren = new ArrayList<ExpandableListChild>();
 
         startLocationFetching();
         this.fillExpandableList();
@@ -163,6 +168,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             public void run() {
                 Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent", Toast.LENGTH_SHORT);
                 confirm.show();
+                SendMessageActivity.this.resetFields();
             }
         });
     }
@@ -222,7 +228,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         XOMessageType selectedType = EnumHelper.getEnumValue(XOMessageType.class, selectedTypeString);
 
                         //Do all validation, both intermediate validation and send validation.
-                        if (doIntermediateValidation()) {
+                        if (doIntermediateValidation(false)) {
                             if (doSendButtonValidation()) {
                                 XOMessage m = new XOMessage("MyMailAddress@gmail.com", txtReceiver.getText().toString(), txtSubject.getText().toString(), txtMessageBody.getText().toString(), selectedSecurity, selectedPriority, selectedType, new Date());
                                 List<Uri> att = new LinkedList<Uri>();
@@ -234,8 +240,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                                 getServiceProvider().getNetworkService().send(m);
                             }
                         }
-
-
                     }
                 });
     }
@@ -255,6 +259,10 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         txtSubject.setText("");
         txtMessageBody.setText("");
         sprSecurityLabel.setSelection(0);
+        this.attachmentUri = null;
+        this.attachments.clear();
+        this.attachmentsListChildren.clear();
+        this.fillExpandableList();
         setDefaultSpinnerValues();
     }
 
@@ -267,41 +275,26 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
      *
      * @return true if all intermediate validation is okay.
      */
-    private boolean doIntermediateValidation() {
+    private boolean doIntermediateValidation(boolean isInReceiverField) {
 
         //Find all relevant text strings to validate
         String txtReceiverString = txtReceiver.getText().toString();
-        String txtSubjectString = txtSubject.getText().toString();
-        String txtMessageString = txtMessageBody.getText().toString();
 
-        //Validate all fields
+        //Validate email field
         boolean isValidEmail = isValidEmail(txtReceiverString.trim());
-        boolean isValidSubject = isValidInputField(txtSubjectString);
-        boolean isValidMessage = isValidInputField(txtMessageString);
 
         //If text never has been entered in receiver field, we should not show validations.
         if (!textEnteredInReceiver) {
             return false;
         }
 
-        //Validate email
-        if (!isValidEmail) {
+        if (!isValidEmail && !isInReceiverField) {    //Set error on receiver field only if mail is invalid and we are not in it.
             txtReceiver.setError(getString(R.string.invalidMessageReceiverError));
             return false;
+        } else if (isValidEmail) { //Only clear the error message if it is a valid mail.
+            txtReceiver.setError(null);
         }
-
-        if (!isValidSubject && !txtSubject.hasFocus()) {
-            txtSubject.setError(getString(R.string.invalidMessageSubjectError));
-            return false;
-        }
-
-        if (!isValidMessage && textEnteredInMessageBody && !txtMessageBody.hasFocus()) {
-            txtMessageBody.requestFocus();
-            txtMessageBody.setError(getString(R.string.invalidMessageBodyError));
-            return false;
-        }
-
-        return isValidEmail && isValidSubject;
+        return isValidEmail;
 
     }
 
@@ -309,23 +302,12 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         //Find all relevant text strings to validate
         String txtReceiverString = txtReceiver.getText().toString();
-        String txtSubjectString = txtSubject.getText().toString();
-        String txtMessageString = txtMessageBody.getText().toString();
 
         //Validate all fields
         boolean isValidEmail = isValidEmail(txtReceiverString.trim());
-        boolean isValidSubject = isValidInputField(txtSubjectString);
-        boolean isValidMessage = isValidInputField(txtMessageString);
-
-        if (!isValidMessage) {
-            txtMessageBody.setError(getString(R.string.invalidMessageBodyError));
-            txtMessageBody.requestFocus();
-            return false;
-        }
-
         boolean isValidSecurityLabel = sprSecurityLabel.getSelectedItemPosition() != 0;
 
-        boolean isValidDataFields = isValidEmail && isValidSubject && isValidMessage && isValidSecurityLabel;
+        boolean isValidDataFields = isValidEmail && isValidSecurityLabel;
         if (isValidDataFields) {
             return true;
         }
@@ -335,7 +317,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         sendMessageError.getView().setBackgroundColor(getResources().getColor(R.color.red));
         sendMessageError.show();
 
-        return false; //If we end up here, it means validation has failed, so we return false.
+        return false; //If we end up here, it means validation has failed
     }
 
     /**
@@ -344,6 +326,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private boolean isValidEmail(String email) {
         Pattern pattern = Pattern.compile(EMAIL_PATTERN);
         Matcher matcher = pattern.matcher(email);
+        logMe("IsValidEmail:" + matcher.matches());
         return matcher.matches();
     }
 
@@ -351,35 +334,18 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         txtReceiver.addTextChangedListener(
                 new TextWatcher() {
                     public void onTextChanged(CharSequence cs, int i, int i1, int i2) {
-                        SendMessageActivity.this.textEnteredInReceiver = true;
+                        textEnteredInReceiver = true;
                     }
 
                     public void beforeTextChanged(CharSequence cs, int i, int i1, int i2) {
                     }
 
                     public void afterTextChanged(Editable edtbl) {
-                    }
-                });
-
-
-
-
-        txtMessageBody.addTextChangedListener(
-                new TextWatcher() {
-                    public void beforeTextChanged(CharSequence cs, int i, int i1, int i2) {
-                    }
-
-                    public void onTextChanged(CharSequence cs, int i, int i1, int i2) {
-                    }
-
-                    public void afterTextChanged(Editable edtbl) {
-                        if (txtMessageBody.getText().toString().length() > 0) {
-                            textEnteredInMessageBody = true;
+                        if (txtReceiver.getText().toString().length() > 0) {
+                            doIntermediateValidation(true);
                         }
-                        doIntermediateValidation();
                     }
                 });
-
     }
 
     private void addReceiverOnFocusChangedListener(EditText receiver) {
@@ -389,29 +355,11 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
                         if (!hasFocus) {
-                            doIntermediateValidation();
+                            doIntermediateValidation(false);
                         }
                     }
                 });
     }
-
-    private void addSubjectOnFocusChangedListener(EditText receiver) {
-        final SendMessageActivity t = this;
-        receiver.setOnFocusChangeListener(
-                new OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View v, boolean hasFocus) {
-                        if (!hasFocus) {
-                            doIntermediateValidation();
-
-                        }
-                    }
-                });
-    }
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 67;
-    private static final int FETCH_IMAGE_ACTIVITY_REQUEST_CODE = 77;
-    private static final int FETCH_CONTACT_REQUEST_CODE = 1337;
-    private Uri attachmentUri;
 
     private void addAttachmentClickListener(Button btnAddAttachment) {
 
@@ -483,11 +431,10 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         }
         if (requestCode == FETCH_CONTACT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                String email = "LOL";
-                email = data.getStringExtra("result");
+                String email = data.getStringExtra("result");
                 txtReceiver.setText(email);
+                doIntermediateValidation(false); //Set to false, because we want to force an evaluation.
             }
-
         }
     }
 
@@ -538,8 +485,8 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         if (bestProvider != null) {
             locationManager.requestLocationUpdates(bestProvider, locationUpdateInterval, locationDistance, locationListener);
         } else {
-            Toast noProviderFoundMessage = Toast.makeText(SendMessageActivity.this, getString(R.string.noLocationProviderFound), RESULT_OK);
-            noProviderFoundMessage.show();
+            //Toast noProviderFoundMessage = Toast.makeText(SendMessageActivity.this, getString(R.string.noLocationProviderFound), RESULT_OK);
+            //noProviderFoundMessage.show();
         }
 
     }
@@ -593,12 +540,19 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private void fillExpandableList() {
 
         expListItems = getExpandableListItems();
+
+        if (attachmentsListChildren.isEmpty()) {
+            expandList.setVisibility(View.GONE);
+        } else {
+            expandList.setVisibility(View.VISIBLE);
+        }
+
         expAdapter = new ExpandableListAdapter(SendMessageActivity.this, expListItems);
         expandList.setAdapter(expAdapter);
 
         OnChildClickListener childClickListener = new OnChildClickListener() {
             public boolean onChildClick(ExpandableListView elv, View view, int i, int i1, long l) {
-                ExpandableListChild currentChild = children.get(i1);
+                ExpandableListChild currentChild = attachmentsListChildren.get(i1);
                 logMe("Starting intent...");
                 logMe("Uri is: " + currentChild.getUri().toString());
                 Intent showImageIntent = new Intent();
@@ -610,20 +564,19 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         };
         expandList.setOnChildClickListener(childClickListener);
     }
-    ArrayList<ExpandableListChild> children = new ArrayList<ExpandableListChild>();
 
     private ArrayList<ExpandableListGroup> getExpandableListItems() {
         ArrayList<ExpandableListGroup> listGroups = new ArrayList<ExpandableListGroup>();
         ExpandableListGroup attachmentsGroup = new ExpandableListGroup();
         attachmentsGroup.setName("Attachments");
-        attachmentsGroup.setItems(children);
+        attachmentsGroup.setItems(attachmentsListChildren);
         listGroups.add(attachmentsGroup);
         return listGroups;
     }
 
     private void addAttachmentToDropDown(Uri uri) {
-        String name = "Image " + imageCounter++ + " (" + FileHelper.getImageFileLastPathSegmentFromImage(uri) + ")";
+        String name = "Image " + imageCounter++;
         ExpandableListChild child = new ExpandableListChild(name, uri);
-        children.add(child);
+        attachmentsListChildren.add(child);
     }
 }
