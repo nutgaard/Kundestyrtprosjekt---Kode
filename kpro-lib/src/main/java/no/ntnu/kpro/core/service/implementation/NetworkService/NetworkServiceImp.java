@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.activation.CommandMap;
+import javax.activation.MailcapCommandMap;
 import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
@@ -32,6 +34,16 @@ import no.ntnu.kpro.core.utilities.Converter;
  * @author Nicklas
  */
 public class NetworkServiceImp extends NetworkService implements NetworkService.Callback {
+
+    static {
+        MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
+        mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
+        mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
+        mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
+        mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
+        mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
+        CommandMap.setDefaultCommandMap(mc);
+    }
 
     public enum BoxName {
 
@@ -142,6 +154,7 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
             // Broadcasting intent
             ServiceProvider.getInstance().getApplicationContext().sendBroadcast(i);
             getInbox().add(message);
+            System.out.println("Received message with " + message.getAttachments().size() + " attachments");
         } catch (Exception ex) {
             Logger.getLogger(NetworkServiceImp.class.getName()).log(Level.SEVERE, null, ex);
         }

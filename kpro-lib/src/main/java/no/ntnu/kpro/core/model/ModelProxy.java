@@ -7,6 +7,7 @@ package no.ntnu.kpro.core.model;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import java.io.InputStream;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.Date;

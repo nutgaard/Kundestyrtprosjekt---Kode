@@ -4,7 +4,9 @@
  */
 package no.ntnu.kpro.core.utilities;
 
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.MediaStore;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -25,11 +27,13 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
 import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 import no.ntnu.kpro.core.model.XOMessageType;
+import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.PersistenceService;
 
 /**
@@ -80,10 +84,14 @@ public class Converter {
             //Add attachments
 
             for (Uri uri : message.getAttachments()) {
-                File f = new File(uri.getPath());
+                InputStream is = ServiceProvider.getInstance().getApplicationContext().getContentResolver().openInputStream(uri);
+                
+//                File f = new File(new URI(uri.getEncodedPath())).getCanonicalFile();
                 MimeBodyPart attachment = new MimeBodyPart();
-                attachment.setFileName(f.getName());
-                DataSource source = new FileDataSource(uri.getPath());
+                attachment.setFileName(FileHelper.getImageFileLastPathSegmentFromImage(uri));
+                
+//                DataSource source = new FileDataSource(uri.getPath());
+                DataSource source = new ByteArrayDataSource(is, "image/jpeg");
                 attachment.setDataHandler(new DataHandler(source));
                 multipart.addBodyPart(attachment);
             }
@@ -125,10 +133,13 @@ public class Converter {
                         System.out.println("Fetching outputstream");
                         File f = persistence.createOutputFile(filename);
                         OutputStream os = new FileOutputStream(f);
-                        int d;
+
                         System.out.println("writing to file");
-                        while ((d = is.read()) >= 0) {
-                            os.write(d);
+
+                        byte[] buffer = new byte[10240];
+                        int len;
+                        while ((len = is.read(buffer)) != -1) {
+                            os.write(buffer, 0, len);
                         }
                         is.close();
                         os.close();
@@ -144,10 +155,11 @@ public class Converter {
             //            label = EnumHelper.getEnumValue(XOMessageSecurityLabel.class, m.getHeader(LABEL))[0];
             label = secLabelParsing(m.getHeader(LABEL));
             type = EnumHelper.getEnumValue(XOMessageType.class, m.getHeader(TYPE))[0];
-            date = m.getReceivedDate();
+            date = (m.getReceivedDate() == null) ? new Date() : m.getReceivedDate();
 
             XOMessage xo = new XOMessage(id, from, to, subject, body, label, priority, type, date);
             xo.addAttachment(attachments);
+            System.out.println("Adding "+attachments.size()+" attachsments to message with subject: "+xo.getSubject());
             return xo;
         }
         System.out.println("Returning null in converter");

@@ -52,7 +52,7 @@ public class SMTPTest {
             smtp.send(m);
         }
         synchronized (this){
-            wait(200);
+            wait(500);
         }
         verify(sender, times(2*n)).sendMail(any(XOMessage.class));
     }

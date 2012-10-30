@@ -97,8 +97,10 @@ public class IMAPPush extends IMAPStrategy implements MessageCountListener {
     @Override
     public void halt() {
         try {
-            inbox.close(true);
-            run = false;
+            if (inbox != null) {
+                inbox.close(true);
+                run = false;
+            }
         } catch (MessagingException ex) {
             Logger.getLogger(IMAPPush.class.getName()).log(Level.SEVERE, null, ex);
         }

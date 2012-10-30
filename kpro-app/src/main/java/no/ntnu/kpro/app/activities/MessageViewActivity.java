@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import no.ntnu.kpro.app.R;
-import no.ntnu.kpro.core.helpers.FileHelper;
+import no.ntnu.kpro.core.utilities.FileHelper;
 import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
@@ -280,15 +280,16 @@ public class MessageViewActivity extends WrapperActivity {
     private void setUpAttachmentsViewState() {
         if (currentMessage.getAttachments().isEmpty()) {
             btnAttachments.setVisibility(View.GONE);
+            Log.i(TAG, "attachments is empty");
             return;
         }
 
         Log.i(TAG, "Initializing attachment variables");
         attachmentsView = new ArrayList<String>();
 
-        List<Uri> attachments = new ArrayList<Uri>(); //TODO: Fix so we fetch the real attachments.
+        
 
-        for (Uri attachment : attachments) {
+        for (Uri attachment : currentMessage.getAttachments()) {
             attachmentsView.add(FileHelper.getImageFileLastPathSegmentFromImage(attachment));
         }
 

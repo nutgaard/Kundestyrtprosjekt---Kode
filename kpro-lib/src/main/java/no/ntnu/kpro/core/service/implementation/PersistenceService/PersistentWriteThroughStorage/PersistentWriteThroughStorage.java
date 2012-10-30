@@ -285,7 +285,7 @@ public class PersistentWriteThroughStorage extends PersistenceService {
     class NameFilter implements FilenameFilter {
 
         private String filename;
-
+        
         public NameFilter(String filename) {
             this.filename = filename;
         }

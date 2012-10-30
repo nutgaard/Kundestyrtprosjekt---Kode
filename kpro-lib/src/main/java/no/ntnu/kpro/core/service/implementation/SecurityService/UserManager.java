@@ -35,7 +35,7 @@ public class UserManager {
     }
     public IUser authorize(IUser user){
         try {
-            IUser[] users = storage.castTo(storage.findAll(User.class), IUser[].class);
+            IUser[] users = PersistentWriteThroughStorage.castTo(storage.findAll(User.class), IUser[].class);
             for (IUser u : users){
                 if (u.authorize(user)){
                     return u;

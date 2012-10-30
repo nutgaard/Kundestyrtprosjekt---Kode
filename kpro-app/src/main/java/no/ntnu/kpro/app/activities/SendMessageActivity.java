@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -30,6 +31,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,7 +39,7 @@ import javax.mail.Address;
 import no.ntnu.kpro.app.ContactsActivity;
 import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.app.adapters.ExpandableListAdapter;
-import no.ntnu.kpro.core.helpers.FileHelper;
+import no.ntnu.kpro.core.utilities.FileHelper;
 import no.ntnu.kpro.core.model.Attachments;
 import no.ntnu.kpro.core.model.ExpandableListChild;
 import no.ntnu.kpro.core.model.ExpandableListGroup;
@@ -223,6 +225,12 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         if (doIntermediateValidation()) {
                             if (doSendButtonValidation()) {
                                 XOMessage m = new XOMessage("MyMailAddress@gmail.com", txtReceiver.getText().toString(), txtSubject.getText().toString(), txtMessageBody.getText().toString(), selectedSecurity, selectedPriority, selectedType, new Date());
+                                List<Uri> att = new LinkedList<Uri>();
+                                for (Attachment a : attachments){
+                                    System.out.println("Addding URI to attachments: "+a.getUri().toString());
+                                    att.add(a.getUri()); 
+                                }
+                                m.addAttachment(att);
                                 getServiceProvider().getNetworkService().send(m);
                             }
                         }

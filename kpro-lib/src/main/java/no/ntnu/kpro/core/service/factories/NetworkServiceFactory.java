@@ -5,7 +5,10 @@
 package no.ntnu.kpro.core.service.factories;
 
 import android.content.Context;
+import android.net.Uri;
+import java.io.InputStream;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +33,7 @@ public class NetworkServiceFactory {
         props.put("mail.smtps.socketFactory.port", "465");
         props.put("mail.smtps.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         props.put("mail.smtps.auth", "true");
+        props.put("mail.debug", "true");
         props.put("mail.smtps.port", "465");
 
         props.put("mail.store.protocol", "imaps");
@@ -64,12 +68,12 @@ public class NetworkServiceFactory {
         });
 //        List<URI> a = new LinkedList<URI>();
 //        a.add(URI.create("./Koala.jpg"));
-//        XOMessage m = new XOMessage("kprothales@gmail.com", "kprothales@gmail.com", "Sending with attachment", "Look at the attachments, should contain pom.xml", XOMessageSecurityLabel.UGRADERT, XOMessagePriority.FLASH, XOMessageType.DRILL, new Date());
+        XOMessage m = new XOMessage("kprothales@gmail.com", "kprothales@gmail.com", "Sending with attachment", "Look at the attachments, should contain pom.xml", XOMessageSecurityLabel.UGRADERT, XOMessagePriority.FLASH, XOMessageType.DRILL, new Date(), new LinkedList<Uri>());
 //        m.addAttachment(a);
-//        try {
-//            ns.send(m);
-//        } catch (Exception ex) {
-//            Logger.getLogger(NetworkServiceFactory.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        try {
+            ns.send(m);
+        } catch (Exception ex) {
+            Logger.getLogger(NetworkServiceFactory.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

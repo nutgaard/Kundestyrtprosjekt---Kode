@@ -6,17 +6,15 @@ package no.ntnu.kpro.core.model;
 
 import android.net.Uri;
 import android.os.Parcel;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.Session;
@@ -42,7 +40,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
     private String from;
     private String to;
     private String subject;
-    private List<URI> attachments;
+    private List<Uri> attachments;
     private String htmlBody;
     private String strippedBody;
     private String grading;
@@ -61,15 +59,19 @@ public class XOMessage implements ModelProxy.IXOMessage {
         this(from, to, subject, body, label, XOMessagePriority.ROUTINE, XOMessageType.OPERATION, new Date());
     }
 
-    public XOMessage(String id, String from, String to, String subject, String body, XOMessageSecurityLabel grading, XOMessagePriority priority, XOMessageType type, Date date) {
-        this(from, to, subject, body, grading, priority, type, date);
+    public XOMessage(String id, String from, String to, String subject, String body, XOMessageSecurityLabel grading, XOMessagePriority priority, XOMessageType type, Date date, Uri... uris) {
+        this(from, to, subject, body, grading, priority, type, date, uris);
         this.id = id;
     }
-    public XOMessage(String from, String to, String subject, String body, XOMessageSecurityLabel grading, XOMessagePriority priority, XOMessageType type, Date date) {
+    public XOMessage(String from, String to, String subject, String body, XOMessageSecurityLabel grading, XOMessagePriority priority, XOMessageType type, Date date, Uri... uris) {
+        this(from, to, subject, body, grading, priority, type, date, Arrays.asList(uris));
+    }
+    public XOMessage(String from, String to, String subject, String body, XOMessageSecurityLabel grading, XOMessagePriority priority, XOMessageType type, Date date, List<Uri> uris) {
         this.from = from;
         this.to = to;
         this.subject = subject;
-        this.attachments = new LinkedList<URI>();
+        this.attachments = new LinkedList<Uri>();
+        addAttachment(uris);
         this.htmlBody = body;
         this.strippedBody = body.replaceAll("\\<.*?>", "");
         this.grading = grading.name();
@@ -107,23 +109,12 @@ public class XOMessage implements ModelProxy.IXOMessage {
         return subject;
     }
     public void addAttachment(List<Uri> uri){
-        this.attachments.clear();
-        for (Uri u : uri){
-            try {
-                this.attachments.add(new URI(u.toString()));
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(XOMessage.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        this.attachments = uri;
     }
 
     @Override
     public List<Uri> getAttachments() {
-        List<Uri> o = new LinkedList<Uri>();
-        for (URI u : this.attachments){
-            o.add(Uri.parse(u.getPath()));
-        }
-        return o;
+        return this.attachments;
     }
     @Override
     public String getHtmlBody() {
