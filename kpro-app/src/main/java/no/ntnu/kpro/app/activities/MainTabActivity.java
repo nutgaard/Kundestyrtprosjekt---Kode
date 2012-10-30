@@ -4,29 +4,36 @@
  */
 package no.ntnu.kpro.app.activities;
 
-import android.content.BroadcastReceiver;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TabWidget;
-import no.ntnu.kpro.app.ContactsActivity;
+import android.widget.TextView;
+import android.widget.Toast;
 import no.ntnu.kpro.app.R;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
+import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.service.ServiceProvider;
+import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 /**
  *
  * @author Kristin
  */
-public class MainTabActivity extends WrapperActivity implements TabHost.OnTabChangeListener {
+public class MainTabActivity extends WrapperActivity implements TabHost.OnTabChangeListener, NetworkService.Callback {
 
     final static String TAG = "KPRO-GUI-MAINTAB";
+    TabHost tabHost;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,8 +52,10 @@ public class MainTabActivity extends WrapperActivity implements TabHost.OnTabCha
 //        }, null);
        
         
+        
+        
         // Finding the tabhost
-        TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
+        tabHost = (TabHost) findViewById(android.R.id.tabhost);
 
         tabHost.setup(this.getLocalActivityManager());
 
@@ -133,6 +142,13 @@ public class MainTabActivity extends WrapperActivity implements TabHost.OnTabCha
                 }
             });
         }
+        
+        Intent in = getIntent();
+        boolean isFlashOverride = in.getBooleanExtra("flashoverride", false);
+        if(isFlashOverride){
+            XOMessage currentMessage = in.getParcelableExtra("message");
+            this.mailReceived(currentMessage);
+        }
     }
 
     // Method for switching the current tab from outside
@@ -148,6 +164,8 @@ public class MainTabActivity extends WrapperActivity implements TabHost.OnTabCha
     }
 
     public void onTabChanged(String string) {
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(tabHost.getApplicationWindowToken(), 0);
         final String s = string;
         final boolean isLoggedIn = false; //Check in back-end
         if (isLoggedIn) {
@@ -155,5 +173,60 @@ public class MainTabActivity extends WrapperActivity implements TabHost.OnTabCha
 //            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
 //            startActivity(i);
         }
+    }
+    
+    @Override
+     public void mailReceived(IXOMessage message) {
+        super.mailReceived(message);
+        Log.i(TAG, "MainTab mailreceived");
+        final IXOMessage recMessage = message;
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(MainTabActivity.this, "1 new message", Toast.LENGTH_LONG).show();
+                XOMessagePriority priority = recMessage.getPriority();
+                Log.i("KPRO-GUI", priority.toString());
+                //Log.i("KPRO-GUI", recMessage.getSubject());
+                //Log.i("KPRO-GUI", recMessage.getStrippedBody());
+                if (priority.equals(XOMessagePriority.OVERRIDE) || priority.equals(XOMessagePriority.FLASH)) {
+
+                    final Dialog dialog = new Dialog(MainTabActivity.this);
+                    dialog.setContentView(R.layout.dialog_flash_override);
+                    dialog.setTitle("XOXOmail: Important message received!");
+                    dialog.setCancelable(true);
+
+                    TextView lblSubject = (TextView) dialog.findViewById(R.id.lblInstSubject);
+                    lblSubject.setText("Subject: " + recMessage.getSubject());
+
+                    TextView lblText = (TextView) dialog.findViewById(R.id.lblInstText);
+                    String text = recMessage.getStrippedBody().length() > 60 ? recMessage.getStrippedBody().substring(0, 59) : recMessage.getStrippedBody();
+                    lblText.setText("Text: " + text);
+
+                    Button btnOpen = (Button) dialog.findViewById(R.id.btnOpen);
+                    btnOpen.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View view) {
+                            Log.i("KPRO-GUI", "Clicking open");
+                            Intent i = new Intent(getApplicationContext(), MessageViewActivity.class);
+                            // sending data to new activity
+
+                            i.putExtra("folder", "Inbox");
+                            i.putExtra("message", recMessage);
+                            Log.i("KPRO-GUI", "Opening message " + recMessage.toString());
+                            recMessage.setOpened(true);
+                            startActivity(i);
+                            dialog.dismiss();
+                        }
+                    });
+
+                    Button btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    dialog.show();
+                }
+            }
+        });
     }
 }

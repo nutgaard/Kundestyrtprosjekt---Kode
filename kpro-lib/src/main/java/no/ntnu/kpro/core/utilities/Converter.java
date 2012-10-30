@@ -156,6 +156,7 @@ public class Converter {
             //            label = EnumHelper.getEnumValue(XOMessageSecurityLabel.class, m.getHeader(LABEL))[0];
             label = secLabelParsing(m.getHeader(LABEL));
             type = EnumHelper.getEnumValue(XOMessageType.class, m.getHeader(TYPE))[0];
+
             date = (m.getReceivedDate() == null) ? new Date() : m.getReceivedDate();
 
             XOMessage xo = new XOMessage(id, from, to, subject, body, label, priority, type, date);
