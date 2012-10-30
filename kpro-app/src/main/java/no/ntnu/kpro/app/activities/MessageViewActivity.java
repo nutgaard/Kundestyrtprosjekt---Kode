@@ -324,4 +324,9 @@ public class MessageViewActivity extends WrapperActivity {
 
 
     }
+    
+    @Override
+    public void mailReceived(IXOMessage message){
+        super.mailReceived(message);
+    }
 }

@@ -31,11 +31,11 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
         
         
-        Log.i("Settings", strategy);
-        Log.i("Settings", s);
+        //Log.i("Settings", strategy);
+        //Log.i("Settings", s);
         CharSequence[] labels = s.split(getResources().getString(R.string.separator));
         for (int i = 0; i < labels.length; i++) {
-            Log.i("Security label: ", labels[i].toString());
+            //Log.i("Security label: ", labels[i].toString());
         }
         
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
@@ -46,7 +46,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
     public void onSharedPreferenceChanged(SharedPreferences sp, String string) {
         updatePrefSummary(findPreference(string));
-        Log.w("Settings", "NOE SKJEDDE");
+        //Log.w("Settings", "NOE SKJEDDE");
     }
 
     private void updatePrefSummary(Preference p) {

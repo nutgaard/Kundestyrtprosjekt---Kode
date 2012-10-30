@@ -21,14 +21,16 @@ import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 import no.ntnu.kpro.core.model.XOMessageType;
+import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 /**
  *
  * @author Administrator
  */
-public class InstantMessageActivity extends WrapperActivity implements View.OnClickListener{
+public class InstantMessageActivity extends WrapperActivity implements View.OnClickListener, NetworkService.Callback {
+
     static final String TAG = "KPRO-GUI-INSTANT";
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -37,30 +39,30 @@ public class InstantMessageActivity extends WrapperActivity implements View.OnCl
         setContentView(R.layout.instant_message);
 
         updateFields();
-        
+
         Button btnSend = (Button) findViewById(R.id.btnSend);
         btnSend.setOnClickListener(this);
     }
-    
+
     @Override
-    public void onRestart(){
-       super.onRestart();
-       updateFields();
+    public void onRestart() {
+        super.onRestart();
+        updateFields();
     }
-    
+
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         updateFields();
     }
-    
-    private void updateFields(){
+
+    private void updateFields() {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        String from = sharedPrefs.getString("standard_receiver", "");
+        String from = sharedPrefs.getString("standard_receiver", "kprothales@gmail.com");
         TextView lblFrom = (TextView) findViewById(R.id.lblReceiver);
         lblFrom.setText(from);
-       
+
         String securityLabel = sharedPrefs.getString("standard_security_label", "UNCLASSIFIED");
         TextView lblSecurityLabel = (TextView) findViewById(R.id.lblSecurityLabel);
         lblSecurityLabel.setText(securityLabel);
@@ -70,59 +72,52 @@ public class InstantMessageActivity extends WrapperActivity implements View.OnCl
         } else {
             lblSecurityLabel.setTextColor(getResources().getColor(R.color.SIOLabelRed));
         }
-        
+
         String priority = sharedPrefs.getString("standard_priority", "Override");
         TextView lblPriority = (TextView) findViewById(R.id.lblPriority);
         lblPriority.setText(priority);
 
-        String type = sharedPrefs.getString("standard_type", "Operations");
+        String type = sharedPrefs.getString("standard_type", "Operation");
         TextView lblType = (TextView) findViewById(R.id.lblType);
         lblType.setText(type);
     }
-    
+
     public void onClick(View view) {
-        String lblReceiver = ((TextView)findViewById(R.id.lblReceiver)).getText().toString();
-        String lblLabel = ((TextView)findViewById(R.id.lblSecurityLabel)).getText().toString();
-        String lblPriority = ((TextView)findViewById(R.id.lblPriority)).getText().toString();
-        String lblType = ((TextView)findViewById(R.id.lblType)).getText().toString();
+        String lblReceiver = ((TextView) findViewById(R.id.lblReceiver)).getText().toString();
+        String lblLabel = ((TextView) findViewById(R.id.lblSecurityLabel)).getText().toString();
+        String lblPriority = ((TextView) findViewById(R.id.lblPriority)).getText().toString();
+        String lblType = ((TextView) findViewById(R.id.lblType)).getText().toString();
         Log.i(TAG, lblLabel);
         XOMessageSecurityLabel secLabel = EnumHelper.getEnumValue(XOMessageSecurityLabel.class, lblLabel);
         XOMessagePriority priority = EnumHelper.getEnumValue(XOMessagePriority.class, lblPriority);
         XOMessageType type = EnumHelper.getEnumValue(XOMessageType.class, lblType);
-        String text = ((EditText)findViewById(R.id.txtMessage)).getText().toString();
-        String subject = text.length() >= 60 ? text.substring(0, 59) : text;
-        
-        IXOMessage m = new XOMessage("MyMailAddress@gmail.com", lblReceiver, subject, text, secLabel, priority, type, new Date());
+        String text = ((EditText) findViewById(R.id.txtMessage)).getText().toString();
+        String subject = "";
+        if (text != null && text.length() > 0) {
+            subject = text.length() >= 60 ? text.substring(0, 59) : text;
+        } else {
+            text = "";
+            subject = "";
+        }
+        if (text == null) {
+            subject = "";
+        }
+
+        XOMessage m = new XOMessage("MyMailAddress@gmail.com", lblReceiver, subject, text, secLabel, priority, type, new Date());
+
         getServiceProvider().getNetworkService().send(m);
     }
-    
-    
-    
-//        Button createNewIM = (Button) findViewById(R.id.createInstantMessage);
-//        Button viewIM = (Button) findViewById(R.id.viewInstantMessages);
-//
-//        createNewIM.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View view) {
-//                
-//                Toast.makeText(getApplicationContext(), "LAG INSTAMESSAGE!", Toast.LENGTH_SHORT).show();
-//                Intent i = new Intent(getApplicationContext(), CreateInstantMessageActivity.class);
-//                startActivity(i);
-//
-//            }
-//        });
-//        viewIM.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View view) {
-//                Toast.makeText(getApplicationContext(), "SE INSTAMESSAGES!", Toast.LENGTH_SHORT).show();
-//                Intent i = new Intent(getApplicationContext(), ViewInstantMessagesActivity.class);
-//                startActivity(i);
-//            }
-//        });
 
     @Override
     public void mailSent(IXOMessage message, Address[] invalidAddress) {
         super.mailSent(message, invalidAddress);
-        EditText txtMessage = (EditText)findViewById(R.id.txtMessage);
-        txtMessage.setText("");
+        Log.i(TAG, "Trying to reset textfield");
+        runOnUiThread(new Runnable() {
+            public void run() {
+                EditText txtMessage = (EditText) findViewById(R.id.txtMessage);
+                txtMessage.setText("");
+            }
+        });
+
     }
 }

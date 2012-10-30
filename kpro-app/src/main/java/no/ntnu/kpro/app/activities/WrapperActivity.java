@@ -5,9 +5,11 @@
 package no.ntnu.kpro.app.activities;
 
 import android.app.ActivityGroup;
+import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.Service;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.util.Collections;
 import java.util.LinkedList;
+
 import java.util.List;
 import javax.mail.Address;
 import no.ntnu.kpro.app.R;
@@ -93,7 +96,9 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
         };
     }
 
+
     public void mailSent(IXOMessage message, Address[] invalidAddress) {
+        Log.i("KPRO-GUI-WRAPPER", "Her er den sendt");
         runOnUiThread(new Runnable() {
 
             public void run() {
@@ -111,23 +116,31 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
         });
     }
 
+
     public void mailReceived(IXOMessage message) {
-        final IXOMessage recMessage = message;
-        if (!dialogId.contains(recMessage.getId())) {
-            dialogId.add(recMessage.getId());
+        Log.i("KPRO-GUI-WRAPPER", this.getLocalClassName());
+        //Check if visible to limit to one
+        ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
+        String topActivity = services.get(0).topActivity.toString();
+        String pref = "ComponentInfo{no.ntnu.kpro.app/no.ntnu.kpro.app." + this.getLocalClassName() + "}";
+        Log.i("KPRO-GUI-WRAPPER", pref + "=" + topActivity);
+        
+        //
+        if (topActivity.equals("ComponentInfo{no.ntnu.kpro.app/no.ntnu.kpro.app." + this.getLocalClassName() + "}")) {
+            final IXOMessage recMessage = message;
             runOnUiThread(new Runnable() {
 
                 public void run() {
                     Toast.makeText(WrapperActivity.this, "1 new message", Toast.LENGTH_LONG).show();
                     XOMessagePriority priority = recMessage.getPriority();
                     Log.i("KPRO-GUI", priority.toString());
-                    Log.i("KPRO-GUI", recMessage.getSubject());
-                    Log.i("KPRO-GUI", recMessage.getStrippedBody());
                     if (priority.equals(XOMessagePriority.OVERRIDE) || priority.equals(XOMessagePriority.FLASH)) {
 
                         final Dialog dialog = new Dialog(WrapperActivity.this);
                         dialog.setContentView(R.layout.dialog_flash_override);
-                        dialog.setTitle("Important message received");
+
+                        dialog.setTitle("XOXOmail: Important message received!");
                         dialog.setCancelable(true);
 
                         TextView lblSubject = (TextView) dialog.findViewById(R.id.lblInstSubject);
@@ -166,9 +179,8 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
                     }
                 }
             });
-        }else {
-            System.out.println("Prevented double dialog");
         }
+
     }
 
     public void mailReceivedError(Exception ex) {

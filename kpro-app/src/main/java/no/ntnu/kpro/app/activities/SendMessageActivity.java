@@ -8,7 +8,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -43,6 +42,7 @@ import no.ntnu.kpro.core.utilities.FileHelper;
 import no.ntnu.kpro.core.model.Attachments;
 import no.ntnu.kpro.core.model.ExpandableListChild;
 import no.ntnu.kpro.core.model.ExpandableListGroup;
+import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
@@ -162,7 +162,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 //        getServiceProvider().register(this);
     }
 
-    public void mailSent(XOMessage message, Address[] invalidAddress) {
+    public void mailSent(IXOMessage message, Address[] invalidAddress) {
         super.mailSent(message, invalidAddress);
         runOnUiThread(new Runnable() {
             public void run() {
