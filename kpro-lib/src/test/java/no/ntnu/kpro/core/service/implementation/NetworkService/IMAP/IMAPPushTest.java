@@ -5,6 +5,7 @@
 package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 
 import com.sun.mail.smtp.SMTPTransport;
+import java.io.File;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,10 +19,12 @@ import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 import no.ntnu.kpro.core.model.XOMessageType;
 import no.ntnu.kpro.core.service.implementation.NetworkService.SMTP.SMTPSender;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
+import no.ntnu.kpro.core.service.interfaces.PersistenceService;
 import no.ntnu.kpro.core.utilities.Converter;
 import org.junit.After;
 import org.junit.Before;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  *
@@ -40,6 +43,7 @@ public class IMAPPushTest {
     private IMAPPush pusher;
     private SMTPSender sender;
     private Properties props;
+    private PersistenceService persistence;
 
     public IMAPPushTest() {
     }
@@ -59,6 +63,8 @@ public class IMAPPushTest {
         props.put("mail.imaps.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         props.put("mail.imaps.auth", "true");
         props.put("mail.imaps.port", "993");
+        when(persistence.createOutputFile(anyString())).thenReturn(new File("/."));
+        Converter.setup(persistence);
         sender = new SMTPSender(USER_NAME, USER_PASSWORD, EMAIL_USER_ADDRESS, props, new Authenticator() {
 
             @Override

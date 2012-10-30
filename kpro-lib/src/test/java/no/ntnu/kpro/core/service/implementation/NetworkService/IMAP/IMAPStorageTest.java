@@ -8,6 +8,7 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.DummySSLSocketFactory;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import java.io.File;
 import java.security.Security;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,10 +24,13 @@ import javax.mail.search.SearchTerm;
 import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
+import no.ntnu.kpro.core.service.interfaces.PersistenceService;
+import no.ntnu.kpro.core.utilities.Converter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  *
@@ -45,6 +49,7 @@ public class IMAPStorageTest {
     private IMAPStorage store;
     private Properties props;
     private GreenMailUser user;
+    private PersistenceService persistence;
 
     public IMAPStorageTest() {
     }
@@ -59,6 +64,10 @@ public class IMAPStorageTest {
         props.put("mail.imaps.port", ServerSetupTest.IMAPS.getPort());
         props.put("mail.imaps.auth", "true");
 
+        persistence = mock(PersistenceService.class);
+        when(persistence.createOutputFile(anyString())).thenReturn(new File("/."));
+        Converter.setup(persistence);
+        
         server.start();
         user = server.setUser(EMAIL_USER_ADDRESS, USER_NAME, USER_PASSWORD);
         store = new IMAPStorage(props, new Authenticator() {

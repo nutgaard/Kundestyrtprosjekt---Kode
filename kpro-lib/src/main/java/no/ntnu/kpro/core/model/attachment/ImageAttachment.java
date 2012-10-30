@@ -4,7 +4,7 @@
  */
 package no.ntnu.kpro.core.model.attachment;
 
-import java.net.URI;
+import android.net.Uri;
 
 
 
@@ -13,7 +13,7 @@ import java.net.URI;
  * @author Nicklas
  */
 public class ImageAttachment extends Attachment {
-     public ImageAttachment(URI uri){
+     public ImageAttachment(Uri uri){
         super(uri);
     }
     

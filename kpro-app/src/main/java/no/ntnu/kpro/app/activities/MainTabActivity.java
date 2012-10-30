@@ -4,7 +4,10 @@
  */
 package no.ntnu.kpro.app.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -32,6 +35,16 @@ public class MainTabActivity extends WrapperActivity implements TabHost.OnTabCha
         Log.i(TAG, "Starting onCreate in MainTabActivity");
         Log.i(TAG, "Setting content view");
 
+//        IntentFilter intentFilter = new IntentFilter("FlashOverride");
+//        getApplicationContext().registerReceiver(new BroadcastReceiver() {
+//
+//            @Override
+//            public void onReceive(Context cntxt, Intent intent) {
+//                throw new UnsupportedOperationException("Not supported yet.");
+//            }
+//        }, null);
+       
+        
         // Finding the tabhost
         TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
 
@@ -58,12 +71,12 @@ public class MainTabActivity extends WrapperActivity implements TabHost.OnTabCha
         instantSpec.setContent(instantIntent);
         Log.i(TAG, "Creating tabspec for instant message");
 
-        // Tab for Contacts
-        TabSpec contactsSpec = tabHost.newTabSpec("Contacts");
-        contactsSpec.setIndicator("", getResources().getDrawable(R.drawable.ic_tab_contact));
-        Intent contactsIntent = new Intent(this, ContactsActivity.class);
-        contactsSpec.setContent(contactsIntent);
-        Log.i(TAG, "Creating tabspec for contacts");
+//        // Tab for Contacts
+//        TabSpec contactsSpec = tabHost.newTabSpec("Contacts");
+//        contactsSpec.setIndicator("", getResources().getDrawable(R.drawable.ic_tab_contact));
+//        Intent contactsIntent = new Intent(this, ContactsActivity.class);
+//        contactsSpec.setContent(contactsIntent);
+//        Log.i(TAG, "Creating tabspec for contacts");
 
         // Tab for Settings
         TabSpec settingsSpec = tabHost.newTabSpec("Settings");
@@ -76,7 +89,7 @@ public class MainTabActivity extends WrapperActivity implements TabHost.OnTabCha
         tabHost.addTab(folderSpec); // Adding photos tab
         tabHost.addTab(newMessageSpec); // Adding songs tab
         tabHost.addTab(instantSpec); // Adding videos tab
-        tabHost.addTab(contactsSpec);
+       // tabHost.addTab(contactsSpec);
         tabHost.addTab(settingsSpec);
         Log.i(TAG, "Adding tabspecs to tabhost");
 

@@ -125,7 +125,6 @@ public class XOMessage implements ModelProxy.IXOMessage {
         }
         return o;
     }
-
     @Override
     public String getHtmlBody() {
         return htmlBody;

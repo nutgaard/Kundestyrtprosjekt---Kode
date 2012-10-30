@@ -7,6 +7,7 @@ package no.ntnu.kpro.core.service.implementation.NetworkService.SMTP;
 import com.icegreen.greenmail.util.DummySSLSocketFactory;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import java.io.File;
 import java.security.Security;
 import java.util.Date;
 import java.util.LinkedList;
@@ -21,10 +22,13 @@ import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 import no.ntnu.kpro.core.model.XOMessageType;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
+import no.ntnu.kpro.core.service.interfaces.PersistenceService;
+import no.ntnu.kpro.core.utilities.Converter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  *
@@ -34,6 +38,7 @@ public class SMTPSenderTest {
 
     SMTPSender sender;
     GreenMail server;
+    PersistenceService persistence;
     private static final String USER_PASSWORD = "kprothales2012";
     private static final String USER_NAME = "kprothales";
     private static final String EMAIL_USER_ADDRESS = "kprothales@gmail.com";
@@ -56,6 +61,10 @@ public class SMTPSenderTest {
                 return new PasswordAuthentication(USER_NAME, USER_PASSWORD);
             }
         };
+        
+        persistence = mock(PersistenceService.class);
+        when(persistence.createOutputFile(anyString())).thenReturn(new File("/."));
+        Converter.setup(persistence);
         sender = new SMTPSender(USER_NAME, USER_PASSWORD, EMAIL_USER_ADDRESS, props, auth, new LinkedList<NetworkService.Callback>());
 
         this.server = new GreenMail(ServerSetupTest.SMTPS);

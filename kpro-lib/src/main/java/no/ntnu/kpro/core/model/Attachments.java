@@ -35,7 +35,7 @@ public class Attachments extends ArrayList<Attachment> {
 
     public void removeAttachment(URI filePath) {
         for (Attachment obj : this) {
-            URI uri = obj.getUri();
+            Uri uri = obj.getUri();
             if (uri.getPath().equals(filePath.getPath())) {
                 remove(obj);
             }

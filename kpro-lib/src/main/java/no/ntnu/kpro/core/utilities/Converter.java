@@ -4,6 +4,7 @@
  */
 package no.ntnu.kpro.core.utilities;
 
+import android.net.Uri;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -36,66 +37,70 @@ import no.ntnu.kpro.core.service.interfaces.PersistenceService;
  * @author Nicklas
  */
 public class Converter {
+
     private static Converter instance;
     private PersistenceService persistence;
     public static String TAG = "CONVERTER";
     public static String LABEL = "SIO-Label";
     public static String PRIORITY = "MMHS-Primary-Precedence";
     public static String TYPE = "MMHS-Message-Type";
-    
-    private Converter(PersistenceService p){
+
+    private Converter(PersistenceService p) {
         this.persistence = p;
     }
-    public static void setup(PersistenceService ps){
+
+    public static void setup(PersistenceService ps) {
         instance = new Converter(ps);
     }
+
     public static Converter getInstance() {
         return instance;
     }
-    
-    public MimeMessage convertToMime(Session session, IXOMessage message) throws Exception {
-        MimeMessage mm = new MimeMessage(session);
-        Multipart multipart = new MimeMultipart();
 
-        mm.setFrom(new InternetAddress(message.getFrom()));
-        mm.setRecipients(Message.RecipientType.TO, InternetAddress.parse(message.getTo()));
-        mm.setSubject(message.getSubject(), "UTF-8");
-        mm.setHeader("Content-Type", "text/plain; charset=UTF-8");
-        mm.addHeader(PRIORITY, message.getPriority().toString());
-        mm.addHeader(LABEL, message.getGrading().getHeaderValue());
-        mm.addHeader(TYPE, message.getType().toString());
-        mm.setSentDate(message.getDate());
+    public MimeMessage convertToMime(Session session, IXOMessage message) {
+        try {
+            MimeMessage mm = new MimeMessage(session);
+            Multipart multipart = new MimeMultipart();
 
-        //Add body
-        MimeBodyPart body = new MimeBodyPart();
+            mm.setFrom(new InternetAddress(message.getFrom()));
+            mm.setRecipients(Message.RecipientType.TO, InternetAddress.parse(message.getTo()));
+            mm.setSubject(message.getSubject(), "UTF-8");
+            mm.setHeader("Content-Type", "text/plain; charset=UTF-8");
+            mm.addHeader(PRIORITY, message.getPriority().toString());
+            mm.addHeader(LABEL, message.getGrading().getHeaderValue());
+            mm.addHeader(TYPE, message.getType().toString());
+            mm.setSentDate(message.getDate());
+
+            //Add body
+            MimeBodyPart body = new MimeBodyPart();
 //        body.setText(message.getStrippedBody(), "UTF-8");
-        body.setContent(message.getStrippedBody(), "text/plain");
-        multipart.addBodyPart(body);
+            body.setContent(message.getStrippedBody(), "text/plain");
+            multipart.addBodyPart(body);
 
-        //Add attachments
+            //Add attachments
 
-        for (URI uri : message.getAttachments()) {
-            File f = new File(uri.getPath());
-            MimeBodyPart attachment = new MimeBodyPart();
-//            attachment.setHeader("Content-Transfer-Encoding", "base64");
-//            attachment.setHeader("Content-Type", "image/jpg");
-//            attachment.setHeader("Content-ID", f.getName());
-            attachment.setFileName(f.getName());
-//            attachment.setDisposition("inline");
-            DataSource source = new FileDataSource(uri.getPath());
-            attachment.setDataHandler(new DataHandler(source));
-            multipart.addBodyPart(attachment);
+            for (Uri uri : message.getAttachments()) {
+                File f = new File(uri.getPath());
+                MimeBodyPart attachment = new MimeBodyPart();
+                attachment.setFileName(f.getName());
+                DataSource source = new FileDataSource(uri.getPath());
+                attachment.setDataHandler(new DataHandler(source));
+                multipart.addBodyPart(attachment);
+            }
+            mm.setContent(multipart);
+            return mm;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        mm.setContent(multipart);
-        return mm;
+        return null;
     }
 
-    public XOMessage convertToXO(Message message) throws Exception {        
+    public XOMessage convertToXO(Message message) throws Exception {
         String id, from, to, subject, body = "";
         XOMessagePriority priority;
         XOMessageSecurityLabel label;
         XOMessageType type;
-        List<URI> attachments = new LinkedList<URI>();
+        List<Uri> attachments = new LinkedList<Uri>();
         Date date;
         if (message instanceof MimeMessage) {
             MimeMessage m = (MimeMessage) message;
@@ -103,7 +108,7 @@ public class Converter {
             from = convertAddressArray(m.getFrom());
             to = convertAddressArray(m.getRecipients(Message.RecipientType.TO));
             subject = m.getSubject();
-            
+
             if (m.getContentType().contains("multipart")) {
                 System.out.println("Message was multipart");
                 Multipart multipart = (Multipart) m.getContent();
@@ -113,8 +118,8 @@ public class Converter {
                     if (part.getContentType().toLowerCase().contains("text")) {
                         System.out.println("Found text part");
                         body = (String) multipart.getBodyPart(i).getContent();
-                    }else if (part.getContentType().toLowerCase().contains("image")) {
-                        System.out.println("Found image part: "+part.getFileName());
+                    } else if (part.getContentType().toLowerCase().contains("image")) {
+                        System.out.println("Found image part: " + part.getFileName());
                         String filename = part.getFileName();
                         InputStream is = part.getDataHandler().getInputStream();
                         System.out.println("Fetching outputstream");
@@ -122,14 +127,14 @@ public class Converter {
                         OutputStream os = new FileOutputStream(f);
                         int d;
                         System.out.println("writing to file");
-                        while ((d = is.read()) >=0){
+                        while ((d = is.read()) >= 0) {
                             os.write(d);
                         }
                         is.close();
                         os.close();
-                        attachments.add(f.toURI());
-                    }else {
-                        System.out.println("Unknown type: "+part.getContentType());
+                        attachments.add(Uri.parse(f.getPath()));
+                    } else {
+                        System.out.println("Unknown type: " + part.getContentType());
                     }
                 }
             } else {
@@ -145,6 +150,7 @@ public class Converter {
             xo.addAttachment(attachments);
             return xo;
         }
+        System.out.println("Returning null in converter");
         return null;
 //        return new XOMessage(from, to, subject, body, label, priority, type, date);
     }
@@ -169,5 +175,5 @@ public class Converter {
         }
         sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
-    }   
+    }
 }

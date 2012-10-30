@@ -5,6 +5,7 @@
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
 import android.content.Context;
+import android.content.Intent;
 import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -16,10 +17,10 @@ import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.User;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.factories.PersistenceServiceFactory;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAP;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPCache;
-import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPPull;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPPush;
 import no.ntnu.kpro.core.service.implementation.NetworkService.SMTP.SMTP;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
@@ -62,7 +63,7 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
     }
 
     public NetworkServiceImp(final String username, final String password, final String mailAdr, Properties properties, Context context) {
-        for (BoxName bn : BoxName.values()){
+        for (BoxName bn : BoxName.values()) {
             bn.getBox().clear();
         }
         cache = new IMAPCache(properties, username, password);
@@ -132,12 +133,15 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
     }
 
     public void mailReceived(IXOMessage message) {
-        getInbox().add(message);
         try {
             System.out.println("Saving GOD DAMNIT");
             message.setBoxAffiliation(BoxName.INBOX);
             this.persistence.save(message);
-            
+            Intent i = new Intent("FlashOverride");
+            i.putExtra("message", message);
+            // Broadcasting intent
+            ServiceProvider.getInstance().getApplicationContext().sendBroadcast(i);
+            getInbox().add(message);
         } catch (Exception ex) {
             Logger.getLogger(NetworkServiceImp.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -145,6 +149,7 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
 
     public void mailReceivedError(Exception ex) {
     }
+
     public PersistenceService getMessageStorage() {
         return persistence;
     }

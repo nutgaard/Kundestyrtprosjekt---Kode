@@ -33,6 +33,7 @@ public class ContactsActivity extends WrapperActivity {
         elements = new ArrayList<Contact>();
 
         Contact lars = new Contact("Lars", "lars.hoysaeter@gmail.com", 1);
+        Contact kpro = new Contact("KproThales", "kprothales@gmail.com", 2);
         Contact magnus = new Contact("Magnus", "magnus@gmail.com", 2);
         Contact aleksander = new Contact("Aleksander", "aleksander@gmail.com", 2);
         Contact ida = new Contact("Ida", "Ida@gmail.com", 2);
@@ -41,6 +42,7 @@ public class ContactsActivity extends WrapperActivity {
         Contact christian = new Contact("Christian", "Christian@thales.no", 2);
         Contact stig = new Contact("Stig", "Stig@thales.no", 2);
 
+        elements.add(kpro);
         elements.add(lars);
         elements.add(magnus);
         elements.add(aleksander);

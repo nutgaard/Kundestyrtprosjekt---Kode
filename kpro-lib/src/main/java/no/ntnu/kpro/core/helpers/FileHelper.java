@@ -61,4 +61,12 @@ public class FileHelper {
         }
         return mediaFile;
     }
+    
+    public static String getImageFileLastPathSegmentFromImage(Uri uri){
+        String fileName = uri.getLastPathSegment();
+        if(!fileName.contains(".")){
+            fileName += ".jpg";
+        }
+        return fileName;
+    }
 }

@@ -12,17 +12,17 @@ import java.net.URI;
  * @author Nicklas
  */
 public abstract class Attachment {
-    protected URI uri;
+    protected Uri uri;
 
-    public Attachment(URI uri) {
+    public Attachment(Uri uri) {
         this.uri = uri;
     }
 
-    public URI getUri() {
+    public Uri getUri() {
         return uri;
     }
 
-    public void setUri(URI uri) {
+    public void setUri(Uri uri) {
         this.uri = uri;
     }
     @Override

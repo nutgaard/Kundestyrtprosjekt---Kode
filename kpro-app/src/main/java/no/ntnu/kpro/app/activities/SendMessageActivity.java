@@ -115,7 +115,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         attachments = new Attachments();
 
         startLocationFetching();
-
         this.fillExpandableList();
 
     }
@@ -402,7 +401,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                 });
     }
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 67;
-    private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 73;
     private static final int FETCH_IMAGE_ACTIVITY_REQUEST_CODE = 77;
     private static final int FETCH_CONTACT_REQUEST_CODE = 1337;
     private Uri attachmentUri;
@@ -416,7 +414,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                 AlertDialog.Builder builder = new AlertDialog.Builder(SendMessageActivity.this);
 
                 builder.setTitle("Select Content");
-                builder.setAdapter(adapter, null);
 
                 builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
@@ -594,9 +591,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         OnChildClickListener childClickListener = new OnChildClickListener() {
             public boolean onChildClick(ExpandableListView elv, View view, int i, int i1, long l) {
                 ExpandableListChild currentChild = children.get(i1);
-                Uri uri = currentChild.getUri();
-
-                Toast t = Toast.makeText(SendMessageActivity.this, "Clicked parent:" + i + ". Child: " + i1, Toast.LENGTH_LONG);
                 logMe("Starting intent...");
                 logMe("Uri is: " + currentChild.getUri().toString());
                 Intent showImageIntent = new Intent();
@@ -620,16 +614,8 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     }
 
     private void addAttachmentToDropDown(Uri uri) {
-        String name = "Image " + imageCounter++ + " (" + getImageFileLastPathSegment(uri) + ")";
+        String name = "Image " + imageCounter++ + " (" + FileHelper.getImageFileLastPathSegmentFromImage(uri) + ")";
         ExpandableListChild child = new ExpandableListChild(name, uri);
         children.add(child);
-    }
-
-    private String getImageFileLastPathSegment(Uri uri) {
-        String fileName = uri.getLastPathSegment();
-        if (!fileName.contains(".")) {
-            fileName += ".jpg";
-        }
-        return fileName;
     }
 }
