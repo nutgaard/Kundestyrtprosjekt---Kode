@@ -34,6 +34,7 @@
         <EditTextPreference 
             android:key="standard_receiver"
             android:summary="Set standard receiver"
+            android:defaultValue="kprothales@gmail.com"
             android:title="Standard receiver"/>
         <ListPreference
             android:key="standard_security_label"

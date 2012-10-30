@@ -4,13 +4,11 @@
  */
 package no.ntnu.kpro.app.activities;
 
-import no.ntnu.kpro.app.activities.SendMessageActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.core.model.XOMessage;
 

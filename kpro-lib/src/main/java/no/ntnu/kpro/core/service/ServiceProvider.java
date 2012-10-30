@@ -13,6 +13,8 @@ import android.util.Log;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import no.ntnu.kpro.core.model.ModelProxy.IUser;
+import no.ntnu.kpro.core.model.User;
 import no.ntnu.kpro.core.service.factories.HALServiceFactory;
 import no.ntnu.kpro.core.service.factories.NetworkServiceFactory;
 import no.ntnu.kpro.core.service.factories.PersistenceServiceFactory;
@@ -146,5 +148,9 @@ public class ServiceProvider extends Service {
     //Can to this because Service is implicit singleton
     public static ServiceProvider getInstance() {
         return instance;
+    }
+    
+    public IUser login(IUser user){
+        return user;
     }
 }

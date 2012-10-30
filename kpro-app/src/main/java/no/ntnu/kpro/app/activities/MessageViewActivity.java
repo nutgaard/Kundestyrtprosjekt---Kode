@@ -294,4 +294,9 @@ public class MessageViewActivity extends WrapperActivity {
 
 
     }
+    
+    @Override
+    public void mailReceived(XOMessage message){
+        super.mailReceived(message);
+    }
 }
