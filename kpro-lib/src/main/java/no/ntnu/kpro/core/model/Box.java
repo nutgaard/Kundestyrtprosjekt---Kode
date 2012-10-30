@@ -29,6 +29,14 @@ public class Box<T> extends ArrayList<T> {
         }
         return null;
     }  
+    @Override
+    public boolean add(T e){
+        if (!super.contains(e)){
+            return super.add(e);
+        }
+        return false;
+    }
+    
     
     
 }
