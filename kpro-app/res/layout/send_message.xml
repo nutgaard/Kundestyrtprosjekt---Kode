@@ -101,18 +101,9 @@
             android:layout_below="@id/sprType"
             android:text="Add attachment"/>
 
-        <!--ATTACHMENTS LIST-->
-<!--        <ListView
-            android:id="@+id/lstAttachments"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@id/btnAddAttachment">
-            android:layout_above="@id/txtMessage">
-        </ListView>-->
-        
         <ExpandableListView
                 android:id="@+id/ExpList"
-                android:layout_height="150dp"
+                android:layout_height="75dp"
                 android:layout_width="fill_parent"
                 android:groupIndicator="@null" 
                 android:layout_below="@id/btnAddAttachment"/>

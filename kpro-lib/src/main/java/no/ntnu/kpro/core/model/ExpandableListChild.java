@@ -5,6 +5,8 @@
 package no.ntnu.kpro.core.model;
 
 import android.net.Uri;
+import android.util.Log;
+import no.ntnu.kpro.core.helpers.FileHelper;
 
 /**
  *
@@ -12,22 +14,22 @@ import android.net.Uri;
  */
 public class ExpandableListChild {
 
-	private String name;
-	private Uri uri;
-        
-        public ExpandableListChild(String name, Uri uri){
-            this.name = name;
-            this.uri = uri;
-        }
-	
-	public String getName() {
-		return name + " ( " + uri.getLastPathSegment() + ")";
-	}
-	
-	public Uri getUri() {
-		return this.uri;
-                
-	}
-	
-}
+    private String name;
+    private Uri uri;
 
+    public ExpandableListChild(String name, Uri uri) {
+        this.name = name;
+        this.uri = uri;
+    }
+
+    public String getName() {
+        String fileName = name + "(" + FileHelper.getImageFileLastPathSegmentFromImage(uri) + ")";
+        Log.i("ListChild", "I is in getName, and name is: " + name);
+        return fileName;
+    }
+
+    public Uri getUri() {
+        return this.uri;
+
+    }
+}
