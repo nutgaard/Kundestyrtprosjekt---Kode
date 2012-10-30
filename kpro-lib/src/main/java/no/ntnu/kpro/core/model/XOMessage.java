@@ -7,6 +7,7 @@ package no.ntnu.kpro.core.model;
 import android.net.Uri;
 import android.os.Parcel;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
@@ -14,6 +15,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.Session;
@@ -103,13 +106,24 @@ public class XOMessage implements ModelProxy.IXOMessage {
     public String getSubject() {
         return subject;
     }
-    public void addAttachment(List<URI> uri){
-        this.attachments = uri;
+    public void addAttachment(List<Uri> uri){
+        this.attachments.clear();
+        for (Uri u : uri){
+            try {
+                this.attachments.add(new URI(u.toString()));
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(XOMessage.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     @Override
-    public List<URI> getAttachments() {
-        return attachments;
+    public List<Uri> getAttachments() {
+        List<Uri> o = new LinkedList<Uri>();
+        for (URI u : this.attachments){
+            o.add(Uri.parse(u.getPath()));
+        }
+        return o;
     }
 
     @Override

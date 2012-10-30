@@ -4,6 +4,7 @@
  */
 package no.ntnu.kpro.core.model;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import java.net.URI;
@@ -46,7 +47,7 @@ public class ModelProxy {
             }
         };
 
-        void addAttachment(List<URI> is);
+        void addAttachment(List<Uri> is);
 
         int compareTo(XOMessage o);
 
@@ -54,7 +55,7 @@ public class ModelProxy {
 
         boolean equals(Object obj);
 
-        List<URI> getAttachments();
+        List<Uri> getAttachments();
 
         Date getDate();
 
