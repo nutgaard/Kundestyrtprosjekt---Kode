@@ -4,8 +4,9 @@
  */
 package no.ntnu.kpro.core.model;
 
+import android.net.Uri;
 import android.os.Parcel;
-import java.io.InputStream;
+import java.net.URI;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
@@ -38,7 +39,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
     private String from;
     private String to;
     private String subject;
-    private List<InputStream> attachments;
+    private List<URI> attachments;
     private String htmlBody;
     private String strippedBody;
     private String grading;
@@ -65,7 +66,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
         this.from = from;
         this.to = to;
         this.subject = subject;
-        this.attachments = new LinkedList<InputStream>();
+        this.attachments = new LinkedList<URI>();
         this.htmlBody = body;
         this.strippedBody = body.replaceAll("\\<.*?>", "");
         this.grading = grading.name();
@@ -102,14 +103,12 @@ public class XOMessage implements ModelProxy.IXOMessage {
     public String getSubject() {
         return subject;
     }
-    
-    @Override
-    public void addAttachment(InputStream is) {
-        this.attachments.add(is);
+    public void addAttachment(List<URI> uri){
+        this.attachments = uri;
     }
 
     @Override
-    public List<InputStream> getAttachments() {
+    public List<URI> getAttachments() {
         return attachments;
     }
 
@@ -168,7 +167,11 @@ public class XOMessage implements ModelProxy.IXOMessage {
         return "XOMessage{" + "from=" + from + ", to=" + to + ", subject=" + subject + ", attachments=" + attachments + ", htmlBody=" + htmlBody + ", strippedBody=" + strippedBody + ", grading=" + grading + ", priority=" + priority + ", type=" + type + ", date=" + date + ", opened=" + opened + '}';
     }
 
-    
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -188,20 +191,42 @@ public class XOMessage implements ModelProxy.IXOMessage {
         if ((this.subject == null) ? (other.subject != null) : !this.subject.equals(other.subject)) {
             return false;
         }
+        if (this.attachments != other.attachments && (this.attachments == null || !this.attachments.equals(other.attachments))) {
+            return false;
+        }
         if ((this.htmlBody == null) ? (other.htmlBody != null) : !this.htmlBody.equals(other.htmlBody)) {
             return false;
         }
-        if (this.grading != other.grading) {
+        if ((this.strippedBody == null) ? (other.strippedBody != null) : !this.strippedBody.equals(other.strippedBody)) {
             return false;
         }
-        if (this.priority != other.priority) {
+        if ((this.grading == null) ? (other.grading != null) : !this.grading.equals(other.grading)) {
             return false;
         }
-        if (this.type != other.type) {
+        if ((this.priority == null) ? (other.priority != null) : !this.priority.equals(other.priority)) {
+            return false;
+        }
+        if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
+            return false;
+        }
+        if (this.date != other.date && (this.date == null || !this.date.equals(other.date))) {
+            return false;
+        }
+        if (this.opened != other.opened) {
+            return false;
+        }
+        if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
+            return false;
+        }
+        if ((this.boxAffiliation == null) ? (other.boxAffiliation != null) : !this.boxAffiliation.equals(other.boxAffiliation)) {
             return false;
         }
         return true;
     }
+
+    
+
+    
 
     @Override
     public int describeContents() {

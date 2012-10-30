@@ -25,7 +25,6 @@ public class PersistentWriteThroughStorage extends PersistenceService {
     private PersistencePostProcessor postProcessor;
     private XStream xstream;
     private Map<String, Integer> index;
-    private File baseDir;
 
     public void close() {
         this.user = null;
@@ -36,14 +35,14 @@ public class PersistentWriteThroughStorage extends PersistenceService {
     }
 
     public PersistentWriteThroughStorage(User user, PersistencePostProcessor postProcessor, File basedir) throws Exception {
+        super(basedir);
         this.user = user;
         this.postProcessor = postProcessor;
         this.xstream = new XStream();
         xstream.addImplicitCollection(ConcurrentHashMap.class, "classes");
         xstream.addImplicitCollection(Attachments.class, "attachments");
-        this.baseDir = basedir;
-        if (!basedir.exists()) {
-            basedir.mkdirs();
+        if (!baseDir.exists()) {
+            baseDir.mkdirs();
         }
         getIndex();
     }

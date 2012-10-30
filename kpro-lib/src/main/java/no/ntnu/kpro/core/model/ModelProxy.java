@@ -6,7 +6,7 @@ package no.ntnu.kpro.core.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import java.io.InputStream;
+import java.net.URI;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -46,7 +46,7 @@ public class ModelProxy {
             }
         };
 
-        void addAttachment(InputStream is);
+        void addAttachment(List<URI> is);
 
         int compareTo(XOMessage o);
 
@@ -54,7 +54,7 @@ public class ModelProxy {
 
         boolean equals(Object obj);
 
-        List<InputStream> getAttachments();
+        List<URI> getAttachments();
 
         Date getDate();
 

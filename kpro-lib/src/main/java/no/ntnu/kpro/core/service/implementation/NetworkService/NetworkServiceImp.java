@@ -24,6 +24,7 @@ import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPPush;
 import no.ntnu.kpro.core.service.implementation.NetworkService.SMTP.SMTP;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.service.interfaces.PersistenceService;
+import no.ntnu.kpro.core.utilities.Converter;
 
 /**
  *
@@ -66,6 +67,7 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
         }
         cache = new IMAPCache(properties, username, password);
         this.persistence = PersistenceServiceFactory.createMessageStorage(new User(username, password), context);
+        Converter.setup(persistence);
         Date lastSeen = new Date(0);
         try {
             IXOMessage[] savedMessages = PersistenceService.castTo(this.persistence.findAll(XOMessage.class), IXOMessage[].class);
@@ -85,18 +87,19 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
                 return new PasswordAuthentication(username, password);
             }
         }, listeners);
-        IMAPStrategy s = new IMAPPull(properties, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        }, lastSeen, listeners, 10, cache);
+//        IMAPStrategy s = new IMAPPull(properties, new Authenticator() {
+//            @Override
+//            protected PasswordAuthentication getPasswordAuthentication() {
+//                return new PasswordAuthentication(username, password);
+//            }
+//        }, lastSeen, listeners, 10, cache);
         IMAPStrategy ss = new IMAPPush(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(username, password);
             }
         }, lastSeen, listeners, cache);
+        System.err.println("JUST ONCE PLEASE");
         this.imap = new IMAP(ss);
         listeners.add(this);
     }
@@ -134,11 +137,15 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
             System.out.println("Saving GOD DAMNIT");
             message.setBoxAffiliation(BoxName.INBOX);
             this.persistence.save(message);
+            
         } catch (Exception ex) {
             Logger.getLogger(NetworkServiceImp.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void mailReceivedError(Exception ex) {
+    }
+    public PersistenceService getMessageStorage() {
+        return persistence;
     }
 }

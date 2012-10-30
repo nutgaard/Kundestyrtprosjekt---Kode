@@ -117,7 +117,7 @@ public class IMAPPush extends IMAPStrategy implements MessageCountListener {
                     continue;
                 }
                 for (NetworkService.Callback cb : listeners) {
-                    XOMessage xo = Converter.convertToXO(m);
+                    XOMessage xo = Converter.getInstance().convertToXO(m);
                     cb.mailReceived(xo);
                     cache.cache(im.getMessageID(), im, xo);
                 }

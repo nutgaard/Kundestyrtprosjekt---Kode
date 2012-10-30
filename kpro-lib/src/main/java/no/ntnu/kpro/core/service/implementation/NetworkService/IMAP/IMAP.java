@@ -30,6 +30,7 @@ public class IMAP extends Thread {
     public void run() {
         while (run) {
             if (strategy != null) {
+                System.out.println("STARTING IMAP..............");
                 strategy.run();
             }
         }

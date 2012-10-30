@@ -34,7 +34,7 @@ public class SMTPSender {
     public boolean sendMail(IXOMessage msg) {
         try {
             Session session = Session.getInstance(this.props, this.auth);
-            MimeMessage message = Converter.convertToMime(session, msg);
+            MimeMessage message = Converter.getInstance().convertToMime(session, msg);
 
             SMTPTransport t = (SMTPTransport) session.getTransport("smtps");
             t.addTransportListener(new LocalTransportListener());
@@ -62,7 +62,7 @@ public class SMTPSender {
             try {
                 //Callback
                 for (Callback cb : listener) {
-                    cb.mailSent(Converter.convertToXO(te.getMessage()), te.getInvalidAddresses());
+                    cb.mailSent(Converter.getInstance().convertToXO(te.getMessage()), te.getInvalidAddresses());
                 }
             } catch (Exception ex) {
                 Logger.getLogger(SMTPSender.class.getName()).log(Level.SEVERE, null, ex);
@@ -72,7 +72,7 @@ public class SMTPSender {
         public void messageNotDelivered(TransportEvent te) {
             XOMessage msg;
             try {
-                msg = Converter.convertToXO(te.getMessage());
+                msg = Converter.getInstance().convertToXO(te.getMessage());
                 sendMail(msg);
                 //Retry sending
                 for (Callback cb : listener) {

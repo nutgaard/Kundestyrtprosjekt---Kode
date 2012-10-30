@@ -6,6 +6,7 @@ package no.ntnu.kpro.core.model;
 
 import android.net.Uri;
 import android.util.Log;
+import java.net.URI;
 import java.util.ArrayList;
 //import java.util.LinkedHashMap;
 import no.ntnu.kpro.core.model.attachment.Attachment;
@@ -32,9 +33,9 @@ public class Attachments extends ArrayList<Attachment> {
         
     }
 
-    public void removeAttachment(Uri filePath) {
+    public void removeAttachment(URI filePath) {
         for (Attachment obj : this) {
-            Uri uri = obj.getUri();
+            URI uri = obj.getUri();
             if (uri.getPath().equals(filePath.getPath())) {
                 remove(obj);
             }

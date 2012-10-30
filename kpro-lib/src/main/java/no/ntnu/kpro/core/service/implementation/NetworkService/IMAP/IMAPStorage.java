@@ -66,8 +66,8 @@ public class IMAPStorage {
                     cache.update(im.getMessageID(), im);
                     continue;
                 } else {
+                    XOMessage xo = Converter.getInstance().convertToXO(m);
                     for (NetworkService.Callback cb : listeners) {
-                        XOMessage xo = Converter.convertToXO(m);
                         cb.mailReceived(xo);
                         cache.cache(im.getMessageID(), im, xo);
                     }

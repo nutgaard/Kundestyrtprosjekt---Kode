@@ -5,9 +5,16 @@
 package no.ntnu.kpro.core.service.factories;
 
 import android.content.Context;
+import java.util.Date;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.mail.Address;
 import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
+import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.XOMessagePriority;
+import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
+import no.ntnu.kpro.core.model.XOMessageType;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
@@ -55,5 +62,14 @@ public class NetworkServiceFactory {
                 System.out.println("MailreceivedError");
             }
         });
+//        List<URI> a = new LinkedList<URI>();
+//        a.add(URI.create("./Koala.jpg"));
+//        XOMessage m = new XOMessage("kprothales@gmail.com", "kprothales@gmail.com", "Sending with attachment", "Look at the attachments, should contain pom.xml", XOMessageSecurityLabel.UGRADERT, XOMessagePriority.FLASH, XOMessageType.DRILL, new Date());
+//        m.addAttachment(a);
+//        try {
+//            ns.send(m);
+//        } catch (Exception ex) {
+//            Logger.getLogger(NetworkServiceFactory.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
 }

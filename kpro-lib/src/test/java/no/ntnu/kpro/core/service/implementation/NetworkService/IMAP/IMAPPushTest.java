@@ -113,7 +113,7 @@ public class IMAPPushTest {
                 return new PasswordAuthentication(USER_NAME, USER_PASSWORD);
             }
         });
-        MimeMessage message = Converter.convertToMime(session, s);
+        MimeMessage message = Converter.getInstance().convertToMime(session, s);
 
         SMTPTransport t = (SMTPTransport) session.getTransport("smtps");
         t.connect(this.props.getProperty("mail.smtps.host"), EMAIL_USER_ADDRESS, USER_PASSWORD);

@@ -83,7 +83,7 @@ public class IMAPCache {
                 return null;
             } else {
                 try {
-                    cache.put(messages[0].getMessageID(), new Pair<IMAPMessage,IXOMessage>(messages[0], Converter.convertToXO(messages[0])));
+                    cache.put(messages[0].getMessageID(), new Pair<IMAPMessage,IXOMessage>(messages[0], Converter.getInstance().convertToXO(messages[0])));
                 } catch (Exception ex) {
                     Logger.getLogger(IMAPCache.class.getName()).log(Level.SEVERE, null, ex);
                 }

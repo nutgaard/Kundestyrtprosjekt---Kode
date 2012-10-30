@@ -2,8 +2,11 @@ target
 *.iws
 *.ipr
 *.iml
+*.jpg
+*.png
 .settings
 .classpath
 .project
 .idea
 gen
+kpro-lib/kprothales/

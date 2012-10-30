@@ -5,23 +5,24 @@
 package no.ntnu.kpro.core.model.attachment;
 
 import android.net.Uri;
+import java.net.URI;
 
 /**
  *
  * @author Nicklas
  */
 public abstract class Attachment {
-    protected Uri uri;
+    protected URI uri;
 
-    public Attachment(Uri uri) {
+    public Attachment(URI uri) {
         this.uri = uri;
     }
 
-    public Uri getUri() {
+    public URI getUri() {
         return uri;
     }
 
-    public void setUri(Uri uri) {
+    public void setUri(URI uri) {
         this.uri = uri;
     }
     @Override
