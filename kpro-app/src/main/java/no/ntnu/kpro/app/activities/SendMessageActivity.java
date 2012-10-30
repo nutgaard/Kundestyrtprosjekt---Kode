@@ -80,7 +80,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     //Attachments//
     private ExpandableListView expList;
     private Attachments attachments;
-    private List<String> attachmentsVisualRepresentation;
+    ArrayList<ExpandableListChild> attachmentsListChildren;
     //Intents
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 67;
     private static final int FETCH_IMAGE_ACTIVITY_REQUEST_CODE = 77;
@@ -122,6 +122,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         //Attachments//
         expandList = (ExpandableListView) findViewById(R.id.ExpList);
         attachments = new Attachments();
+        attachmentsListChildren = new ArrayList<ExpandableListChild>();
 
         startLocationFetching();
         this.fillExpandableList();
@@ -170,6 +171,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             public void run() {
                 Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent", Toast.LENGTH_SHORT);
                 confirm.show();
+                SendMessageActivity.this.resetFields();
             }
         });
     }
@@ -252,6 +254,10 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         txtSubject.setText("");
         txtMessageBody.setText("");
         sprSecurityLabel.setSelection(0);
+        this.attachmentUri = null;
+        this.attachments.clear();
+        this.attachmentsListChildren.clear();
+        this.fillExpandableList();
         setDefaultSpinnerValues();
     }
 
@@ -276,19 +282,11 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         if (!textEnteredInReceiver) {
             return false;
         }
-//
-//        //If we are in the receiver field, not show
-//        //error message, as this is annoying, just return false. It is also annoying to
-//        //
-//        if (isInReceiverField) {
-//            return false;
-//        }
-
-        //Validate email
-        if (!isValidEmail && !isInReceiverField) {
+     
+        if (!isValidEmail && !isInReceiverField) {    //Set error on receiver field only if mail is invalid and we are not in it.
             txtReceiver.setError(getString(R.string.invalidMessageReceiverError));
             return false;
-        } else if (isValidEmail) {
+        } else if (isValidEmail) { //Only clear the error message if it is a valid mail.
             txtReceiver.setError(null);
         }
         return isValidEmail;
@@ -519,7 +517,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         OnChildClickListener childClickListener = new OnChildClickListener() {
             public boolean onChildClick(ExpandableListView elv, View view, int i, int i1, long l) {
-                ExpandableListChild currentChild = children.get(i1);
+                ExpandableListChild currentChild = attachmentsListChildren.get(i1);
                 logMe("Starting intent...");
                 logMe("Uri is: " + currentChild.getUri().toString());
                 Intent showImageIntent = new Intent();
@@ -531,20 +529,21 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         };
         expandList.setOnChildClickListener(childClickListener);
     }
-    ArrayList<ExpandableListChild> children = new ArrayList<ExpandableListChild>();
+    
+    
 
     private ArrayList<ExpandableListGroup> getExpandableListItems() {
         ArrayList<ExpandableListGroup> listGroups = new ArrayList<ExpandableListGroup>();
         ExpandableListGroup attachmentsGroup = new ExpandableListGroup();
         attachmentsGroup.setName("Attachments");
-        attachmentsGroup.setItems(children);
+        attachmentsGroup.setItems(attachmentsListChildren);
         listGroups.add(attachmentsGroup);
         return listGroups;
     }
 
     private void addAttachmentToDropDown(Uri uri) {
-        String name = "Image " + imageCounter++ + " (" + FileHelper.getImageFileLastPathSegmentFromImage(uri) + ")";
+        String name = "Image " + imageCounter++;
         ExpandableListChild child = new ExpandableListChild(name, uri);
-        children.add(child);
+        attachmentsListChildren.add(child);
     }
 }

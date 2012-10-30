@@ -65,8 +65,10 @@ public class FileHelper {
     public static String getImageFileLastPathSegmentFromImage(Uri uri){
         String fileName = uri.getLastPathSegment();
         if(!fileName.contains(".")){
+            Log.d("FileHelper", "I is in pathSegment and i contain DOTT");
             fileName += ".jpg";
         }
+        Log.d("FileHelper", "I has no dott.");
         return fileName;
     }
 }
