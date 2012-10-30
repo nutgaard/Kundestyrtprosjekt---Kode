@@ -231,9 +231,11 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         XOMessageType selectedType = EnumHelper.getEnumValue(XOMessageType.class, selectedTypeString);
 
                         //Do all validation, both intermediate validation and send validation.
-                        if (doSendButtonValidation()) {
-                            XOMessage m = new XOMessage("MyMailAddress@gmail.com", txtReceiver.getText().toString(), txtSubject.getText().toString(), txtMessageBody.getText().toString(), selectedSecurity, selectedPriority, selectedType, new Date());
-                            getServiceProvider().getNetworkService().send(m);
+                        if (doIntermediateValidation(false)) {
+                            if (doSendButtonValidation()) {
+                                XOMessage m = new XOMessage("MyMailAddress@gmail.com", txtReceiver.getText().toString(), txtSubject.getText().toString(), txtMessageBody.getText().toString(), selectedSecurity, selectedPriority, selectedType, new Date());
+                                getServiceProvider().getNetworkService().send(m);
+                            }
                         }
                     }
                 });
@@ -282,7 +284,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         if (!textEnteredInReceiver) {
             return false;
         }
-     
+
         if (!isValidEmail && !isInReceiverField) {    //Set error on receiver field only if mail is invalid and we are not in it.
             txtReceiver.setError(getString(R.string.invalidMessageReceiverError));
             return false;
@@ -512,6 +514,13 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private void fillExpandableList() {
 
         expListItems = getExpandableListItems();
+
+        if (attachmentsListChildren.isEmpty()) {
+            expandList.setVisibility(View.GONE);
+        } else {
+            expandList.setVisibility(View.VISIBLE);
+        }
+
         expAdapter = new ExpandableListAdapter(SendMessageActivity.this, expListItems);
         expandList.setAdapter(expAdapter);
 
@@ -529,8 +538,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         };
         expandList.setOnChildClickListener(childClickListener);
     }
-    
-    
 
     private ArrayList<ExpandableListGroup> getExpandableListItems() {
         ArrayList<ExpandableListGroup> listGroups = new ArrayList<ExpandableListGroup>();
