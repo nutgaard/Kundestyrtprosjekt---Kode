@@ -7,7 +7,6 @@ package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPMessage;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import javax.mail.Authenticator;
 import javax.mail.Folder;
@@ -15,13 +14,11 @@ import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.search.SearchTerm;
-import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp.BoxName;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.service.interfaces.NetworkService.Callback;
 import no.ntnu.kpro.core.utilities.Converter;
-import no.ntnu.kpro.core.utilities.Pair;
 
 /**
  *
@@ -58,20 +55,13 @@ public class IMAPStorage {
                     break;
                 }
                 IMAPMessage im = (IMAPMessage) m;
-                if (cache.containsIMAPMessage(im.getMessageID())) {
-                    System.out.println("Message allready fully cached");
-                    continue;
-                } else if (cache.contains(im.getMessageID())) {
-                    System.out.println("Message was mediumcached, updating");
-                    cache.update(im.getMessageID(), im);
-                    continue;
-                } else {
+                 if (!cache.contains(im.getMessageID())) {
                     XOMessage xo = Converter.getInstance().convertToXO(m);
                     for (NetworkService.Callback cb : listeners) {
                         cb.mailReceived(xo);
-                        cache.cache(im.getMessageID(), im, xo);
+                        cache.cache(im.getMessageID(), xo);
                     }
-                }
+                } 
             }
             store.close();
             return messages;
