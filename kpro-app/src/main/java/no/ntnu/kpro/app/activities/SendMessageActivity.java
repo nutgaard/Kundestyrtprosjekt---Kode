@@ -229,14 +229,10 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         XOMessageType selectedType = EnumHelper.getEnumValue(XOMessageType.class, selectedTypeString);
 
                         //Do all validation, both intermediate validation and send validation.
-                        if (doIntermediateValidation(false)) {
-                            if (doSendButtonValidation()) {
-                                XOMessage m = new XOMessage("MyMailAddress@gmail.com", txtReceiver.getText().toString(), txtSubject.getText().toString(), txtMessageBody.getText().toString(), selectedSecurity, selectedPriority, selectedType, new Date());
-                                getServiceProvider().getNetworkService().send(m);
-                            }
+                        if (doSendButtonValidation()) {
+                            XOMessage m = new XOMessage("MyMailAddress@gmail.com", txtReceiver.getText().toString(), txtSubject.getText().toString(), txtMessageBody.getText().toString(), selectedSecurity, selectedPriority, selectedType, new Date());
+                            getServiceProvider().getNetworkService().send(m);
                         }
-
-
                     }
                 });
     }
@@ -280,19 +276,19 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         if (!textEnteredInReceiver) {
             return false;
         }
-
-        //If we are in the receiver field, not show
-        //error message, as this is annoying, just return false. It is also annoying to
-        //
-        if (isInReceiverField) {
-            return false;
-        }
+//
+//        //If we are in the receiver field, not show
+//        //error message, as this is annoying, just return false. It is also annoying to
+//        //
+//        if (isInReceiverField) {
+//            return false;
+//        }
 
         //Validate email
-        if (!isValidEmail) {
+        if (!isValidEmail && !isInReceiverField) {
             txtReceiver.setError(getString(R.string.invalidMessageReceiverError));
             return false;
-        }else{
+        } else if (isValidEmail) {
             txtReceiver.setError(null);
         }
         return isValidEmail;
@@ -306,8 +302,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         //Validate all fields
         boolean isValidEmail = isValidEmail(txtReceiverString.trim());
-
-
         boolean isValidSecurityLabel = sprSecurityLabel.getSelectedItemPosition() != 0;
 
         boolean isValidDataFields = isValidEmail && isValidSecurityLabel;
@@ -362,7 +356,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         }
                     }
                 });
-   }
+    }
 
     private void addAttachmentClickListener(Button btnAddAttachment) {
 
