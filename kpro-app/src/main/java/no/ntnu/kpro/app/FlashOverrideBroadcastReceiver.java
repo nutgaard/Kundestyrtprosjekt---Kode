@@ -16,26 +16,37 @@ import no.ntnu.kpro.app.activities.MainTabActivity;
  *
  * @author Kristin
  */
-public class FlashOverrideBroadcastReceiver extends BroadcastReceiver{
-
+public class FlashOverrideBroadcastReceiver extends BroadcastReceiver {
+    final static String TAG = "KPRO-GUI-FLASHOVERRIDE-BROADCASTRECEIVER";
+    
     @Override
     public void onReceive(Context cntxt, Intent intent) {
-        ActivityManager activityManager = (ActivityManager)cntxt.getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> tasks = activityManager.getRunningAppProcesses();
+        ActivityManager activityManager = (ActivityManager) cntxt.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
         boolean isRunning = false;
-        for(int i = 0; i<tasks.size(); i++){
-            Log.i("KPRO-TASKS", tasks.get(i).processName);
-            if(tasks.get(i).processName.equals("no.ntnu.kpro.app") &&
-                tasks.get(i).importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE){
-                isRunning = true;
-                Log.i("KPRO-TASKS", "App is running");
-            }
+        String topActivity = services.get(0).topActivity.toString();
+        if (topActivity.equals("ComponentInfo{no.ntnu.kpro.app/no.ntnu.kpro.app.activities.MainTabActivity}")) {
+            Log.i(TAG, "MainTabActivity is running");
+            isRunning = true;
+        } else if (topActivity.equals("ComponentInfo{no.ntnu.kpro.app/no.ntnu.kpro.app.activities.MessageViewActivity}")) {
+            Log.i(TAG, "MessageViewActivity is running");
+            isRunning = true;
+        } else if (topActivity.equals("ComponentInfo{no.ntnu.kpro.app/no.ntnu.kpro.app.activities.LoginActivity}")) {
+            Log.i(TAG, "LoginActivity is running");
+            isRunning = true;
+        } else if (topActivity.equals("{ComponentInfo{no.ntnu.kpro.app/no.ntnu.kpro.app.ContactsActivity}")){
+            Log.i(TAG, "ContactsActivity is running");
         }
-        Log.i("KPRO", "Receving broadcast");    
-        Intent i = new Intent(cntxt, MainTabActivity.class);
-        i.putExtra("message", intent.getParcelableExtra("message"));
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //cntxt.startActivity(i);
+
+        Log.i(TAG, "Receiving broadcast");
+        if (isRunning) {
+        } else {
+            Intent i = new Intent(cntxt, MainTabActivity.class);
+            i.putExtra("flashoverride", true);
+            i.putExtra("message", intent.getParcelableExtra("message"));
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            cntxt.startActivity(i);
+        }
+
     }
-    
 }

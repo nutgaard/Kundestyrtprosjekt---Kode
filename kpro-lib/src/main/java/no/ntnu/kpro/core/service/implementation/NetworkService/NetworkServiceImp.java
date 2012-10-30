@@ -17,6 +17,7 @@ import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import no.ntnu.kpro.core.model.Box;
 import no.ntnu.kpro.core.model.XOMessage;
+import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAP;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPPull;
@@ -24,7 +25,6 @@ import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPPush;
 import no.ntnu.kpro.core.service.implementation.NetworkService.SMTP.SMTP;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.utilities.Pair;
-
 
 /**
  *
@@ -113,10 +113,12 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
     public void mailReceived(XOMessage message) {
         getInbox().add(message);
         // Creating an intent for broadcasting message received
-        Intent i = new Intent("FlashOverride");
-        i.putExtra("message", message);
-        // Broadcasting intent
-        ServiceProvider.getInstance().getApplicationContext().sendBroadcast(i);
+        if (message.getPriority() == XOMessagePriority.FLASH || message.getPriority() == XOMessagePriority.OVERRIDE) {
+            Intent i = new Intent("FlashOverride");
+            i.putExtra("message", message);
+            // Broadcasting intent
+            ServiceProvider.getInstance().getApplicationContext().sendBroadcast(i);
+        }
     }
 
     public void mailReceivedError(Exception ex) {
