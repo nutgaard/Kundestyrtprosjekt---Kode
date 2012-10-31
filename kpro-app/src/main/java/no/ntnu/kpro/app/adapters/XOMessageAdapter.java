@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package no.ntnu.kpro.app;
+package no.ntnu.kpro.app.adapters;
 
 import android.app.Activity;
 import android.content.res.Resources;
@@ -15,6 +15,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 
 /**
