@@ -9,19 +9,21 @@ package no.ntnu.kpro.core.model;
  * @author Aleksander
  */
 public enum XOMessagePriority {
-    DEFERRED("Deferred", 0),
-    ROUTINE("Routine", 1),
-    PRIORITY("Priority", 2),
-    IMMEDIATE("Immediate", 3),
-    FLASH("Flash", 4),
-    OVERRIDE("Override", 5);
+    DEFERRED("Deferred", 0, "a"),
+    ROUTINE("Routine", 1, "b"),
+    PRIORITY("Priority", 2, "c"),
+    IMMEDIATE("Immediate", 3, "d"),
+    FLASH("Flash", 4, "e"),
+    OVERRIDE("Override", 5, "f");
     
     private String val;
     private int numValue;
+    private String shortVal;
     
-    private XOMessagePriority(String value, int numValue){
+    private XOMessagePriority(String value, int numValue, String shortVal){
         this.val = value;
         this.numValue = numValue;
+        this.shortVal = shortVal;
     }
     
     @Override
@@ -34,5 +36,8 @@ public enum XOMessagePriority {
     }
     public int getNumeric() {
         return this.numValue;
+    }
+    public String getAlpha() {
+        return this.shortVal;
     }
 }

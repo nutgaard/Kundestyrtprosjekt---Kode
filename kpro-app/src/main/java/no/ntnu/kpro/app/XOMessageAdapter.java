@@ -94,7 +94,7 @@ public class XOMessageAdapter extends ArrayAdapter {
         xoView.date.setText(dateFormat.format(date));
 
         xoView.label.setText(message.getGrading().getShortValue());
-        xoView.priority.setText(message.getPriority().getNumValue());
+        xoView.priority.setText(message.getPriority().getAlpha());
 
         String shortVal = message.getGrading().getShortValue();
         if (shortVal.equals("nu") || shortVal.equals("ug") || shortVal.equals("uc")) {
