@@ -56,6 +56,7 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
         super.onCreate(savedInstanceState);
         //Needs some intent to bind to serice
         mConnection = newServiceConnection();
+        getApplicationContext().startService(new Intent(this, ServiceProvider.class));
         getApplicationContext().bindService(new Intent(this, ServiceProvider.class), mConnection, Service.BIND_AUTO_CREATE);
     }
 

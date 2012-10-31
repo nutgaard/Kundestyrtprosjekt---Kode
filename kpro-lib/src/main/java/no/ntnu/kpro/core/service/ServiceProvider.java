@@ -5,6 +5,7 @@
 package no.ntnu.kpro.core.service;
 
 import android.app.Activity;
+import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -44,8 +45,9 @@ public class ServiceProvider extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        startForeground(START_STICKY, new Notification());
         ServiceProvider.instance = this;
-        threadpool = new ThreadPoolExecutor(3, 100, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+//        threadpool = new ThreadPoolExecutor(3, 100, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
         this.persistenceService = PersistenceServiceFactory.createService();
         this.HALService = HALServiceFactory.createService();
         this.networkService = NetworkServiceFactory.createService(getApplicationContext());
