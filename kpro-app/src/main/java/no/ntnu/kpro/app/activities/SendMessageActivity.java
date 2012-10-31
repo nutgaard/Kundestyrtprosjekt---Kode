@@ -14,28 +14,22 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
-import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.Address;
@@ -109,12 +103,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         //Add text changed listeners to all fields, so that we can check if fields has been written to.
         addTextChangedListeners();
 
-        //Add listener to the send button.
-        addBtnSendClickListener(btnSend);
-        addBtnContactsClickListener(btnContacts);
-        addReceiverOnFocusChangedListener(txtReceiver);
-
-        addAttachmentClickListener(btnAddAttachment);
+        addClickAndFocusListeners();
 
         populateSpinners();
         setDefaultSpinnerValues();
@@ -159,55 +148,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
     }
 
-    @Override
-    public void onServiceConnected(ServiceProvider serviceProvider) {
-        super.onServiceConnected(serviceProvider);
-//        getServiceProvider().register(this);
-    }
-
-    public void mailSent(XOMessage message, Address[] invalidAddress) {
-        super.mailSent(message, invalidAddress);
-        runOnUiThread(new Runnable() {
-            public void run() {
-                Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent", Toast.LENGTH_SHORT);
-                confirm.show();
-                SendMessageActivity.this.resetFields();
-            }
-        });
-    }
-
-    public void mailSentError(XOMessage message, Exception ex) {
-        super.mailSentError(message, ex);
-        runOnUiThread(new Runnable() {
-            public void run() {
-//                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Something went wrong", Toast.LENGTH_SHORT);
-//                errorMess.show();
-            }
-        });
-    }
-
-    public void mailReceived(XOMessage message) {
-        super.mailReceived(message);
-        runOnUiThread(new Runnable() {
-            public void run() {
-//                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Message Received, but I dont care", Toast.LENGTH_SHORT);
-//                errorMess.show();
-            }
-        });
-    }
-
-    public void mailReceivedError(Exception ex) {
-        super.mailReceivedError(ex);
-        runOnUiThread(new Runnable() {
-            public void run() {
-//                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Message Received with error, but I dont care", Toast.LENGTH_SHORT);
-//                errorMess.show();
-            }
-        });
-
-    }
-
-    private void addBtnSendClickListener(Button btnSend) {
+    private void addClickAndFocusListeners() {
         btnSend.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
@@ -239,9 +180,71 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         }
                     }
                 });
-    }
 
-    private void addBtnContactsClickListener(ImageButton btnContacts) {
+        btnContacts.setOnClickListener(
+                new View.OnClickListener() {
+                    public void onClick(View view) {
+                        Intent i = new Intent(SendMessageActivity.this, ContactsActivity.class);
+                        startActivityForResult(i, 1337);
+                    }
+                });
+
+        txtReceiver.setOnFocusChangeListener(
+                new OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if (!hasFocus) {
+                            doIntermediateValidation(false);
+                        }
+                    }
+                });
+
+        btnAddAttachment.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                String[] items = new String[]{"Image From Camera", "Image From Phone", "Location"};
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(SendMessageActivity.this, android.R.layout.select_dialog_item, items);
+                AlertDialog.Builder builder = new AlertDialog.Builder(SendMessageActivity.this);
+
+                builder.setTitle("Select Content");
+
+                builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (item == 0) {
+                            startFetchImageFromCameraActivity();
+                        } else if (item == 1) {
+                            startFetchImageFromPhoneActivity();
+                        } else if (item == 2) {
+                            addNewLocationToMessage();
+                        }
+                    }
+
+                    private void startFetchImageFromPhoneActivity() {
+                        //Create intent
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+                        startActivityForResult(intent, FETCH_IMAGE_ACTIVITY_REQUEST_CODE);
+                    }
+
+                    private void startFetchImageFromCameraActivity() {
+                        // create Intent to take a picture and return control to the calling application
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                        attachmentUri = FileHelper.getOutputMediaFileUri(FileHelper.MEDIA_TYPE_IMAGE); // create a file to save the image
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, attachmentUri); // set the image file name
+
+                        Log.d("SendMessage", "The file uri of imagei is: " + attachmentUri.getEncodedPath());
+
+                        // start the image capture Intent
+                        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
         btnContacts.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
@@ -343,69 +346,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         }
                     }
                 });
-    }
-
-    private void addReceiverOnFocusChangedListener(EditText receiver) {
-        final SendMessageActivity t = this;
-        receiver.setOnFocusChangeListener(
-                new OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View v, boolean hasFocus) {
-                        if (!hasFocus) {
-                            doIntermediateValidation(false);
-                        }
-                    }
-                });
-    }
-
-    private void addAttachmentClickListener(Button btnAddAttachment) {
-
-        btnAddAttachment.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                String[] items = new String[]{"Image From Camera", "Image From Phone", "Location"};
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(SendMessageActivity.this, android.R.layout.select_dialog_item, items);
-                AlertDialog.Builder builder = new AlertDialog.Builder(SendMessageActivity.this);
-
-                builder.setTitle("Select Content");
-
-                builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        if (item == 0) {
-                            startFetchImageFromCameraActivity();
-                        } else if (item == 1) {
-                            startFetchImageFromPhoneActivity();
-                        } else if (item == 2) {
-                            addNewLocationToMessage();
-                        }
-                    }
-
-                    private void startFetchImageFromPhoneActivity() {
-                        //Create intent
-                        Intent intent = new Intent();
-                        intent.setType("image/*");
-                        intent.setAction(Intent.ACTION_GET_CONTENT);
-                        intent.addCategory(Intent.CATEGORY_OPENABLE);
-                        startActivityForResult(intent, FETCH_IMAGE_ACTIVITY_REQUEST_CODE);
-                    }
-
-                    private void startFetchImageFromCameraActivity() {
-                        // create Intent to take a picture and return control to the calling application
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-                        attachmentUri = FileHelper.getOutputMediaFileUri(FileHelper.MEDIA_TYPE_IMAGE); // create a file to save the image
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, attachmentUri); // set the image file name
-
-                        Log.d("SendMessage", "The file uri of imagei is: " + attachmentUri.getEncodedPath());
-
-                        // start the image capture Intent
-                        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-                    }
-                });
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
     }
     private int imageCounter = 1;
 
@@ -552,5 +492,54 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         String name = "Image " + imageCounter++;
         ExpandableListChild child = new ExpandableListChild(name, uri);
         attachmentsListChildren.add(child);
+    }
+
+    @Override
+    public void onServiceConnected(ServiceProvider serviceProvider) {
+        super.onServiceConnected(serviceProvider);
+    }
+
+    public void mailSent(XOMessage message, Address[] invalidAddress) {
+        super.mailSent(message, invalidAddress);
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent", Toast.LENGTH_SHORT);
+                confirm.show();
+                SendMessageActivity.this.resetFields();
+            }
+        });
+    }
+
+    @Override
+    public void mailSentError(XOMessage message, Exception ex) {
+        super.mailSentError(message, ex);
+        runOnUiThread(new Runnable() {
+            public void run() {
+//                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Something went wrong", Toast.LENGTH_SHORT);
+//                errorMess.show();
+            }
+        });
+    }
+
+    @Override
+    public void mailReceived(XOMessage message) {
+        super.mailReceived(message);
+        runOnUiThread(new Runnable() {
+            public void run() {
+//                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Message Received, but I dont care", Toast.LENGTH_SHORT);
+//                errorMess.show();
+            }
+        });
+    }
+
+    @Override
+    public void mailReceivedError(Exception ex) {
+        super.mailReceivedError(ex);
+        runOnUiThread(new Runnable() {
+            public void run() {
+//                Toast errorMess = Toast.makeText(SendMessageActivity.this, "Message Received with error, but I dont care", Toast.LENGTH_SHORT);
+//                errorMess.show();
+            }
+        });
     }
 }

@@ -280,6 +280,7 @@ public class MessageViewActivity extends WrapperActivity {
     private void setUpAttachmentsViewState() {
         if (currentMessage.getAttachments().isEmpty()) {
             btnAttachments.setVisibility(View.GONE);
+            Log.d(TAG, "Attachments is empty");
             return;
         }
 
