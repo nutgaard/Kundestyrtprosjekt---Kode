@@ -4,20 +4,16 @@
  */
 package no.ntnu.kpro.core.utilities;
 
-import android.database.Cursor;
 import android.net.Uri;
-import android.provider.MediaStore;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -89,9 +85,10 @@ public class Converter {
 //                File f = new File(new URI(uri.getEncodedPath())).getCanonicalFile();
                 MimeBodyPart attachment = new MimeBodyPart();
                 attachment.setFileName(FileHelper.getImageFileLastPathSegmentFromImage(uri));
+                attachment.setDisposition("inline");
                 
 //                DataSource source = new FileDataSource(uri.getPath());
-                DataSource source = new ByteArrayDataSource(is, "image/jpeg");
+                DataSource source = new ByteArrayDataSource(is, "application/octet-stream");
                 attachment.setDataHandler(new DataHandler(source));
                 multipart.addBodyPart(attachment);
             }
@@ -126,7 +123,7 @@ public class Converter {
                     if (part.getContentType().toLowerCase().contains("text")) {
                         System.out.println("Found text part");
                         body = (String) multipart.getBodyPart(i).getContent();
-                    } else if (part.getContentType().toLowerCase().contains("image")) {
+                    } else if (part.getContentType().toLowerCase().contains("image") || part.getContentType().toLowerCase().contains("application/octet-stream")) {
                         System.out.println("Found image part: " + part.getFileName());
                         String filename = part.getFileName();
                         InputStream is = part.getDataHandler().getInputStream();
