@@ -35,8 +35,9 @@ public class FlashOverrideBroadcastReceiver extends BroadcastReceiver {
         } else if (topActivity.equals("ComponentInfo{no.ntnu.kpro.app/no.ntnu.kpro.app.activities.LoginActivity}")) {
             Log.i(TAG, "LoginActivity is running");
             isRunning = true;
-        } else if (topActivity.equals("{ComponentInfo{no.ntnu.kpro.app/no.ntnu.kpro.app.ContactsActivity}")){
+        } else if (topActivity.equals("ComponentInfo{no.ntnu.kpro.app/no.ntnu.kpro.app.ContactsActivity}")){
             Log.i(TAG, "ContactsActivity is running");
+            isRunning = true;
         }
 
         Log.i(TAG, "Receiving broadcast");
