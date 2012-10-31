@@ -24,31 +24,28 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.mail.Address;
 import no.ntnu.kpro.app.ContactsActivity;
 import no.ntnu.kpro.app.R;
-import no.ntnu.kpro.app.adapters.ExpandableListAdapter;
+import no.ntnu.kpro.app.managers.ExpandableListManager;
+import no.ntnu.kpro.app.managers.PositionManager;
 import no.ntnu.kpro.core.helpers.EnumHelper;
 import no.ntnu.kpro.core.helpers.FileHelper;
 import no.ntnu.kpro.core.model.Attachments;
 import no.ntnu.kpro.core.model.ExpandableListChild;
-import no.ntnu.kpro.core.model.ExpandableListGroup;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 import no.ntnu.kpro.core.model.XOMessageType;
-import no.ntnu.kpro.core.model.attachment.Attachment;
 import no.ntnu.kpro.core.model.attachment.ImageAttachment;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
+import no.ntnu.no.app.validators.SendMessageValidator;
 
 /**
  *
@@ -56,6 +53,15 @@ import no.ntnu.kpro.core.service.interfaces.NetworkService;
  */
 public class SendMessageActivity extends MenuActivity implements NetworkService.Callback {
 
+    final static String TAG = "KPRO-GUI-SENDMESSAGE";
+    
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 67;
+    private static final int FETCH_IMAGE_ACTIVITY_REQUEST_CODE = 77;
+    private static final int FETCH_CONTACT_REQUEST_CODE = 1337;
+    
+    XOMessagePriority defaultPriority = XOMessagePriority.ROUTINE;
+    XOMessageType defaultType = XOMessageType.OPERATION;
+    
     //Fields
     private EditText txtReceiver;
     private EditText txtSubject;
@@ -66,20 +72,29 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private Button btnAddAttachment;
     private Button btnSend;
     private ImageButton btnContacts;
-    private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-    boolean textEnteredInReceiver = false;
+    private boolean textEnteredInReceiver = false;
     boolean textEnteredInMessageBody = false;
-    XOMessagePriority defaultPriority = XOMessagePriority.ROUTINE;
-    XOMessageType defaultType = XOMessageType.OPERATION;
+    
     //Attachments//
-    private ExpandableListView expList;
     private Attachments attachments;
     ArrayList<ExpandableListChild> attachmentsListChildren;
+    ExpandableListManager expandableAttachmentsListManager;
+    
     //Intents
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 67;
-    private static final int FETCH_IMAGE_ACTIVITY_REQUEST_CODE = 77;
-    private static final int FETCH_CONTACT_REQUEST_CODE = 1337;
     private Uri attachmentUri;
+    private SendMessageValidator sendMessageValidator;
+    
+    //GPS / WIFI -Location Manager//
+    LocationManager locationManager;
+    private final int locationUpdateInterval = 5000; //Milliseconds
+    private final int locationDistance = 5; //Meters.
+    private Location currentLocation = null;
+    private PositionManager positionManager;
+    
+    //ExpandableList for attachments and manager for holding and setting up attachments
+    ExpandableListView expandableListView;
+    ExpandableListManager expandableListManager;
+    
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -102,27 +117,26 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
         //Add text changed listeners to all fields, so that we can check if fields has been written to.
         addTextChangedListeners();
-
         addClickAndFocusListeners();
-
         populateSpinners();
         setDefaultSpinnerValues();
 
         //Attachments//
-        expandList = (ExpandableListView) findViewById(R.id.ExpList);
+        expandableListView = (ExpandableListView) findViewById(R.id.ExpList);
+        expandableListManager = new ExpandableListManager(this, expandableListView);
         attachments = new Attachments();
-        attachmentsListChildren = new ArrayList<ExpandableListChild>();
-
-        startLocationFetching();
-        this.fillExpandableList();
-
+        
+        //PositionManaging
+        positionManager = new PositionManager(this);
+        positionManager.startLocationFetching();
+        sendMessageValidator = new SendMessageValidator(this);
     }
 
     /**
      * Fills the spinners with data values based on all values of input enums.
      */
     public void populateSpinners() {
-        EnumHelper.populateSpinnerWithEnumValues(sprSecurityLabel, this, XOMessageSecurityLabel.class);
+        EnumHelper.populateSpinnerWithEnumValues(getSprSecurityLabel(), this, XOMessageSecurityLabel.class);
         EnumHelper.populateSpinnerWithEnumValues(sprPriority, this, XOMessagePriority.class);
         EnumHelper.populateSpinnerWithEnumValues(sprType, this, XOMessageType.class);
     }
@@ -160,7 +174,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                          * Parse selected values from spinners
                          */
                         //Parse security string
-                        String selectedSecurityString = (String) sprSecurityLabel.getSelectedItem();
+                        String selectedSecurityString = (String) getSprSecurityLabel().getSelectedItem();
                         XOMessageSecurityLabel selectedSecurity = EnumHelper.getEnumValue(XOMessageSecurityLabel.class, selectedSecurityString);
 
                         //Parse priority string
@@ -172,11 +186,18 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         XOMessageType selectedType = EnumHelper.getEnumValue(XOMessageType.class, selectedTypeString);
 
                         //Do all validation, both intermediate validation and send validation.
-                        if (doIntermediateValidation(false)) {
-                            if (doSendButtonValidation()) {
-                                XOMessage m = new XOMessage("MyMailAddress@gmail.com", txtReceiver.getText().toString(), txtSubject.getText().toString(), txtMessageBody.getText().toString(), selectedSecurity, selectedPriority, selectedType, new Date());
+                        if (sendMessageValidator.isValidIntermediateValidation(false)) {
+                            if (sendMessageValidator.isValidFinalValidation()) {
+                                XOMessage m = new XOMessage("MyMailAddress@gmail.com", getTxtReceiver().getText().toString(), txtSubject.getText().toString(), getTxtMessageBody().getText().toString(), selectedSecurity, selectedPriority, selectedType, new Date());
                                 getServiceProvider().getNetworkService().send(m);
+                            } else {
+                                //Create a big,bad and flashy toast that gets attention.
+                                Toast sendMessageError = Toast.makeText(SendMessageActivity.this, R.string.invalidSecurityLabelError, Toast.LENGTH_LONG);
+                                sendMessageError.getView().setBackgroundColor(getResources().getColor(R.color.red));
+                                sendMessageError.show();
+
                             }
+
                         }
                     }
                 });
@@ -189,12 +210,12 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                     }
                 });
 
-        txtReceiver.setOnFocusChangeListener(
+        getTxtReceiver().setOnFocusChangeListener(
                 new OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
                         if (!hasFocus) {
-                            doIntermediateValidation(false);
+                            sendMessageValidator.isValidIntermediateValidation(false);
                         }
                     }
                 });
@@ -214,7 +235,15 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         } else if (item == 1) {
                             startFetchImageFromPhoneActivity();
                         } else if (item == 2) {
-                            addNewLocationToMessage();
+                            String description = positionManager.getCurrentLocationDescription();
+                            if(description.equals("")){
+                                Toast locationNotFound = Toast.makeText(SendMessageActivity.this, R.string.noLocationFoundError, RESULT_OK);
+                                locationNotFound.show();
+                            }else{
+                                txtMessageBody.setText(txtMessageBody.getText() + description);
+                            }
+                            
+                            
                         }
                     }
 
@@ -234,7 +263,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         attachmentUri = FileHelper.getOutputMediaFileUri(FileHelper.MEDIA_TYPE_IMAGE); // create a file to save the image
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, attachmentUri); // set the image file name
 
-                        Log.d("SendMessage", "The file uri of imagei is: " + attachmentUri.getEncodedPath());
+                        Log.d("SendMessage", "The file uri of image is: " + attachmentUri.getEncodedPath());
 
                         // start the image capture Intent
                         startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
@@ -245,6 +274,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                 dialog.show();
             }
         });
+
         btnContacts.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
@@ -255,79 +285,16 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     }
 
     private void resetFields() {
-        txtReceiver.setText("");
+        getTxtReceiver().setText("");
         txtSubject.setText("");
-        txtMessageBody.setText("");
-        sprSecurityLabel.setSelection(0);
+        getTxtMessageBody().setText("");
+        getSprSecurityLabel().setSelection(0);
         this.attachmentUri = null;
         this.attachments.clear();
-        this.attachmentsListChildren.clear();
-        this.fillExpandableList();
+        expandableListManager.clearAttachmentsChildren();
         setDefaultSpinnerValues();
-    }
-
-    private boolean isValidInputField(String input) {
-        return !input.equals("");
-    }
-
-    /**
-     * Shows all relevant error messages, if necessary.
-     *
-     * @return true if all intermediate validation is okay.
-     */
-    private boolean doIntermediateValidation(boolean isInReceiverField) {
-
-        //Find all relevant text strings to validate
-        String txtReceiverString = txtReceiver.getText().toString();
-
-        //Validate email field
-        boolean isValidEmail = isValidEmail(txtReceiverString.trim());
-
-        //If text never has been entered in receiver field, we should not show validations.
-        if (!textEnteredInReceiver) {
-            return false;
-        }
-
-        if (!isValidEmail && !isInReceiverField) {    //Set error on receiver field only if mail is invalid and we are not in it.
-            txtReceiver.setError(getString(R.string.invalidMessageReceiverError));
-            return false;
-        } else if (isValidEmail) { //Only clear the error message if it is a valid mail.
-            txtReceiver.setError(null);
-        }
-        return isValidEmail;
-
-    }
-
-    private boolean doSendButtonValidation() {
-
-        //Find all relevant text strings to validate
-        String txtReceiverString = txtReceiver.getText().toString();
-
-        //Validate all fields
-        boolean isValidEmail = isValidEmail(txtReceiverString.trim());
-        boolean isValidSecurityLabel = sprSecurityLabel.getSelectedItemPosition() != 0;
-
-        boolean isValidDataFields = isValidEmail && isValidSecurityLabel;
-        if (isValidDataFields) {
-            return true;
-        }
-
-        //Create a big,bad and flashy toast that gets attention.
-        Toast sendMessageError = Toast.makeText(SendMessageActivity.this, R.string.invalidSecurityLabelError, Toast.LENGTH_LONG);
-        sendMessageError.getView().setBackgroundColor(getResources().getColor(R.color.red));
-        sendMessageError.show();
-
-        return false; //If we end up here, it means validation has failed
-    }
-
-    /**
-     * Returns if email matches the email pattern.
-     */
-    private boolean isValidEmail(String email) {
-        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
-        Matcher matcher = pattern.matcher(email);
-        logMe("IsValidEmail:" + matcher.matches());
-        return matcher.matches();
+        this.textEnteredInMessageBody = false;
+        this.textEnteredInReceiver = false;
     }
 
     private void addTextChangedListeners() {
@@ -341,8 +308,8 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                     }
 
                     public void afterTextChanged(Editable edtbl) {
-                        if (txtReceiver.getText().toString().length() > 0) {
-                            doIntermediateValidation(true);
+                        if (getTxtReceiver().getText().toString().length() > 0) {
+                            sendMessageValidator.isValidIntermediateValidation(true);
                         }
                     }
                 });
@@ -351,147 +318,25 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        logMe("ReqCode: " + requestCode + ". ResultCode:" + resultCode);
+        Log.d(TAG, "ReqCode: " + requestCode + ". ResultCode:" + resultCode);
 
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-            addAttachment(new ImageAttachment(attachmentUri));
-            addAttachmentToDropDown(attachmentUri);
-            fillExpandableList();
+            attachments.addAttachment(new ImageAttachment(attachmentUri));
+            expandableListManager.addAttachmentToDropDown(attachmentUri, imageCounter++);
         }
 
         if (requestCode == FETCH_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             Uri path = data.getData();
-            addAttachment(new ImageAttachment(path));
-            addAttachmentToDropDown(data.getData());
-            fillExpandableList();
-            //super.onActivityResult(requestCode, resultCode, data);
+            attachments.addAttachment(new ImageAttachment(path));
+            expandableListManager.addAttachmentToDropDown(data.getData(), imageCounter++);
         }
         if (requestCode == FETCH_CONTACT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 String email = data.getStringExtra("result");
-                txtReceiver.setText(email);
-                doIntermediateValidation(false); //Set to false, because we want to force an evaluation.
+                getTxtReceiver().setText(email);
+                sendMessageValidator.isValidIntermediateValidation(false); //Set to false, because we want to force an evaluation.
             }
         }
-    }
-
-    private void addAttachment(Attachment attachment) {
-        attachments.addAttachment(attachment);
-    }
-
-    private void logMe(String message) {
-        Log.d("SendMessage", message);
-    }
-    //GPS / WIFI -Location Manager//
-    LocationManager locationManager;
-    private final int locationUpdateInterval = 5000; //Milliseconds
-    private final int locationDistance = 5; //Meters.
-    private Location currentLocation = null;
-
-    private void startLocationFetching() {
-        String serviceString = Context.LOCATION_SERVICE;
-        locationManager = (LocationManager) getSystemService(serviceString);
-        addLocationListener(locationManager);
-
-    }
-
-    private void addLocationListener(LocationManager locationManager) {
-        Criteria criteria = new Criteria();
-        criteria.setAltitudeRequired(false);
-        criteria.setBearingRequired(false);
-        criteria.setSpeedRequired(false);
-        criteria.setCostAllowed(true);
-
-        LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location lctn) {
-                SendMessageActivity.this.currentLocation = lctn;
-
-            }
-
-            public void onStatusChanged(String string, int i, Bundle bundle) {
-            }
-
-            public void onProviderEnabled(String string) {
-            }
-
-            public void onProviderDisabled(String string) {
-            }
-        };
-        String bestProvider = locationManager.getBestProvider(criteria, true);
-
-        if (bestProvider != null) {
-            locationManager.requestLocationUpdates(bestProvider, locationUpdateInterval, locationDistance, locationListener);
-        } else {
-            //Toast noProviderFoundMessage = Toast.makeText(SendMessageActivity.this, getString(R.string.noLocationProviderFound), RESULT_OK);
-            //noProviderFoundMessage.show();
-        }
-
-    }
-
-    private void addNewLocationToMessage() {
-        String locLongString = "";
-
-        if (currentLocation != null) {
-            double lat = currentLocation.getLatitude();
-            double lng = currentLocation.getLongitude();
-
-            locLongString += "\n" + getString(R.string.myLocationNow) + "\n";
-            locLongString += getString(R.string.locationLatitude) + lat + "\n";
-            locLongString += getString(R.string.locationLongditude) + lng + "\n";
-            locLongString += "Accuracy is " + currentLocation.getAccuracy() + " meters";
-            this.txtMessageBody.setText(txtMessageBody.getText() + locLongString);
-
-        } else {
-            Toast locationNotFound = Toast.makeText(SendMessageActivity.this, R.string.noLocationFoundError, RESULT_OK);
-            locationNotFound.show();
-        }
-    }
-    private ExpandableListAdapter expAdapter;
-    private ArrayList<ExpandableListGroup> expListItems;
-    private ExpandableListView expandList;
-
-    //Expandable list example:
-    private void fillExpandableList() {
-
-        expListItems = getExpandableListItems();
-
-        if (attachmentsListChildren.isEmpty()) {
-            expandList.setVisibility(View.GONE);
-        } else {
-            expandList.setVisibility(View.VISIBLE);
-        }
-
-        expAdapter = new ExpandableListAdapter(SendMessageActivity.this, expListItems);
-        expandList.setAdapter(expAdapter);
-
-        OnChildClickListener childClickListener = new OnChildClickListener() {
-            public boolean onChildClick(ExpandableListView elv, View view, int i, int i1, long l) {
-                ExpandableListChild currentChild = attachmentsListChildren.get(i1);
-                logMe("Starting intent...");
-                logMe("Uri is: " + currentChild.getUri().toString());
-                Intent showImageIntent = new Intent();
-                showImageIntent.setAction(Intent.ACTION_VIEW);
-                showImageIntent.setDataAndType(currentChild.getUri(), "image/jpg");
-                startActivity(showImageIntent);
-                return true;
-            }
-        };
-        expandList.setOnChildClickListener(childClickListener);
-    }
-
-    private ArrayList<ExpandableListGroup> getExpandableListItems() {
-        ArrayList<ExpandableListGroup> listGroups = new ArrayList<ExpandableListGroup>();
-        ExpandableListGroup attachmentsGroup = new ExpandableListGroup();
-        attachmentsGroup.setName("Attachments");
-        attachmentsGroup.setItems(attachmentsListChildren);
-        listGroups.add(attachmentsGroup);
-        return listGroups;
-    }
-
-    private void addAttachmentToDropDown(Uri uri) {
-        String name = "Image " + imageCounter++;
-        ExpandableListChild child = new ExpandableListChild(name, uri);
-        attachmentsListChildren.add(child);
     }
 
     @Override
@@ -499,6 +344,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         super.onServiceConnected(serviceProvider);
     }
 
+    @Override
     public void mailSent(XOMessage message, Address[] invalidAddress) {
         super.mailSent(message, invalidAddress);
         runOnUiThread(new Runnable() {
@@ -541,5 +387,33 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 //                errorMess.show();
             }
         });
+    }
+
+    /**
+     * @return the txtReceiver
+     */
+    public EditText getTxtReceiver() {
+        return txtReceiver;
+    }
+
+    /**
+     * @return the txtMessageBody
+     */
+    public EditText getTxtMessageBody() {
+        return txtMessageBody;
+    }
+
+    /**
+     * @return the sprSecurityLabel
+     */
+    public Spinner getSprSecurityLabel() {
+        return sprSecurityLabel;
+    }
+
+    /**
+     * @return the textEnteredInReceiver
+     */
+    public boolean isTextEnteredInReceiver() {
+        return textEnteredInReceiver;
     }
 }

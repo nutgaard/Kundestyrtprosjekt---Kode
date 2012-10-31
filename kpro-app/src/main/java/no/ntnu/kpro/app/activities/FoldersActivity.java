@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.mail.Address;
 import no.ntnu.kpro.app.R;
-import no.ntnu.kpro.app.XOMessageAdapter;
+import no.ntnu.kpro.app.adapters.XOMessageAdapter;
 import no.ntnu.kpro.core.helpers.EnumHelper;
 import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.ServiceProvider;
