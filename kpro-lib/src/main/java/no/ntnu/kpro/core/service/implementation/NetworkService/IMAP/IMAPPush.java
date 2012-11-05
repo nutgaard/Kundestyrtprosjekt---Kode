@@ -7,8 +7,8 @@ package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPMessage;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +21,6 @@ import javax.mail.event.MessageCountEvent;
 import javax.mail.event.MessageCountListener;
 import javax.mail.search.ComparisonTerm;
 import javax.mail.search.ReceivedDateTerm;
-import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessage;
 
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAPStrategy;
@@ -29,7 +28,6 @@ import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.service.interfaces.NetworkService.Callback;
 import no.ntnu.kpro.core.utilities.Converter;
-import no.ntnu.kpro.core.utilities.Pair;
 
 /**
  *
