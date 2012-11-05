@@ -66,6 +66,11 @@
                 <action android:name="FlashOverride"/>
             </intent-filter>
         </receiver>
+        <receiver android:name=".ShareWithBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="ShareWith"/>
+            </intent-filter>
+        </receiver>
         
     </application>
     <uses-permission android:name="android.permission.INTERNET" />

@@ -4,49 +4,34 @@
  */
 package no.ntnu.kpro.app.activities;
 
-import android.R;
+import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import no.ntnu.kpro.core.model.XOMessage;
-import no.ntnu.kpro.core.model.XOMessagePriority;
-import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
-import no.ntnu.kpro.core.model.XOMessageType;
-import no.ntnu.kpro.core.service.ServiceProvider;
-import no.ntnu.kpro.core.utilities.EnumHelper;
 
 /**
  *
  * @author Nicklas
  */
-public class ShareWithActivity extends WrapperActivity {
+public class ShareWithActivity extends Activity {
 
     @Override
     public void onCreate(Bundle bundle) {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        super.onCreate(bundle);
+        System.out.println("ShareWithActivity starting");
+
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         String action = intent.getAction();
-
         if (Intent.ACTION_SEND.equals(action)) {
             if (extras.containsKey(Intent.EXTRA_STREAM)) {
                 Uri uri = (Uri) extras.getParcelable(Intent.EXTRA_STREAM);
-
-                String to = sharedPrefs.getString("standard_receiver", "kprothales@gmail.com");
-                XOMessageSecurityLabel secLabel = EnumHelper.getEnumValue(XOMessageSecurityLabel.class, sharedPrefs.getString("standard_security_label", "UNCLASSIFIED"));
-                XOMessagePriority priority = EnumHelper.getEnumValue(XOMessagePriority.class, sharedPrefs.getString("standard_priority", "Override"));
-                XOMessageType type = EnumHelper.getEnumValue(XOMessageType.class, sharedPrefs.getString("standard_type", "Operation"));
-                List<Uri> uris = new LinkedList<Uri>();
-                uris.add(uri);
-                XOMessage m = new XOMessage("MyMailAddress@gmail.com", to, "Shared via camera", "See attachment", secLabel, priority, type, new Date(), uris);
-                ServiceProvider.getInstance().getNetworkService().send(m);
+                Intent i = new Intent("ShareWith");
+                i.putExtra("uri", uri);
+                sendBroadcast(i);
             }
         }
-        finishActivity(0);
+        System.out.println("ShareWithActivity complete, finishing");
+        finish();
     }
 }

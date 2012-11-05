@@ -34,6 +34,7 @@ public class MainTabActivity extends WrapperActivity implements TabHost.OnTabCha
 
     final static String TAG = "KPRO-GUI-MAINTAB";
     TabHost tabHost;
+    private XOMessage messageToBeSendt;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -149,6 +150,10 @@ public class MainTabActivity extends WrapperActivity implements TabHost.OnTabCha
             XOMessage currentMessage = in.getParcelableExtra("message");
             this.mailReceived(currentMessage);
         }
+        XOMessage toBeSent = in.getParcelableExtra("messageSend");
+        if (toBeSent != null){
+            messageToBeSendt = toBeSent;
+        }
     }
 
     // Method for switching the current tab from outside
@@ -161,6 +166,9 @@ public class MainTabActivity extends WrapperActivity implements TabHost.OnTabCha
     @Override
     public void onServiceConnected(ServiceProvider sp) {
         super.onServiceConnected(sp);
+        if (messageToBeSendt != null){
+            sp.getNetworkService().send(messageToBeSendt);
+        }
     }
 
     public void onTabChanged(String string) {

@@ -10,10 +10,12 @@ import android.widget.TextView;
 import no.ntnu.kpro.app.R;
 import no.ntnu.kpro.core.model.ModelProxy.IUser;
 import no.ntnu.kpro.core.model.User;
+import no.ntnu.kpro.core.model.XOMessage;
 import no.ntnu.kpro.core.service.implementation.SecurityService.UserManager;
 
 public class LoginActivity extends WrapperActivity {
     final static String TAG = "KPRO-GUI-LOGIN";
+    private XOMessage messageToBeSent;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,9 @@ public class LoginActivity extends WrapperActivity {
                 if (user != null) { //um.authorize(loginUser) != null
                     Log.d(TAG, "Login successful");
                     Intent i = new Intent(getApplicationContext(), MainTabActivity.class);
+                    if (messageToBeSent != null){
+                        i.putExtra("messageSend", messageToBeSent);
+                    }
                     startActivity(i);
                 } else {
                     Log.d(TAG, "Login failed");
@@ -45,5 +50,9 @@ public class LoginActivity extends WrapperActivity {
                 }
             }
         });
+        XOMessage m = getIntent().getParcelableExtra("messageSend");
+        if (m != null) {
+            messageToBeSent = m;
+        }
     }
 }
