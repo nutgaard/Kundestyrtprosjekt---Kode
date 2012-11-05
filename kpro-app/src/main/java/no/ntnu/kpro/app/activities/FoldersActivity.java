@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javax.mail.Address;
 import no.ntnu.kpro.app.R;
@@ -167,28 +168,7 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
     }
 
     private void sortOnCondition() {
-        switch (sortCon) {
-            case DATE_DESC:
-                Log.i(TAG, "Sorting on date descending");
-                Collections.sort(messages, XOMessage.XOMessageSorter.getDateComparator(true));
-                Log.i(TAG, "Finished sorting");
-                break;
-            case DATE_ASC:
-                Log.i(TAG, "Sorting on date ascending");
-                Collections.sort(messages, XOMessage.XOMessageSorter.getDateComparator(false));
-                Log.i(TAG, "Finished sorting");
-                break;
-            case SENDER_DESC:
-                Log.i(TAG, "Sorting on sender descending");
-                Collections.sort(messages, XOMessage.XOMessageSorter.getSenderComparator(true));
-                Log.i(TAG, "Finished sorting");
-                break;
-            case SENDER_ASC:
-                Log.i(TAG, "Sorting on sender ascending");
-                Collections.sort(messages, XOMessage.XOMessageSorter.getSenderComparator(false));
-                Log.i(TAG, "Finished sorting");
-                break;
-        }
+        Collections.sort(messages, sortCon.comp);
     }
 
     private void showDialogButtonClick() {
@@ -196,17 +176,21 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
         Log.i(TAG, "Show sort dialog");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Sort by");
-        final CharSequence[] choiceList = {"Date (newest)", "Date (oldest)", "Sender (A to Z)", "Sender (Z to A)", "Subject (A to Z)", "Subject (Z to A)", "Priority (highest)", "Priority (lowest)"};
         int selected = -1;
-        for (int i = 0; i < choiceList.length; i++) {
-            if (choiceList[i].equals(sortCon.toString())) {
+        for (int i = 0; i < SortCondition.values().length; i++) {
+            if (SortCondition.values()[i].val.equals(sortCon.toString())) {
                 selected = i;
             }
         }
-        builder.setSingleChoiceItems(choiceList, selected, new DialogInterface.OnClickListener() {
+        final String[] values = new String[SortCondition.values().length];
+        int vId = 0;
+        for (SortCondition sc : SortCondition.values()) {
+            values[vId++] = sc.val;
+        }
+        builder.setSingleChoiceItems(values, selected, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                sortCon = EnumHelper.getEnumValue(SortCondition.class, choiceList[which].toString());
+                sortCon = EnumHelper.getEnumValue(SortCondition.class, values[which].toString());
                 fetchMessages();
                 Toast.makeText(FoldersActivity.this, "Selected " + sortCon.toString(), Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
@@ -278,22 +262,24 @@ public class FoldersActivity extends MenuActivity implements NetworkService.Call
 
     public enum SortCondition {
 
-        DATE_DESC("Date (newest)"),
-        DATE_ASC("Date (oldest)"),
-        SUBJECT_DESC("Subject (Z to A)"),
-        SUBJECT_ASC("Subject (A to Z)"),
-        PRIORITY_DESC("Priority (highest)"),
-        PRIORITY_ASC("Priority (lowest)"),
-        LABEL_DESC("Label (Z to A)"),
-        LABEL_ASC("Label (A to Z)"),
-        TYPE_DESC("Type (Z to A)"),
-        TYPE_ASC("Type (A to Z)"),
-        SENDER_DESC("Sender (Z to A)"),
-        SENDER_ASC("Sender (A to Z)");
+        DATE_DESC("Date (newest)", XOMessage.XOMessageSorter.getDateComparator(true)),
+        DATE_ASC("Date (oldest)", XOMessage.XOMessageSorter.getDateComparator(false)),
+        SUBJECT_DESC("Subject (Z to A)", XOMessage.XOMessageSorter.getSubjectComparator(true)),
+        SUBJECT_ASC("Subject (A to Z)", XOMessage.XOMessageSorter.getSubjectComparator(false)),
+        PRIORITY_DESC("Priority (highest)", XOMessage.XOMessageSorter.getPriorityComparator(true)),
+        PRIORITY_ASC("Priority (lowest)", XOMessage.XOMessageSorter.getPriorityComparator(false)),
+        LABEL_DESC("Label (Z to A)", XOMessage.XOMessageSorter.getLabelComparator(true)),
+        LABEL_ASC("Label (A to Z)", XOMessage.XOMessageSorter.getLabelComparator(false)),
+        TYPE_DESC("Type (Z to A)", XOMessage.XOMessageSorter.getTypeComparator(true)),
+        TYPE_ASC("Type (A to Z)", XOMessage.XOMessageSorter.getTypeComparator(false)),
+        SENDER_DESC("Sender (Z to A)", XOMessage.XOMessageSorter.getSenderComparator(true)),
+        SENDER_ASC("Sender (A to Z)", XOMessage.XOMessageSorter.getSenderComparator(false));
         private String val;
+        private Comparator<IXOMessage> comp;
 
-        private SortCondition(String value) {
+        private SortCondition(String value, Comparator<IXOMessage> comp) {
             this.val = value;
+            this.comp = comp;
         }
 
         @Override

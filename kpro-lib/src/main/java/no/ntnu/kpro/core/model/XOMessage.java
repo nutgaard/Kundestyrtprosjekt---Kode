@@ -365,7 +365,8 @@ public class XOMessage implements ModelProxy.IXOMessage {
             return new Comparator<IXOMessage>() {
 
                 public int compare(IXOMessage o1, IXOMessage o2) {
-                    return descending ? o2.getFrom().compareToIgnoreCase(o1.getFrom()) : o1.getFrom().compareTo(o2.getFrom());
+                    int p = descending ? o2.getFrom().compareToIgnoreCase(o1.getFrom()) : o1.getFrom().compareTo(o2.getFrom());
+                    return (p == 0) ? getDateComparator(descending).compare(o1, o2) : p;
                 }
             };
         }
@@ -374,25 +375,28 @@ public class XOMessage implements ModelProxy.IXOMessage {
             return new Comparator<IXOMessage>() {
 
                 public int compare(IXOMessage o1, IXOMessage o2) {
-                    throw new UnsupportedOperationException("Not supported yet.");
+                    int p = o1.getPriority().getNumeric()-o2.getPriority().getNumeric()*(descending ? -1 : 1);
+                    return (p == 0) ? getDateComparator(descending).compare(o1, o2) : p;
                 }
             };
         }
 
-        public static Comparator<IXOMessage> getLabelComparator(boolean descending) {
+        public static Comparator<IXOMessage> getLabelComparator(final boolean descending) {
             return new Comparator<IXOMessage>() {
 
                 public int compare(IXOMessage o1, IXOMessage o2) {
-                    throw new UnsupportedOperationException("Not supported yet.");
+                    int p = o1.getGrading().getSortVal() - o2.getGrading().getSortVal()*(descending ? -1 : 1);
+                    return (p == 0) ? getDateComparator(descending).compare(o1, o2) : p;
                 }
             };
         }
 
-        public static Comparator<IXOMessage> getTypeComparator(boolean descending) {
+        public static Comparator<IXOMessage> getTypeComparator(final boolean descending) {
             return new Comparator<IXOMessage>() {
 
                 public int compare(IXOMessage o1, IXOMessage o2) {
-                    throw new UnsupportedOperationException("Not supported yet.");
+                    int p = o1.getType().getNumval() - o2.getType().getNumval()*(descending ? -1 : 1);
+                    return (p == 0) ? getDateComparator(descending).compare(o1, o2) : p;
                 }
             };
         }
@@ -401,7 +405,8 @@ public class XOMessage implements ModelProxy.IXOMessage {
             return new Comparator<IXOMessage>() {
 
                 public int compare(IXOMessage o1, IXOMessage o2) {
-                    return descending ? o2.getSubject().compareToIgnoreCase(o1.getSubject()) : o1.getSubject().compareTo(o2.getSubject());
+                    int p = descending ? o2.getSubject().compareToIgnoreCase(o1.getSubject()) : o1.getSubject().compareTo(o2.getSubject());
+                    return (p == 0) ? getDateComparator(descending).compare(o1, o2) : p;
                 }
             };
         }

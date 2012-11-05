@@ -169,7 +169,9 @@ public class ServiceProvider extends Service {
     }
 
     public void logout() {
-        this.networkService.close();
+        if (networkService != null) {
+            this.networkService.close();
+        }
         this.HALService = null;
         this.networkService = null;
         this.securityService = null;
