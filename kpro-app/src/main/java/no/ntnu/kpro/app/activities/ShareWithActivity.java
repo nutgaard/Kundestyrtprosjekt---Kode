@@ -2,10 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package no.ntnu.kpro.app;
+package no.ntnu.kpro.app.activities;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.R;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -25,11 +24,12 @@ import no.ntnu.kpro.core.utilities.EnumHelper;
  *
  * @author Nicklas
  */
-public class ShareWithBroadcastReceiver extends BroadcastReceiver {
+public class ShareWithActivity extends WrapperActivity {
 
     @Override
-    public void onReceive(Context context, Intent intent) {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+    public void onCreate(Bundle bundle) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         String action = intent.getAction();
 
@@ -47,5 +47,6 @@ public class ShareWithBroadcastReceiver extends BroadcastReceiver {
                 ServiceProvider.getInstance().getNetworkService().send(m);
             }
         }
+        finishActivity(0);
     }
 }
