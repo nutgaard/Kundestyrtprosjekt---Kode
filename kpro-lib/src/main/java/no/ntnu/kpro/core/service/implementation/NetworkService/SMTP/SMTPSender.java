@@ -22,6 +22,7 @@ public class SMTPSender {
     private Properties props;
     private Authenticator auth;
     private List<NetworkService.Callback> listener;
+    private long wait = 0;
 
     public SMTPSender(final String username, final String password, final String mailAdr, final Properties props, final Authenticator auth, List<NetworkService.Callback> listener) {
         this.password = password;
@@ -33,6 +34,11 @@ public class SMTPSender {
 
     public boolean sendMail(IXOMessage msg) {
         try {
+            if (wait > 0) {
+                synchronized (this) {
+                    this.wait(wait * 10000);
+                }
+            }
             Session session = Session.getInstance(this.props, this.auth);
             MimeMessage message = Converter.getInstance().convertToMime(session, msg);
 
@@ -42,9 +48,11 @@ public class SMTPSender {
             t.sendMessage(message, message.getAllRecipients());
 
             t.close();
+            wait = 0;
             return true;
         } catch (Exception ex) {
             Logger.getLogger(SMTPSender.class.getName()).log(Level.SEVERE, null, ex);
+            wait += 2;
             return false;
         }
     }
@@ -52,6 +60,7 @@ public class SMTPSender {
     public void addListener(Callback callback) {
         this.listener.add(callback);
     }
+
     public void removeListener(Callback callback) {
         this.listener.remove(callback);
     }

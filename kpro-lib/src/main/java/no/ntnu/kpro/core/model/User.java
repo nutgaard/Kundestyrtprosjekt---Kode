@@ -13,14 +13,14 @@ import no.ntnu.kpro.core.model.ModelProxy.IUser;
 public class User implements IUser {
 
     public String name;
-    private String hash;
+    private String password;
 
     public User() {
     }
 
-    public User(String name, String hash) {
+    public User(String name, String password) {
         this.name = name;
-        this.hash = hash;
+        this.password = password;
     }
 
     public String getName() {
@@ -32,14 +32,14 @@ public class User implements IUser {
     }
 
     public String getPassword() {
-        return hash;
+        return password;
     }
 
     public void setPassword(String password) {
-        this.hash = password;
+        this.password = password;
     }
 
     public boolean authorize(IUser u) {
-        return true;
+        return this.name.equals(u.getName())&&this.password.equals(u.getPassword());
     }
 }

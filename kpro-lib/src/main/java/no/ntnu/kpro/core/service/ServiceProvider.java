@@ -11,19 +11,23 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import com.sun.mail.smtp.SMTPTransport;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.mail.Authenticator;
+import javax.mail.MessagingException;
+import javax.mail.NoSuchProviderException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
 import no.ntnu.kpro.core.model.ModelProxy.IUser;
-import no.ntnu.kpro.core.model.User;
 import no.ntnu.kpro.core.service.factories.HALServiceFactory;
 import no.ntnu.kpro.core.service.factories.NetworkServiceFactory;
-import no.ntnu.kpro.core.service.factories.PersistenceServiceFactory;
 import no.ntnu.kpro.core.service.factories.SecurityServiceFactory;
 import no.ntnu.kpro.core.service.implementation.NetworkService.crypto.CryptoHandler;
+import no.ntnu.kpro.core.service.implementation.SecurityService.UserManager;
 import no.ntnu.kpro.core.service.interfaces.HALService;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
-import no.ntnu.kpro.core.service.interfaces.PersistenceService;
 import no.ntnu.kpro.core.service.interfaces.SecurityService;
 
 /**
@@ -35,9 +39,6 @@ public class ServiceProvider extends Service {
     private static ServiceProvider instance;
     private IBinder mBinder = new LocalBinder();
     private static final String TAG = "KPRO";
-    public static ThreadPoolExecutor threadpool;
-    private Activity currentActivity;
-    private PersistenceService persistenceService;
     private HALService HALService;
     private NetworkService networkService;
     private SecurityService securityService;
@@ -47,11 +48,6 @@ public class ServiceProvider extends Service {
         super.onCreate();
         startForeground(START_STICKY, new Notification());
         ServiceProvider.instance = this;
-//        threadpool = new ThreadPoolExecutor(3, 100, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-        this.persistenceService = PersistenceServiceFactory.createService();
-        this.HALService = HALServiceFactory.createService();
-        this.networkService = NetworkServiceFactory.createService(getApplicationContext());
-        this.securityService = SecurityServiceFactory.createService();
         CryptoHandler.setDefaultMailcap(); //tell java mail how to handle security
         Log.i(TAG, "Service starting");
     }
@@ -76,7 +72,6 @@ public class ServiceProvider extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         boolean b = super.onUnbind(intent);
-        this.currentActivity = null;
         Log.d(this.getClass().getName(), "OnUnbind");
         return b;
     }
@@ -87,40 +82,33 @@ public class ServiceProvider extends Service {
             return ServiceProvider.this;
         }
     }
-    public void addListener(Activity activity){
-        for (Class cls : activity.getClass().getInterfaces()){
-            if (cls.equals(NetworkService.Callback.class) && networkService != null){
-                networkService.addListener((NetworkService.Callback)activity);
+
+    public void addListener(Activity activity) {
+        for (Class cls : activity.getClass().getInterfaces()) {
+            if (cls.equals(NetworkService.Callback.class) && networkService != null) {
+                networkService.addListener((NetworkService.Callback) activity);
             }
-            if (cls.equals(PersistenceService.Callback.class) && persistenceService != null){
-                persistenceService.addListener((PersistenceService.Callback)activity);
+            if (cls.equals(SecurityService.Callback.class) && securityService != null) {
+                securityService.addListener((SecurityService.Callback) activity);
             }
-            if (cls.equals(SecurityService.Callback.class) && securityService != null){
-                securityService.addListener((SecurityService.Callback)activity);
-            }
-            if (cls.equals(HALService.Callback.class) && HALService != null){
-                HALService.addListener((HALService.Callback)activity);
+            if (cls.equals(HALService.Callback.class) && HALService != null) {
+                HALService.addListener((HALService.Callback) activity);
             }
         }
     }
-    public void removeListener(Activity activity){
-        for (Class cls : activity.getClass().getInterfaces()){
-            if (cls.equals(NetworkService.Callback.class) && networkService != null){
-                networkService.removeListener((NetworkService.Callback)activity);
+
+    public void removeListener(Activity activity) {
+        for (Class cls : activity.getClass().getInterfaces()) {
+            if (cls.equals(NetworkService.Callback.class) && networkService != null) {
+                networkService.removeListener((NetworkService.Callback) activity);
             }
-            if (cls.equals(PersistenceService.Callback.class) && persistenceService != null){
-                persistenceService.removeListener((PersistenceService.Callback)activity);
+            if (cls.equals(SecurityService.Callback.class) && securityService != null) {
+                securityService.removeListener((SecurityService.Callback) activity);
             }
-            if (cls.equals(SecurityService.Callback.class) && securityService != null){
-                securityService.removeListener((SecurityService.Callback)activity);
-            }
-            if (cls.equals(HALService.Callback.class) && HALService != null){
-                HALService.removeListener((HALService.Callback)activity);
+            if (cls.equals(HALService.Callback.class) && HALService != null) {
+                HALService.removeListener((HALService.Callback) activity);
             }
         }
-    }
-    public PersistenceService getPersistenceService() {
-        return persistenceService;
     }
 
     public HALService getHALService() {
@@ -135,8 +123,55 @@ public class ServiceProvider extends Service {
     public static ServiceProvider getInstance() {
         return instance;
     }
-    
-    public IUser login(IUser user){
-        return user;
+
+    public IUser login(final IUser user) {
+        logout();
+        IUser o = null;
+        try {
+            UserManager um = new UserManager(this);
+            Boolean auth = um.authorize(user);
+            if (auth == null) {
+                //User not found, check through network
+                System.out.println("login::checking network");
+                Properties p = NetworkServiceFactory.getDefaultProperties();
+                Session session = Session.getInstance(p, new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(user.getName(), user.getPassword());
+                    }
+                });
+                try {
+                    SMTPTransport t = (SMTPTransport) session.getTransport("smtps");
+                    t.connect(p.getProperty("mail.smtps.host"), user.getName() + "@" + p.getProperty("mail.domain"), user.getPassword());
+                } catch (Exception ex) {
+                    Logger.getLogger(ServiceProvider.class.getName()).log(Level.SEVERE, null, ex);
+                    return null;
+                }
+                um.createUser(user);
+                o = user;
+            } else if (auth) {
+                //Valid input
+                System.out.println("login::valid");
+                o = user;
+            } else {
+                //Invalid input
+                System.out.println("Invalid");
+            }
+        } finally {
+            if (o != null) {
+                this.HALService = HALServiceFactory.createService();
+                this.networkService = NetworkServiceFactory.createService(getApplicationContext(), user);
+                this.securityService = SecurityServiceFactory.createService();
+                return o;
+            }
+        }
+        return null;
+    }
+
+    public void logout() {
+        this.networkService.close();
+        this.HALService = null;
+        this.networkService = null;
+        this.securityService = null;
     }
 }

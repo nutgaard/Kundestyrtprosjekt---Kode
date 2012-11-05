@@ -25,6 +25,7 @@ import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAP;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPCache;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPPush;
 import no.ntnu.kpro.core.service.implementation.NetworkService.SMTP.SMTP;
+import no.ntnu.kpro.core.service.implementation.NetworkService.SMTP.SMTPSender;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.service.interfaces.PersistenceService;
 import no.ntnu.kpro.core.utilities.Converter;

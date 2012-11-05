@@ -6,7 +6,6 @@ package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPMessage;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import javax.mail.Authenticator;

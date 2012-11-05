@@ -6,15 +6,14 @@ package no.ntnu.kpro.core.service.implementation.SecurityService;
 
 import android.content.Context;
 import java.io.File;
-import no.ntnu.kpro.core.model.ModelProxy.IUser;
 import no.ntnu.kpro.core.model.User;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *
@@ -55,16 +54,16 @@ public class UserManagerTest {
     // The methods must be annotated with annotation @Test. For example:
     //
 
-    //@Test
+    @Test
     public void createUser() {
         m.createUser(u);
         assertTrue(true);
     }
     
-    //@Test
+    @Test
     public void auth() {
         m.createUser(u);
-        IUser u2 = m.authorize(u);
-        assertNotNull(u2);  
+        Boolean u2 = m.authorize(u);
+        assertEquals(u2, Boolean.TRUE);  
     }
 }

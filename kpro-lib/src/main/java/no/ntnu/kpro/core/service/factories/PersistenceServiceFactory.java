@@ -18,12 +18,6 @@ import no.ntnu.kpro.core.service.interfaces.PersistenceService;
  * @author Nicklas
  */
 public class PersistenceServiceFactory {
-    public static PersistenceService createService() {
-        return null;
-    }
-    public static PersistenceService createLoginService() {
-        return null;
-    }
     public static PersistenceService createMessageStorage(User user, Context c){
         try {
             File f = (c!=null)?c.getFilesDir():new File("./");

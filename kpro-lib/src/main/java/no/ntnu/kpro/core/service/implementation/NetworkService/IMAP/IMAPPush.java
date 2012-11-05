@@ -42,6 +42,7 @@ public class IMAPPush extends IMAPStrategy implements MessageCountListener {
     private IMAPFolder inbox;
     private boolean run = true;
     private Date fetchAfter;
+    private long wait = 0;
 
     public IMAPPush(final Properties props, final Authenticator auth, Date fetchAfter, final List<NetworkService.Callback> listeners, IMAPCache cache) {
         super(cache);
@@ -60,6 +61,11 @@ public class IMAPPush extends IMAPStrategy implements MessageCountListener {
         Store store = null;
         while (run) {
             try {
+                if (wait > 0) {
+                    synchronized (this) {
+                        this.wait(wait * 10000);
+                    }
+                }
                 if (store == null || !store.isConnected()) {
                     System.out.println("Connection to server");
                     store = session.getStore("imaps");
@@ -87,6 +93,7 @@ public class IMAPPush extends IMAPStrategy implements MessageCountListener {
 
             } catch (Exception e) {
                 System.out.println("Exception found: " + e.getMessage());
+                wait += 2;
                 e.printStackTrace();
             }
         }

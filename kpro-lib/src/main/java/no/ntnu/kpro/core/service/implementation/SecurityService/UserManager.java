@@ -26,25 +26,32 @@ public class UserManager {
             Logger.getLogger(UserManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public void createUser(User user){
+    public void createUser(IUser user){
         try {
             this.storage.save(user);
         } catch (Exception ex) {
             Logger.getLogger(UserManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public IUser authorize(IUser user){
+    public Boolean authorize(IUser user){
         try {
-            IUser[] users = PersistentWriteThroughStorage.castTo(storage.findAll(User.class), IUser[].class);
+            Object[] usersRaw = storage.findAll(User.class);
+            if (usersRaw == null || usersRaw.length == 0){
+                //Nothing found
+                return null;
+            }
+            IUser[] users = PersistentWriteThroughStorage.castTo(usersRaw, IUser[].class);
             for (IUser u : users){
                 if (u.authorize(user)){
-                    return u;
+                    return Boolean.TRUE;
+                }else if (user.getName().equals(u.getName())) {
+                    return Boolean.FALSE;
                 }
             }
         } catch (Exception ex) {
             Logger.getLogger(UserManager.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
         return null;
-        
     }
 }
