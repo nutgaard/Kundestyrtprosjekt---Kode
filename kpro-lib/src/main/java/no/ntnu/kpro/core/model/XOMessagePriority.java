@@ -9,12 +9,12 @@ package no.ntnu.kpro.core.model;
  * @author Aleksander
  */
 public enum XOMessagePriority {
-    DEFERRED("Deferred", 0, "a"),
-    ROUTINE("Routine", 1, "b"),
-    PRIORITY("Priority", 2, "c"),
-    IMMEDIATE("Immediate", 3, "d"),
-    FLASH("Flash", 4, "e"),
-    OVERRIDE("Override", 5, "f");
+    DEFERRED("Deferred", 0, "Def"),
+    ROUTINE("Routine", 1, "R"),
+    PRIORITY("Priority", 2, "P"),
+    IMMEDIATE("Immediate", 3, "O"),
+    FLASH("Flash", 4, "Z"),
+    OVERRIDE("Override", 5, "Y");
     
     private String val;
     private int numValue;
