@@ -9,6 +9,11 @@
         </activity>
         <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.activities.CreateInstantMessageActivity">
             <action android:name="no.ntnu.kpro.app.activities.CreateInstantMessageActivity"/>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
         </activity>
         <activity android:label="@string/app_name" android:name="no.ntnu.kpro.app.activities.ViewInstantMessagesActivity">
             <action android:name="no.ntnu.kpro.app.activities.ViewInstantMessagesActivity"/>
