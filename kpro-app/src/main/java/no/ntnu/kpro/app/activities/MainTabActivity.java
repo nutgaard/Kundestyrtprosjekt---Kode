@@ -175,11 +175,11 @@ public class MainTabActivity extends WrapperActivity implements TabHost.OnTabCha
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(tabHost.getApplicationWindowToken(), 0);
         final String s = string;
-        final boolean isLoggedIn = false; //Check in back-end
+        final boolean isLoggedIn = getServiceProvider().isLoggedin(); //Check in back-end
         if (isLoggedIn) {
         } else {
-//            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-//            startActivity(i);
+            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(i);
         }
     }
     

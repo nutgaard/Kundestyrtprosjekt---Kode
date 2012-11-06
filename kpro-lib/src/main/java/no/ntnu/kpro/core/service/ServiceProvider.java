@@ -176,4 +176,7 @@ public class ServiceProvider extends Service {
         this.networkService = null;
         this.securityService = null;
     }
+    public boolean isLoggedin() {
+        return this.networkService!=null;
+    }
 }
