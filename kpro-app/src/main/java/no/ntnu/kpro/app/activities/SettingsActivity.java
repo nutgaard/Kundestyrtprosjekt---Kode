@@ -29,7 +29,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         String strategy = prefs.getString("message_retrieval", "Push");
         String s = prefs.getString("security_labels_available", "NATO_CONFIDENTIAL");
 
-        
+        getPreferenceScreen().findPreference("poll_interval").setEnabled(false);
         
         //Log.i("Settings", strategy);
         //Log.i("Settings", s);
@@ -46,9 +46,15 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
     public void onSharedPreferenceChanged(SharedPreferences sp, String string) {
         updatePrefSummary(findPreference(string));
-//        if (get.equals("Push")){
-//            
-//        }
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(SettingsActivity.this);
+        String strategy = sharedPref.getString("message_retrieval", "Push");
+        
+        if (strategy.equals("Push")){
+            getPreferenceScreen().findPreference("poll_interval").setEnabled(false);
+        }
+        else{
+            getPreferenceScreen().findPreference("poll_interval").setEnabled(true);
+        }
         //Log.w("Settings", "NOE SKJEDDE");
     }
 
