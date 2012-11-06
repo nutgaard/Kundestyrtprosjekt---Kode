@@ -9,7 +9,7 @@ import java.io.*;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+//import java.util.concurrent.ConcurrentHashMap;
 import no.ntnu.kpro.core.model.Attachments;
 import no.ntnu.kpro.core.model.User;
 import no.ntnu.kpro.core.service.interfaces.PersistencePostProcessor;
@@ -39,7 +39,7 @@ public class PersistentWriteThroughStorage extends PersistenceService {
         this.user = user;
         this.postProcessor = postProcessor;
         this.xstream = new XStream();
-        xstream.addImplicitCollection(ConcurrentHashMap.class, "classes");
+        xstream.addImplicitCollection(HashMap.class, "classes");
         xstream.addImplicitCollection(Attachments.class, "attachments");
         if (!baseDir.exists()) {
             baseDir.mkdirs();
