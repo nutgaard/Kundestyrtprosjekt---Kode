@@ -5,31 +5,33 @@
 package no.ntnu.kpro.app.managers;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import no.ntnu.kpro.app.R;
-import no.ntnu.kpro.app.activities.SendMessageActivity;
 
 /**
  *
  * @author aleksandersjafjell
  */
-public class PositionManager {
+public class PositionManager implements SharedPreferences.OnSharedPreferenceChangeListener{
     
     Context context;
     LocationManager locationManager;
     
-    private final int locationUpdateInterval = 5000; //Milliseconds
-    private final int locationDistance = 5; //Meters.
+    private int locationUpdateInterval = 5000; //Milliseconds
+    private int locationDistance = 5; //Meters
     
     private Location currentLocation = null;
     
     public PositionManager(Context context){
         this.context = context;
+        getValuesFromPreferences();
     }
     
     public void startLocationFetching() {
@@ -38,6 +40,15 @@ public class PositionManager {
         addLocationListener(locationManager);
 
     } 
+    
+    private void getValuesFromPreferences(){
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPrefs.registerOnSharedPreferenceChangeListener(this);
+        locationUpdateInterval = Integer.parseInt(sharedPrefs.getString("update_interval_time", "5000"));
+        locationDistance = Integer.parseInt(sharedPrefs.getString("update_interval_distance", "5"));
+        Log.i("POSITIONMANAGER", "Update interval: " + locationUpdateInterval);
+        Log.i("POSITIONMANAGER", "Update distance: " + locationDistance);
+    }
     
     private void addLocationListener(LocationManager locationManager) {
         Criteria criteria = new Criteria();
@@ -90,5 +101,9 @@ public class PositionManager {
            
         } 
         return locLongString;
+    }
+
+    public void onSharedPreferenceChanged(SharedPreferences sp, String string) {
+        getValuesFromPreferences();
     }
 }

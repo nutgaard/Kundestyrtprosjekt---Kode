@@ -23,7 +23,6 @@ import javax.mail.search.ComparisonTerm;
 import javax.mail.search.ReceivedDateTerm;
 import no.ntnu.kpro.core.model.XOMessage;
 
-import no.ntnu.kpro.core.service.implementation.NetworkService.IMAPStrategy;
 import no.ntnu.kpro.core.service.implementation.NetworkService.NetworkServiceImp;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.service.interfaces.NetworkService.Callback;
@@ -97,6 +96,7 @@ public class IMAPPush extends IMAPStrategy implements MessageCountListener {
                 e.printStackTrace();
             }
         }
+        System.out.println("Exiting IMAPPush");
     }
 
     @Override

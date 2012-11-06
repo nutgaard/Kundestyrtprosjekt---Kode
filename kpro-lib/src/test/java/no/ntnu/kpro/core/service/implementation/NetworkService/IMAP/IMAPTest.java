@@ -4,7 +4,6 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService.IMAP;
 
-import no.ntnu.kpro.core.service.implementation.NetworkService.IMAPStrategy;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;

@@ -4,8 +4,11 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
+import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPStrategy;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -23,7 +26,9 @@ import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.factories.PersistenceServiceFactory;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAP;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPCache;
+import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPPull;
 import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPPush;
+import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPStrategyFactory;
 import no.ntnu.kpro.core.service.implementation.NetworkService.SMTP.SMTP;
 import no.ntnu.kpro.core.service.implementation.NetworkService.SMTP.SMTPSender;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
@@ -34,7 +39,7 @@ import no.ntnu.kpro.core.utilities.Converter;
  *
  * @author Nicklas
  */
-public class NetworkServiceImp extends NetworkService implements NetworkService.Callback {
+public class NetworkServiceImp extends NetworkService implements NetworkService.Callback, SharedPreferences.OnSharedPreferenceChangeListener {
 
     static {
         MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
@@ -70,6 +75,11 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
     private IMAP imap;
     private IMAPCache cache;
     private PersistenceService persistence;
+    private Context context;
+    private Properties properties;
+    private String username;
+    private String password;
+    private Date lastSeen;
 
     public NetworkServiceImp(final String username, final String password, final String mailAdr, Context context) {
         this(username, password, mailAdr, new Properties(), context);
@@ -82,7 +92,11 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
         cache = new IMAPCache(properties, username, password);
         this.persistence = PersistenceServiceFactory.createMessageStorage(new User(username, password), context);
         Converter.setup(PersistenceServiceFactory.createImageStore(context));
-        Date lastSeen = new Date(0);
+        lastSeen = new Date(0);
+        this.context = context;
+        this.username = username;
+        this.password = password;
+        this.properties = properties;
         try {
             IXOMessage[] savedMessages = PersistenceService.castTo(this.persistence.findAll(XOMessage.class), IXOMessage[].class);
             for (IXOMessage message : savedMessages) {
@@ -96,27 +110,16 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
             System.out.println("Could not load messages from disk");
         }
         this.smtp = new SMTP(username, password, mailAdr, properties, new Authenticator() {
-
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(username, password);
             }
         }, listeners);
-//        IMAPStrategy s = new IMAPPull(properties, new Authenticator() {
-//            @Override
-//            protected PasswordAuthentication getPasswordAuthentication() {
-//                return new PasswordAuthentication(username, password);
-//            }
-//        }, lastSeen, listeners, 10, cache);
-        IMAPStrategy ss = new IMAPPush(properties, new Authenticator() {
 
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        }, lastSeen, listeners, cache);
         System.err.println("JUST ONCE PLEASE");
-        this.imap = new IMAP(ss);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPref.registerOnSharedPreferenceChangeListener(this);
+        this.imap = new IMAP(IMAPStrategyFactory.getStrategy(username, password, properties, listeners, lastSeen, cache, context));
         listeners.add(this);
     }
 
@@ -170,5 +173,9 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
 
     public PersistenceService getMessageStorage() {
         return persistence;
+    }
+
+    public void onSharedPreferenceChanged(SharedPreferences sp, String string) {
+        imap.changeStrategy(IMAPStrategyFactory.getStrategy(username, password, properties, listeners, lastSeen, cache, context));
     }
 }

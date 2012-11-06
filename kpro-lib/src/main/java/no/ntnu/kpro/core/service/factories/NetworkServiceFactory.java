@@ -25,7 +25,7 @@ public class NetworkServiceFactory {
         props.put("mail.smtps.socketFactory.port", "465");
         props.put("mail.smtps.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         props.put("mail.smtps.auth", "true");
-        props.put("mail.debug", "true");
+        props.put("mail.debug", "false");
         props.put("mail.smtps.port", "465");
 
         props.put("mail.store.protocol", "imaps");

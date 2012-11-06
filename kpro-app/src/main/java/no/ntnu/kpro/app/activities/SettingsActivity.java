@@ -46,6 +46,9 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
     public void onSharedPreferenceChanged(SharedPreferences sp, String string) {
         updatePrefSummary(findPreference(string));
+//        if (get.equals("Push")){
+//            
+//        }
         //Log.w("Settings", "NOE SKJEDDE");
     }
 

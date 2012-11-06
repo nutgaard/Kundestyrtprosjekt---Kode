@@ -129,6 +129,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         
         //PositionManaging
         positionManager = new PositionManager(this);
+        
         positionManager.startLocationFetching();
         sendMessageValidator = new SendMessageValidator(this);
     }

@@ -39,7 +39,7 @@ public class IMAPStorage {
     }
 
     public Message[] getAllMessages(final BoxName box, final SearchTerm search) {
-//        System.out.println("Searching");
+        System.out.println("Searching");
         try {
 //            System.out.println("Props: " + props);
 //            System.out.println("Auth: " + auth);
