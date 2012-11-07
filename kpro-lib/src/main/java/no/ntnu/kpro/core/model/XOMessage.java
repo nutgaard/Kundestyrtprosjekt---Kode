@@ -50,6 +50,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
     private String type;
     private Date date;
     private boolean opened = false;
+    private boolean deleted = false;
     private String id = new BigInteger(130, new SecureRandom()).toString(32);
     private String boxAffiliation;
 
@@ -64,6 +65,12 @@ public class XOMessage implements ModelProxy.IXOMessage {
     public XOMessage(String id, String from, String to, String subject, String body, XOMessageSecurityLabel grading, XOMessagePriority priority, XOMessageType type, Date date, Uri... uris) {
         this(from, to, subject, body, grading, priority, type, date, uris);
         this.id = id;
+    }
+    public XOMessage(String id, String from, String to, String subject, String body, XOMessageSecurityLabel grading, XOMessagePriority priority, XOMessageType type, Date date, boolean opened, boolean deleted, Uri... uris) {
+        this(from, to, subject, body, grading, priority, type, date, uris);
+        this.id = id;
+        this.opened = opened;
+        this.deleted = deleted;
     }
 
     public XOMessage(String from, String to, String subject, String body, XOMessageSecurityLabel grading, XOMessagePriority priority, XOMessageType type, Date date, Uri... uris) {
@@ -99,7 +106,8 @@ public class XOMessage implements ModelProxy.IXOMessage {
                 EnumHelper.getEnumValue(XOMessageType.class, in.readString()),
                 new Date(in.readLong()));
         in.readList(attachments, Uri.class.getClassLoader());
-        this.opened = false;
+        this.opened = in.readByte()==1;
+        this.deleted = in.readByte()==1;
     }
 
     @Override
@@ -257,7 +265,12 @@ public class XOMessage implements ModelProxy.IXOMessage {
     public Date getDate() {
         return date;
     }
-
+    public void setDeleted(boolean b) {
+        this.deleted = true;
+    }
+    public boolean isDeleted(){
+        return this.deleted;
+    }
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(id);
@@ -271,6 +284,8 @@ public class XOMessage implements ModelProxy.IXOMessage {
         parcel.writeString(type.toString());
         parcel.writeLong(date.getTime());
         parcel.writeList(attachments);
+        parcel.writeByte((byte)(opened?1:0));
+        parcel.writeByte((byte)(deleted?1:0));
     }
 
     public static MimeMessage convertToMime(Session session, XOMessage message) throws Exception {

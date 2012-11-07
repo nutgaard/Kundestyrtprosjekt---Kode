@@ -47,7 +47,16 @@ public class PersistentWriteThroughStorage extends PersistenceService {
         getIndex();
     }
 
-    
+    public synchronized Object manageAll(Object o) throws Exception {
+        Object p;
+        if (!Proxy.isProxyClass(o.getClass())) {
+            p = TraceProxy.traceAll(o);
+        } else {
+            p = o;
+        }
+        save(p);
+        return p;
+    }
 
     public synchronized Object manage(Object o) throws Exception {
         Object p;
@@ -285,7 +294,7 @@ public class PersistentWriteThroughStorage extends PersistenceService {
     class NameFilter implements FilenameFilter {
 
         private String filename;
-        
+
         public NameFilter(String filename) {
             this.filename = filename;
         }

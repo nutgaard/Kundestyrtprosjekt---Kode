@@ -34,6 +34,7 @@ import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.model.XOMessageSecurityLabel;
 import no.ntnu.kpro.core.model.XOMessageType;
 import no.ntnu.kpro.core.service.ServiceProvider;
+import no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWriteThroughStorage.TraceProxy;
 
 /**
  *
@@ -99,8 +100,9 @@ public class MessageViewActivity extends WrapperActivity {
             case R.id.menu_delete:
                 Log.i(TAG, "Delete message pressed");
                 Toast.makeText(this, "Fake deleting message", Toast.LENGTH_LONG).show();
-                getServiceProvider().getNetworkService().getInbox().remove(currentMessage);
-                getServiceProvider().getNetworkService().getOutbox().remove(currentMessage);
+                getServiceProvider().getNetworkService().delete(currentMessage);
+                Intent i = new Intent(getApplication(), MainTabActivity.class);
+                startActivity(i);
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -42,6 +42,11 @@ public class PersistenceServiceFactory {
                 public Object manage(Object o) throws Exception {
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
+                
+                @Override
+                public Object manageAll(Object o) throws Exception {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
 
                 @Override
                 public Object unmanage(Object o) {
