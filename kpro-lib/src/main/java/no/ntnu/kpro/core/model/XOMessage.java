@@ -7,7 +7,9 @@ package no.ntnu.kpro.core.model;
 import android.net.Uri;
 import android.os.Parcel;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.security.KeyPair;
+import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -48,7 +50,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
     private String type;
     private Date date;
     private boolean opened = false;
-    private String id;
+    private String id = new BigInteger(130, new SecureRandom()).toString(32);
     private String boxAffiliation;
 
     public XOMessage() {
@@ -91,7 +93,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
     }
 
     public XOMessage(Parcel in) throws ParseException {
-        this(in.readString(), in.readString(), in.readString(), in.readString(),
+        this(in.readString(), in.readString(), in.readString(), in.readString(), in.readString(),
                 EnumHelper.getEnumValue(XOMessageSecurityLabel.class, in.readString()),
                 EnumHelper.getEnumValue(XOMessagePriority.class, in.readString()),
                 EnumHelper.getEnumValue(XOMessageType.class, in.readString()),
@@ -201,6 +203,9 @@ public class XOMessage implements ModelProxy.IXOMessage {
             return false;
         }
         final XOMessage other = (XOMessage) obj;
+        if (this.id != null && other.id != null && this.id.equals(other.id)) {
+            return true;
+        }
         if ((this.from == null) ? (other.from != null) : !this.from.equals(other.from)) {
             return false;
         }
@@ -255,6 +260,7 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
         parcel.writeString(from);
         parcel.writeString(to);
         parcel.writeString(subject);
@@ -344,7 +350,6 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
         public static Comparator<IXOMessage> getSendingPriority() {
             return new Comparator<IXOMessage>() {
-
                 public int compare(IXOMessage o1, IXOMessage o2) {
                     int p = o1.getPriority().compareTo(o2.getPriority());
                     return p == 0 ? o2.getDate().compareTo(o1.getDate()) : p;
@@ -354,7 +359,6 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
         public static Comparator<IXOMessage> getDateComparator(final boolean descending) {
             return new Comparator<IXOMessage>() {
-
                 public int compare(IXOMessage o1, IXOMessage o2) {
                     return descending ? o2.getDate().compareTo(o1.getDate()) : o1.getDate().compareTo(o2.getDate());
                 }
@@ -363,7 +367,6 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
         public static Comparator<IXOMessage> getSenderComparator(final boolean descending) {
             return new Comparator<IXOMessage>() {
-
                 public int compare(IXOMessage o1, IXOMessage o2) {
                     int p = descending ? o2.getFrom().compareToIgnoreCase(o1.getFrom()) : o1.getFrom().compareTo(o2.getFrom());
                     return (p == 0) ? getDateComparator(descending).compare(o1, o2) : p;
@@ -373,9 +376,8 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
         public static Comparator<IXOMessage> getPriorityComparator(final boolean descending) {
             return new Comparator<IXOMessage>() {
-
                 public int compare(IXOMessage o1, IXOMessage o2) {
-                    int p = o1.getPriority().getNumeric()-o2.getPriority().getNumeric()*(descending ? -1 : 1);
+                    int p = o1.getPriority().getNumeric() - o2.getPriority().getNumeric() * (descending ? -1 : 1);
                     return (p == 0) ? getDateComparator(descending).compare(o1, o2) : p;
                 }
             };
@@ -383,9 +385,8 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
         public static Comparator<IXOMessage> getLabelComparator(final boolean descending) {
             return new Comparator<IXOMessage>() {
-
                 public int compare(IXOMessage o1, IXOMessage o2) {
-                    int p = o1.getGrading().getSortVal() - o2.getGrading().getSortVal()*(descending ? -1 : 1);
+                    int p = o1.getGrading().getSortVal() - o2.getGrading().getSortVal() * (descending ? -1 : 1);
                     return (p == 0) ? getDateComparator(descending).compare(o1, o2) : p;
                 }
             };
@@ -393,9 +394,8 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
         public static Comparator<IXOMessage> getTypeComparator(final boolean descending) {
             return new Comparator<IXOMessage>() {
-
                 public int compare(IXOMessage o1, IXOMessage o2) {
-                    int p = o1.getType().getNumval() - o2.getType().getNumval()*(descending ? -1 : 1);
+                    int p = o1.getType().getNumval() - o2.getType().getNumval() * (descending ? -1 : 1);
                     return (p == 0) ? getDateComparator(descending).compare(o1, o2) : p;
                 }
             };
@@ -403,7 +403,6 @@ public class XOMessage implements ModelProxy.IXOMessage {
 
         public static Comparator<IXOMessage> getSubjectComparator(final boolean descending) {
             return new Comparator<IXOMessage>() {
-
                 public int compare(IXOMessage o1, IXOMessage o2) {
                     int p = descending ? o2.getSubject().compareToIgnoreCase(o1.getSubject()) : o1.getSubject().compareTo(o2.getSubject());
                     return (p == 0) ? getDateComparator(descending).compare(o1, o2) : p;
