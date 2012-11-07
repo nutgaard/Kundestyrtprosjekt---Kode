@@ -99,6 +99,8 @@ public class MessageViewActivity extends WrapperActivity {
             case R.id.menu_delete:
                 Log.i(TAG, "Delete message pressed");
                 Toast.makeText(this, "Fake deleting message", Toast.LENGTH_LONG).show();
+                getServiceProvider().getNetworkService().getInbox().remove(currentMessage);
+                getServiceProvider().getNetworkService().getOutbox().remove(currentMessage);
             default:
                 return super.onOptionsItemSelected(item);
         }
