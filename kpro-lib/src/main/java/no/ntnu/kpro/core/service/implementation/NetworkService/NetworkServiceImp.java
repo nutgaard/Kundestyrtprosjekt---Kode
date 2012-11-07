@@ -100,6 +100,9 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
         try {
             IXOMessage[] savedMessages = PersistenceService.castTo(this.persistence.findAll(XOMessage.class), IXOMessage[].class);
             for (IXOMessage message : savedMessages) {
+                if (message.isDeleted()) {
+                    continue;
+                }
                 System.out.println("Found saved message: " + message);
                 message.getBoxAffiliation().getBox().add(message);
                 cache.cache(message.getId(), message);
@@ -137,6 +140,16 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
         return BoxName.INBOX.getBox();
     }
 
+    public void delete(IXOMessage message) {
+        try {
+            getInbox().remove(message);
+            getOutbox().remove(message);
+            persistence.manageAll(message);
+        } catch (Exception ex) {
+            Logger.getLogger(NetworkServiceImp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public void close() {
         smtp.halt();
         imap.halt();
@@ -152,6 +165,9 @@ public class NetworkServiceImp extends NetworkService implements NetworkService.
 
     public void mailReceived(IXOMessage message) {
         try {
+            if (getInbox().contains(message)){
+                return;
+            }
             System.out.println("Saving GOD DAMNIT");
             message.setBoxAffiliation(BoxName.INBOX);
             this.persistence.save(message);

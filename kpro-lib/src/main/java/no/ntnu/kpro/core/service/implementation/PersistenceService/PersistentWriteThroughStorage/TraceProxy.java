@@ -27,6 +27,20 @@ public class TraceProxy implements InvocationHandler {
         this.object = object;
     }
 
+    public static Object traceAll(Object object) {
+        for (Entry<PersistentWriteThroughStorage, Map<Object, Object>> localmap : globalMap.entrySet()) {
+            if (localmap.getValue().containsValue(object)) {
+                return trace(localmap.getKey(), object);
+            }
+        }
+        if (globalMap.entrySet().size() > 0) {
+            PersistentWriteThroughStorage p = globalMap.keySet().iterator().next();
+            return trace(p, object);
+        }else {
+            throw new RuntimeException("Not been persistet yet");
+        }
+    }
+
     public static Object trace(PersistentWriteThroughStorage storage, Object object) {
         if (!globalMap.containsKey(storage)) {
             globalMap.put(storage, new HashMap<Object, Object>());

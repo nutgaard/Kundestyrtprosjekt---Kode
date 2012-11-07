@@ -25,4 +25,5 @@ public abstract class NetworkService extends ServiceInterface<NetworkService.Cal
     public abstract Box<IXOMessage> getOutbox();
     public abstract Box<IXOMessage> getInbox();
     public abstract void close();
+    public abstract void delete(IXOMessage message);
 }

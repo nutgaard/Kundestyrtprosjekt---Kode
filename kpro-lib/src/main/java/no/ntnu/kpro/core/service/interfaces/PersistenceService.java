@@ -30,6 +30,7 @@ public abstract class PersistenceService extends ServiceInterface<PersistenceSer
     public abstract void close();
 
     public abstract Object manage(Object o) throws Exception;
+    public abstract Object manageAll(Object o) throws Exception;
 
     public abstract Object unmanage(Object o);
 

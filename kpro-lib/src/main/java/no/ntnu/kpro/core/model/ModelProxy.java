@@ -27,6 +27,7 @@ public class ModelProxy {
         public void setName(String name);
 
         public String getName();
+
         public String getPassword();
 
         public boolean authorize(IUser u);
@@ -48,6 +49,10 @@ public class ModelProxy {
                 return new XOMessage[i];
             }
         };
+
+        public void setDeleted(boolean b);
+
+        public boolean isDeleted();
 
         void addAttachment(List<Uri> is);
 
@@ -86,7 +91,9 @@ public class ModelProxy {
         String toString();
 
         public BoxName getBoxAffiliation();
+
         public void setBoxAffiliation(BoxName box);
+
         void writeToParcel(Parcel parcel, int i);
     }
 }
