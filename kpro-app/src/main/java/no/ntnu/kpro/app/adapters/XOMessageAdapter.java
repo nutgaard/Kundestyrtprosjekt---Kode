@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -71,6 +72,7 @@ public class XOMessageAdapter extends ArrayAdapter {
             xoView.date = (TextView) rowView.findViewById(R.id.lblDate);
             xoView.label = (TextView) rowView.findViewById(R.id.imvLabel);
             xoView.priority = (TextView) rowView.findViewById(R.id.imvPriority);
+            xoView.attachments = (ImageView) rowView.findViewById(R.id.imvAttachment);
 
             // Cache the view objects in the tag,
             // so they can be re-accessed later
@@ -88,6 +90,14 @@ public class XOMessageAdapter extends ArrayAdapter {
         } else {
             xoView.address.setText(message.getTo());
         }
+        
+        if(message.getAttachments().size() > 0){
+            xoView.attachments.setVisibility(View.VISIBLE);
+        }
+        else{
+            xoView.attachments.setVisibility(View.GONE);
+        }
+        
         xoView.subject.setText(message.getSubject());
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
         Date date = message.getDate();
@@ -114,6 +124,7 @@ public class XOMessageAdapter extends ArrayAdapter {
         protected TextView date;
         protected TextView label;
         protected TextView priority;
+        protected ImageView attachments;
         //protected ImageView classification;
         //protected ImageView priority;
     }

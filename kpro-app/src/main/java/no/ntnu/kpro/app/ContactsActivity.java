@@ -41,8 +41,10 @@ public class ContactsActivity extends WrapperActivity {
         Contact nicklas = new Contact("Nicklas", "Nicklas@gmail.com", 2);
         Contact christian = new Contact("Christian", "Christian@thales.no", 2);
         Contact stig = new Contact("Stig", "Stig@thales.no", 2);
+        Contact kprotest = new Contact("KproTest", "kprotest@gmail.com", 2);
 
         elements.add(kpro);
+        elements.add(kprotest);
         elements.add(lars);
         elements.add(magnus);
         elements.add(aleksander);

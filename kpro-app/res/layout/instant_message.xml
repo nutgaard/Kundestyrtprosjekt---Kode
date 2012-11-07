@@ -1,36 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" 
-    style="@style/backgroundStyle">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent" android:layout_height="fill_parent">
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" 
+        android:id="@+id/layInst1"
+        style="@style/backgroundStyle">
  
-    <!--      Header  Starts
-  <LinearLayout android:id="@+id/header"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@layout/header_gradient"
-                    android:paddingTop="5dip"
-                    android:paddingBottom="5dip">
-       Logo Start
-      <ImageView android:src="@drawable/logo"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:layout_marginLeft="10dip"/>
-       Logo Ends 
-  </LinearLayout>
-    Header Ends -->
-    <!-- Footer Start -->
-    <!--    <LinearLayout android:id="@+id/footer"
-                      android:layout_width="fill_parent"
-                      android:layout_height="90dip"
-                      android:background="@layout/footer_repeat"
-                      android:layout_alignParentBottom="true">
-    </LinearLayout>-->
-    <!-- Footer Ends -->
+        <!--      Header  Starts
+      <LinearLayout android:id="@+id/header"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@layout/header_gradient"
+                        android:paddingTop="5dip"
+                        android:paddingBottom="5dip">
+           Logo Start
+          <ImageView android:src="@drawable/logo"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:layout_marginLeft="10dip"/>
+           Logo Ends 
+      </LinearLayout>
+        Header Ends -->
+        <!-- Footer Start -->
+        <!--    <LinearLayout android:id="@+id/footer"
+                          android:layout_width="fill_parent"
+                          android:layout_height="90dip"
+                          android:background="@layout/footer_repeat"
+                          android:layout_alignParentBottom="true">
+        </LinearLayout>-->
+        <!-- Footer Ends -->
  
-    <!-- Login Form -->
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <!-- Login Form -->
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     android:layout_width="fill_parent"
                     android:layout_height="80dp"
                     android:layout_marginLeft="10dip"
@@ -39,54 +42,54 @@
                     android:orientation="vertical" 
                     android:id="@+id/attributes"
                     android:background="@drawable/btn_black"
-    >
+        >
             
-        <!-- From Label -->
-        <TextView
-            android:id="@+id/lblReceiver"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:paddingTop="2dp"
-            android:paddingLeft="2dp"
-            android:textSize="14sp"
-            android:maxLines="1"
-            android:lines="1" />
-        <!-- Security label -->
-        <TextView
-            android:id="@+id/lblSecurityLabel"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:layout_alignParentRight="true"
-            android:background="@color/white"
-            android:textColor="@color/black"
+            <!-- From Label -->
+            <TextView
+                android:id="@+id/lblReceiver"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:paddingTop="2dp"
+                android:paddingLeft="2dp"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:lines="1" />
+            <!-- Security label -->
+            <TextView
+                android:id="@+id/lblSecurityLabel"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:layout_alignParentRight="true"
+                android:background="@color/white"
+                android:textColor="@color/black"
     />
-        <!-- Priority -->
-        <TextView
-            android:id="@+id/lblPriority"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:textSize="12dp"
-            android:layout_alignParentRight="true"
-            android:textColor="@color/black"
-            android:background="@color/white"
-            android:layout_below="@id/lblSecurityLabel"
+            <!-- Priority -->
+            <TextView
+                android:id="@+id/lblPriority"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:layout_alignParentRight="true"
+                android:textColor="@color/black"
+                android:background="@color/white"
+                android:layout_below="@id/lblSecurityLabel"
     />
-        <!-- Type -->
-        <TextView
-            android:id="@+id/lblType"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:textSize="12dp"
-            android:layout_alignParentRight="true"
-            android:textColor="@color/black"
-            android:background="@color/white"
-            android:layout_below="@id/lblPriority"
+            <!-- Type -->
+            <TextView
+                android:id="@+id/lblType"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:layout_alignParentRight="true"
+                android:textColor="@color/black"
+                android:background="@color/white"
+                android:layout_below="@id/lblPriority"
     />
     
-        <!-- Mail Subject -->
-        <TextView android:id="@+id/lblSubject"
+            <!-- Mail Subject -->
+            <TextView android:id="@+id/lblSubject"
                   android:layout_height="wrap_content"
                   android:layout_width="200dp"
                   android:paddingLeft="2dp"
@@ -96,48 +99,61 @@
                   android:textColor="@color/white"
                   android:layout_below="@id/lblReceiver"/>
                 
-    </RelativeLayout>
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/attributes"
-        android:padding="10dip">
-        
-        <EditText
-            android:id="@+id/txtMessage"
-            android:layout_width="fill_parent"
-            android:layout_height="150dp"
-            android:layout_marginTop="7dp"
-            android:lines="10"
-            android:maxLines="10"
-            android:maxLength="500"
-            android:hint="Message text"
-            android:gravity="top|left"/>    
-        
-        <Button
-            android:id="@+id/btnSend"
-            android:layout_width="150dp"
+        </RelativeLayout>
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Send"/> 
+            android:layout_below="@id/attributes"
+            android:padding="10dip">
+            <Button
+                android:id="@+id/btnAddAttachment"
+                android:layout_marginTop="7dp"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Add attachment"/>
+            <ExpandableListView
+                android:id="@+id/ExpList"
+                android:layout_height="75dp"
+                android:layout_width="fill_parent"
+                android:groupIndicator="@null" />
+            <EditText
+                android:id="@+id/txtMessage"
+                android:layout_width="fill_parent"
+                android:layout_height="150dp"
+                android:layout_marginTop="7dp"
+                android:lines="10"
+                android:maxLines="10"
+                android:maxLength="500"
+                android:hint="Message text"
+                android:gravity="top|left"/>    
         
-        <!--  Email Label -->
+            <Button
+                android:id="@+id/btnSend"
+                android:layout_marginTop="7dp"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Send"/> 
+        
+        
+            <!--  Email Label -->
      
-        <!--         Login button 
-       <Button android:id="@+id/createInstantMessage"
-                   android:layout_width="fill_parent"
-                   android:layout_height="wrap_content"
-                   android:layout_marginTop="10dip"
-                   android:text="Create new Instant Message"/>
-       <Button android:id="@+id/viewInstantMessages"
-                   android:layout_width="fill_parent"
-                   android:layout_height="wrap_content"
-                   android:layout_marginTop="20dip"
-                   android:text="View all instant messages"/>
-        Link to Registration Screen -->
+            <!--         Login button 
+           <Button android:id="@+id/createInstantMessage"
+                       android:layout_width="fill_parent"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="10dip"
+                       android:text="Create new Instant Message"/>
+           <Button android:id="@+id/viewInstantMessages"
+                       android:layout_width="fill_parent"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="20dip"
+                       android:text="View all instant messages"/>
+            Link to Registration Screen -->
        
  
-    </LinearLayout>
-    <!-- Login Form Ends -->
-</RelativeLayout>
+        </LinearLayout>
+        <!-- Login Form Ends -->
+    </RelativeLayout>
+</ScrollView>

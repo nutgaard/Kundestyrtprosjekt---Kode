@@ -34,6 +34,7 @@ public class XOXOmailWidget extends AppWidgetProvider{
             // to the button
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
             views.setOnClickPendingIntent(R.id.txt_new_messages_widget, pendingIntent);
+            views.setOnClickPendingIntent(R.id.instant_message_image, pendingIntent);
 
             // Tell the AppWidgetManager to perform an update on the current app widget
             appWidgetManager.updateAppWidget(appWidgetId, views);

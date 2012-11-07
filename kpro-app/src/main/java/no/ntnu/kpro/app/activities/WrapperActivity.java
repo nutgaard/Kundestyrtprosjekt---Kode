@@ -85,7 +85,6 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
 
     private ServiceConnection newServiceConnection() {
         return new ServiceConnection() {
-
             public void onServiceConnected(ComponentName cn, IBinder ib) {
                 ServiceProvider.LocalBinder lb = (ServiceProvider.LocalBinder) ib;
                 WrapperActivity.this.onServiceConnected(lb.getService());
@@ -97,32 +96,37 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
         };
     }
 
-
     public void mailSent(IXOMessage message, Address[] invalidAddress) {
         Log.i("KPRO-GUI-WRAPPER", "Her er den sendt");
-        runOnUiThread(new Runnable() {
-
-            public void run() {
-                Toast.makeText(WrapperActivity.this, "Message sent", Toast.LENGTH_LONG).show();
-            }
-        });
+        if (this.getLocalClassName().equals("activities.MainTabActivity")) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(WrapperActivity.this, "Message sent", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     public void mailSentError(IXOMessage message, Exception ex) {
-        runOnUiThread(new Runnable() {
+        if (this.getLocalClassName().equals("activities.MainTabActivity")) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(WrapperActivity.this, "Message sending error", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
 
-            public void run() {
-                Toast.makeText(WrapperActivity.this, "Message sending error", Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     public void mailReceived(IXOMessage message) {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                Toast.makeText(WrapperActivity.this, "1 new message", Toast.LENGTH_LONG).show();
-            }
-        });
+
+        if (this.getLocalClassName().equals("activities.MainTabActivity")) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(WrapperActivity.this, "New message", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
 
         Log.i("KPRO-GUI-WRAPPER", this.getLocalClassName());
         //Check if visible to limit to one
@@ -136,12 +140,11 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
         if (topActivity.equals("ComponentInfo{no.ntnu.kpro.app/no.ntnu.kpro.app." + this.getLocalClassName() + "}")) {
             final IXOMessage recMessage = message;
             runOnUiThread(new Runnable() {
-
                 public void run() {
 
                     XOMessagePriority priority = recMessage.getPriority();
                     Log.i("KPRO-GUI", priority.toString());
-                    if (priority.equals(XOMessagePriority.OVERRIDE) || priority.equals(XOMessagePriority.FLASH)) {
+                    if (priority.getNumeric() >= 4) {
 
                         final Dialog dialog = new Dialog(WrapperActivity.this);
                         dialog.setContentView(R.layout.dialog_flash_override);
@@ -159,7 +162,6 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
 
                         Button btnOpen = (Button) dialog.findViewById(R.id.btnOpen);
                         btnOpen.setOnClickListener(new View.OnClickListener() {
-
                             public void onClick(View view) {
                                 Log.i("KPRO-GUI", "Clicking open");
                                 Intent i = new Intent(getApplicationContext(), MessageViewActivity.class);
@@ -176,7 +178,6 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
 
                         Button btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
                         btnCancel.setOnClickListener(new View.OnClickListener() {
-
                             public void onClick(View view) {
                                 dialog.dismiss();
                             }
@@ -192,9 +193,8 @@ public abstract class WrapperActivity extends ActivityGroup implements NetworkSe
 
     public void mailReceivedError(Exception ex) {
         runOnUiThread(new Runnable() {
-
             public void run() {
-                Toast.makeText(WrapperActivity.this, "Message recieve error", Toast.LENGTH_LONG).show();
+                //Toast.makeText(WrapperActivity.this, "Message recieve error", Toast.LENGTH_LONG).show();
             }
         });
     }

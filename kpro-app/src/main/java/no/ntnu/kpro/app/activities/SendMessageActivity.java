@@ -17,11 +17,13 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 import java.util.ArrayList;
@@ -52,17 +54,14 @@ import no.ntnu.no.app.validators.SendMessageValidator;
  *
  * @author Aleksander and Kristin
  */
-public class SendMessageActivity extends MenuActivity implements NetworkService.Callback {
-
-    final static String TAG = "KPRO-GUI-SENDMESSAGE";
+public class SendMessageActivity extends WrapperActivity implements NetworkService.Callback {
     
+    final static String TAG = "KPRO-GUI-SENDMESSAGE";
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 67;
     private static final int FETCH_IMAGE_ACTIVITY_REQUEST_CODE = 77;
     private static final int FETCH_CONTACT_REQUEST_CODE = 1337;
-    
     XOMessagePriority defaultPriority = XOMessagePriority.ROUTINE;
     XOMessageType defaultType = XOMessageType.OPERATION;
-    
     //Fields
     private EditText txtReceiver;
     private EditText txtSubject;
@@ -75,28 +74,23 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
     private ImageButton btnContacts;
     private boolean textEnteredInReceiver = false;
     boolean textEnteredInMessageBody = false;
-    
     //Attachments//
     private Attachments attachments;
     ArrayList<ExpandableListChild> attachmentsListChildren;
     ExpandableListManager expandableAttachmentsListManager;
-    
     //Intents
     private Uri attachmentUri;
     private SendMessageValidator sendMessageValidator;
-    
     //GPS / WIFI -Location Manager//
     LocationManager locationManager;
     private final int locationUpdateInterval = 5000; //Milliseconds
     private final int locationDistance = 5; //Meters.
     private Location currentLocation = null;
     private PositionManager positionManager;
-    
     //ExpandableList for attachments and manager for holding and setting up attachments
     ExpandableListView expandableListView;
     ExpandableListManager expandableListManager;
     
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,7 +105,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         sprSecurityLabel = (Spinner) findViewById(R.id.sprSecurityLabel);
         sprPriority = (Spinner) findViewById(R.id.sprPriority);
         sprType = (Spinner) findViewById(R.id.sprType);
-
+        
         btnAddAttachment = (Button) findViewById(R.id.btnAddAttachment);
         btnSend = (Button) findViewById(R.id.btnSend);
         btnContacts = (ImageButton) findViewById(R.id.btnContacts);
@@ -126,7 +120,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         expandableListView = (ExpandableListView) findViewById(R.id.ExpList);
         expandableListManager = new ExpandableListManager(this, expandableListView);
         attachments = new Attachments();
-        
+
         //PositionManaging
         positionManager = new PositionManager(this);
         
@@ -161,26 +155,25 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                 sprType.setSelection(j);
             }
         }
-
+        
     }
-
+    
     @Override
     public void onServiceConnected(ServiceProvider serviceProvider) {
         super.onServiceConnected(serviceProvider);
 //        getServiceProvider().register(this);
     }
-
+    
+    @Override
     public void mailSent(IXOMessage message, Address[] invalidAddress) {
         super.mailSent(message, invalidAddress);
         runOnUiThread(new Runnable() {
             public void run() {
-                Toast confirm = Toast.makeText(SendMessageActivity.this, "Message sent", Toast.LENGTH_SHORT);
-                confirm.show();
                 SendMessageActivity.this.resetFields();
             }
         });
     }
-
+    
     public void mailSentError(XOMessage message, Exception ex) {
         super.mailSentError(message, ex);
         runOnUiThread(new Runnable() {
@@ -190,7 +183,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             }
         });
     }
-
+    
     public void mailReceived(XOMessage message) {
         super.mailReceived(message);
         runOnUiThread(new Runnable() {
@@ -200,7 +193,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             }
         });
     }
-
+    
     public void mailReceivedError(Exception ex) {
         super.mailReceivedError(ex);
         runOnUiThread(new Runnable() {
@@ -209,9 +202,18 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
 //                errorMess.show();
             }
         });
-
+        
     }
+
     private void addClickAndFocusListeners() {
+        RelativeLayout laySendMessage = (RelativeLayout) findViewById(R.id.laySendMessage);
+        laySendMessage.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                final InputMethodManager imm = (InputMethodManager) getSystemService(
+                        INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0); 
+            }
+        });
         btnSend.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
@@ -240,24 +242,27 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                             if (sendMessageValidator.isValidFinalValidation()) {
                                 XOMessage m = new XOMessage("MyMailAddress@gmail.com", getTxtReceiver().getText().toString(), txtSubject.getText().toString(), getTxtMessageBody().getText().toString(), selectedSecurity, selectedPriority, selectedType, new Date());
                                 List<Uri> att = new LinkedList<Uri>();
-                                for (Attachment a : attachments){
-                                    System.out.println("Addding URI to attachments: "+a.getUri().toString());
-                                    att.add(a.getUri()); 
+                                for (Attachment a : attachments) {
+                                    System.out.println("Addding URI to attachments: " + a.getUri().toString());
+                                    att.add(a.getUri());                                    
                                 }
                                 m.addAttachment(att);
                                 getServiceProvider().getNetworkService().send(m);
+                                Intent i = new Intent(getApplicationContext(), MainTabActivity.class);
+                                startActivity(i);
+                                
                             } else {
                                 //Create a big,bad and flashy toast that gets attention.
                                 Toast sendMessageError = Toast.makeText(SendMessageActivity.this, R.string.invalidSecurityLabelError, Toast.LENGTH_LONG);
                                 sendMessageError.getView().setBackgroundColor(getResources().getColor(R.color.red));
                                 sendMessageError.show();
-
+                                
                             }
-
+                            
                         }
                     }
                 });
-
+        
         btnContacts.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
@@ -265,7 +270,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         startActivityForResult(i, 1337);
                     }
                 });
-
+        
         getTxtReceiver().setOnFocusChangeListener(
                 new OnFocusChangeListener() {
                     @Override
@@ -275,15 +280,15 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         }
                     }
                 });
-
+        
         btnAddAttachment.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 String[] items = new String[]{"Image From Camera", "Image From Phone", "Location"};
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(SendMessageActivity.this, android.R.layout.select_dialog_item, items);
                 AlertDialog.Builder builder = new AlertDialog.Builder(SendMessageActivity.this);
-
+                
                 builder.setTitle("Select Content");
-
+                
                 builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         if (item == 0) {
@@ -292,17 +297,17 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                             startFetchImageFromPhoneActivity();
                         } else if (item == 2) {
                             String description = positionManager.getCurrentLocationDescription();
-                            if(description.equals("")){
+                            if (description.equals("")) {
                                 Toast locationNotFound = Toast.makeText(SendMessageActivity.this, R.string.noLocationFoundError, RESULT_OK);
                                 locationNotFound.show();
-                            }else{
+                            } else {
                                 txtMessageBody.setText(txtMessageBody.getText() + description);
                             }
                             
                             
                         }
                     }
-
+                    
                     private void startFetchImageFromPhoneActivity() {
                         //Create intent
                         Intent intent = new Intent();
@@ -311,11 +316,11 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         intent.addCategory(Intent.CATEGORY_OPENABLE);
                         startActivityForResult(intent, FETCH_IMAGE_ACTIVITY_REQUEST_CODE);
                     }
-
+                    
                     private void startFetchImageFromCameraActivity() {
                         // create Intent to take a picture and return control to the calling application
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
+                        
                         attachmentUri = FileHelper.getOutputMediaFileUri(FileHelper.MEDIA_TYPE_IMAGE); // create a file to save the image
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, attachmentUri); // set the image file name
 
@@ -325,12 +330,12 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                         startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
                     }
                 });
-
+                
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
         });
-
+        
         btnContacts.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
@@ -339,7 +344,7 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                     }
                 });
     }
-
+    
     private void resetFields() {
         getTxtReceiver().setText("");
         txtSubject.setText("");
@@ -352,17 +357,17 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
         this.textEnteredInMessageBody = false;
         this.textEnteredInReceiver = false;
     }
-
+    
     private void addTextChangedListeners() {
         txtReceiver.addTextChangedListener(
                 new TextWatcher() {
                     public void onTextChanged(CharSequence cs, int i, int i1, int i2) {
                         textEnteredInReceiver = true;
                     }
-
+                    
                     public void beforeTextChanged(CharSequence cs, int i, int i1, int i2) {
                     }
-
+                    
                     public void afterTextChanged(Editable edtbl) {
                         if (getTxtReceiver().getText().toString().length() > 0) {
                             sendMessageValidator.isValidIntermediateValidation(true);
@@ -371,16 +376,16 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
                 });
     }
     private int imageCounter = 1;
-
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "ReqCode: " + requestCode + ". ResultCode:" + resultCode);
-
+        
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             attachments.addAttachment(new ImageAttachment(attachmentUri));
             expandableListManager.addAttachmentToDropDown(attachmentUri, imageCounter++);
         }
-
+        
         if (requestCode == FETCH_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             Uri path = data.getData();
             attachments.addAttachment(new ImageAttachment(path));
@@ -394,7 +399,6 @@ public class SendMessageActivity extends MenuActivity implements NetworkService.
             }
         }
     }
-
 
     /**
      * @return the txtReceiver

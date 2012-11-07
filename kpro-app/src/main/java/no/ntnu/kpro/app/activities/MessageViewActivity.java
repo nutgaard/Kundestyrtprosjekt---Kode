@@ -280,7 +280,7 @@ public class MessageViewActivity extends WrapperActivity {
                                     public void run() {
                                         Log.i("MediaScanner", "Scanned " + path + ":");
                                         Log.i("MediaScanner", "-> uri=" + uri);
-                                        Toast.makeText(MessageViewActivity.this, "Omg. I clicked:" + uri, Toast.LENGTH_LONG).show();
+                                        Toast.makeText(MessageViewActivity.this, "" + uri, Toast.LENGTH_LONG).show();
                                         Intent showImageIntent = new Intent();
                                         showImageIntent.setAction(Intent.ACTION_VIEW);
                                         Uri u = uri;

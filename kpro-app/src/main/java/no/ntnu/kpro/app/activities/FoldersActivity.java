@@ -31,7 +31,7 @@ import no.ntnu.kpro.core.utilities.EnumHelper;
  *
  * @author Kristin
  */
-public class FoldersActivity extends MenuActivity implements NetworkService.Callback, View.OnClickListener {
+public class FoldersActivity extends WrapperActivity implements NetworkService.Callback, View.OnClickListener {
 
     static final String TAG = "KPRO-GUI-FOLDERS";
     List<IXOMessage> messages;

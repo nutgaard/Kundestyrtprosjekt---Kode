@@ -46,7 +46,7 @@ import no.ntnu.kpro.core.utilities.EnumHelper;
  *
  * @author Aleksander and Kristin
  */
-public class CreateInstantMessageActivity extends MenuActivity implements NetworkService.Callback {
+public class CreateInstantMessageActivity extends WrapperActivity implements NetworkService.Callback {
 
     private EditText txtReceiver;
     private EditText txtSubject;
