@@ -4,6 +4,7 @@
  */
 package no.ntnu.kpro.core.service.implementation.NetworkService;
 
+import no.ntnu.kpro.core.service.implementation.NetworkService.IMAP.IMAPStrategy;
 import android.content.Context;
 import android.content.Intent;
 import java.util.Date;

@@ -8,7 +8,6 @@ import com.sun.mail.imap.IMAPMessage;
 import java.util.HashMap;
 import java.util.Map;
 import no.ntnu.kpro.core.model.XOMessage;
-import no.ntnu.kpro.core.service.implementation.NetworkService.IMAPStrategy;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
 /**
