@@ -47,7 +47,7 @@ import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.utilities.EnumHelper;
 import no.ntnu.kpro.core.utilities.FileHelper;
-import no.ntnu.no.app.validators.SendMessageValidator;
+import no.ntnu.kpro.app.validators.SendMessageValidator;
 
 /**
  *
