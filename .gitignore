@@ -3,7 +3,6 @@ target
 *.ipr
 *.iml
 *.jpg
-*.png
 *.log
 .settings
 .classpath
