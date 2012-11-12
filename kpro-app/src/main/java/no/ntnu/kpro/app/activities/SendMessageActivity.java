@@ -24,6 +24,7 @@ import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -46,13 +47,13 @@ import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.utilities.EnumHelper;
 import no.ntnu.kpro.core.utilities.FileHelper;
-import no.ntnu.no.app.validators.SendMessageValidator;
+import no.ntnu.kpro.app.validators.SendMessageValidator;
 
 /**
  *
  * @author Aleksander and Kristin
  */
-public class SendMessageActivity extends MenuActivity implements NetworkService.Callback {
+public class SendMessageActivity extends WrapperActivity implements NetworkService.Callback {
 
     final static String TAG = "KPRO-GUI-SENDMESSAGE";
     

@@ -73,7 +73,33 @@
             <version>1.8.4</version>
             <scope>test</scope>
         </dependency>                      
-            
     </dependencies>
-  
+    <build>
+        <plugins>   
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <doclet>ydoc.doclets.YStandard</doclet>
+                    <docletPath>C:\Users\Nicklas\yworks-uml-doclet-3.0_02-jdk1.5\lib\ydoc.jar;C:\Users\Nicklas\yworks-uml-doclet-3.0_02-jdk1.5\lib\class2svg.jar;C:\Users\Nicklas\yworks-uml-doclet-3.0_02-jdk1.5\resources</docletPath>
+                    <additionalparam>-umlautogen</additionalparam>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.5.2</version>
+                <configuration>
+                    <formats>
+                        <format>html</format>
+                        <format>xml</format>
+                    </formats>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
