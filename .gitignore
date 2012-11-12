@@ -11,3 +11,4 @@ target
 .idea
 gen
 kpro-lib/kprothales/
+kpro-lib/test

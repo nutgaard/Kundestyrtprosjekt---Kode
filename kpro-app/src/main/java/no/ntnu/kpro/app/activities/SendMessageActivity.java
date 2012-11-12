@@ -53,7 +53,7 @@ import no.ntnu.kpro.app.validators.SendMessageValidator;
  *
  * @author Aleksander and Kristin
  */
-public class SendMessageActivity extends MenuActivity implements NetworkService.Callback {
+public class SendMessageActivity extends WrapperActivity implements NetworkService.Callback {
 
     final static String TAG = "KPRO-GUI-SENDMESSAGE";
     
