@@ -273,6 +273,7 @@ public class InstantMessageActivity extends WrapperActivity implements View.OnCl
         getServiceProvider().getNetworkService().send(m);
         Intent i = new Intent(getApplicationContext(), MainTabActivity.class);
         startActivity(i);
+        finish();
     }
 
     @Override
