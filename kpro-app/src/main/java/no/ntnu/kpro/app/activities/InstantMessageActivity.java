@@ -128,7 +128,7 @@ public class InstantMessageActivity extends WrapperActivity implements View.OnCl
 
         btnAddAttachment.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                String[] items = new String[]{"Image From Camera", "Image From Phone", "Location"};
+                String[] items = new String[]{"Take picture", "Image from gallery", "Location"};
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(InstantMessageActivity.this, android.R.layout.select_dialog_item, items);
                 AlertDialog.Builder builder = new AlertDialog.Builder(InstantMessageActivity.this);
 

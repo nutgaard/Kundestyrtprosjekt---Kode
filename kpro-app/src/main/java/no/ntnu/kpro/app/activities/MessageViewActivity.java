@@ -99,7 +99,7 @@ public class MessageViewActivity extends WrapperActivity {
         switch (item.getItemId()) {
             case R.id.menu_delete:
                 Log.i(TAG, "Delete message pressed");
-                Toast.makeText(this, "Fake deleting message", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Message deleted", Toast.LENGTH_LONG).show();
                 getServiceProvider().getNetworkService().delete(currentMessage);
                 Intent i = new Intent(getApplication(), MainTabActivity.class);
                 startActivity(i);

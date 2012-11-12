@@ -126,6 +126,7 @@
                 android:lines="10"
                 android:maxLines="10"
                 android:maxLength="500"
+                android:inputType="text|textCapSentences"
                 android:hint="Message text"
                 android:gravity="top|left"/>    
         

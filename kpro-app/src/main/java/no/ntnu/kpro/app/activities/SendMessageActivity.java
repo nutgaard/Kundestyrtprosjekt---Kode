@@ -251,6 +251,7 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
                                 getServiceProvider().getNetworkService().send(m);
                                 Intent i = new Intent(getApplicationContext(), MainTabActivity.class);
                                 startActivity(i);
+                                finish();
                                 
                             } else {
                                 //Create a big,bad and flashy toast that gets attention.
@@ -284,7 +285,7 @@ public class SendMessageActivity extends WrapperActivity implements NetworkServi
         
         btnAddAttachment.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                String[] items = new String[]{"Image From Camera", "Image From Phone", "Location"};
+                String[] items = new String[]{"Take picture", "Image from gallery", "Location"};
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(SendMessageActivity.this, android.R.layout.select_dialog_item, items);
                 AlertDialog.Builder builder = new AlertDialog.Builder(SendMessageActivity.this);
                 
