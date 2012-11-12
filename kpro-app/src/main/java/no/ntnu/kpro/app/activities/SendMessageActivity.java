@@ -26,6 +26,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -48,7 +49,7 @@ import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 import no.ntnu.kpro.core.utilities.EnumHelper;
 import no.ntnu.kpro.core.utilities.FileHelper;
-import no.ntnu.no.app.validators.SendMessageValidator;
+import no.ntnu.kpro.app.validators.SendMessageValidator;
 
 /**
  *

@@ -60,10 +60,10 @@ public class UserManagerTest {
         assertTrue(true);
     }
     
-    @Test
-    public void auth() {
-        m.createUser(u);
-        Boolean u2 = m.authorize(u);
-        assertEquals(u2, Boolean.TRUE);  
-    }
+//    @Test
+//    public void auth() {
+//        m.createUser(u);
+//        Boolean u2 = m.authorize(u);
+//        assertEquals(u2, Boolean.TRUE);  
+//    }
 }
