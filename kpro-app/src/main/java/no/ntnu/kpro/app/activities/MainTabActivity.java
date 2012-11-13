@@ -4,25 +4,20 @@
  */
 package no.ntnu.kpro.app.activities;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TabWidget;
-import android.widget.TextView;
-import android.widget.Toast;
 import no.ntnu.kpro.app.R;
-import no.ntnu.kpro.core.model.ModelProxy.IXOMessage;
 import no.ntnu.kpro.core.model.XOMessage;
-import no.ntnu.kpro.core.model.XOMessagePriority;
 import no.ntnu.kpro.core.service.ServiceProvider;
 import no.ntnu.kpro.core.service.interfaces.NetworkService;
 
@@ -151,6 +146,7 @@ public class MainTabActivity extends WrapperActivity implements TabHost.OnTabCha
             this.mailReceived(currentMessage);
         }
         XOMessage toBeSent = in.getParcelableExtra("messageSend");
+        in.putExtra("messageSend", (Parcelable)null);
         if (toBeSent != null){
             messageToBeSendt = toBeSent;
         }
@@ -169,6 +165,7 @@ public class MainTabActivity extends WrapperActivity implements TabHost.OnTabCha
         if (messageToBeSendt != null){
             sp.getNetworkService().send(messageToBeSendt);
             messageToBeSendt = null;
+            System.out.println("MessageToBeSendt set to null");
         }
     }
 
