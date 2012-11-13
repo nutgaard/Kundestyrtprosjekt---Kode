@@ -168,6 +168,7 @@ public class MainTabActivity extends WrapperActivity implements TabHost.OnTabCha
         super.onServiceConnected(sp);
         if (messageToBeSendt != null){
             sp.getNetworkService().send(messageToBeSendt);
+            messageToBeSendt = null;
         }
     }
 
