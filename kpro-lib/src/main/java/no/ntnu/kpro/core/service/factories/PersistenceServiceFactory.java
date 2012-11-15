@@ -9,7 +9,7 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import no.ntnu.kpro.core.model.User;
-import no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWriteThroughStorage.FileCryptoFactory;
+import no.ntnu.kpro.core.service.implementation.SecurityService.FileCryptoFactory;
 import no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWriteThroughStorage.PersistentWriteThroughStorage;
 import no.ntnu.kpro.core.service.interfaces.PersistenceService;
 

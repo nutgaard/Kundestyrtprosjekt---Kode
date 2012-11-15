@@ -27,8 +27,12 @@ public class ModelProxy {
         public void setName(String name);
 
         public String getName();
-
+        
         public String getPassword();
+
+        public String getHash();
+        
+        public String getPBK();
 
         public boolean authorize(IUser u);
     }

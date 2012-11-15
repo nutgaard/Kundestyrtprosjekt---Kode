@@ -5,10 +5,14 @@
 package no.ntnu.kpro.core.model;
 
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
+import java.security.Key;
+
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.spec.KeySpec;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import no.ntnu.kpro.core.model.ModelProxy.IUser;
 
 /**
@@ -21,6 +25,8 @@ public class User implements IUser {
     @XStreamOmitField
     private String password;
     private String hash;
+    @XStreamOmitField
+    private String pbk;
 
     public User() {
     }
@@ -29,10 +35,18 @@ public class User implements IUser {
         try {
             this.name = name;
             this.password = password;
+            if (password == null || password.equals("")) {
+                throw new RuntimeException("Password cannot be null or an empty string");
+            }
             MessageDigest m = MessageDigest.getInstance("SHA-256");
             byte[] passB = password.getBytes();
             hash = new String(m.digest(passB));
-        } catch (NoSuchAlgorithmException ex) {
+            
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            KeySpec keyspec = new PBEKeySpec(password.toCharArray(), name.getBytes(), 1000, 128);
+            Key key = factory.generateSecret(keyspec);
+            this.pbk = new String(key.getEncoded());
+        } catch (Exception ex) {
             Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -44,9 +58,16 @@ public class User implements IUser {
     public void setName(String name) {
         this.name = name;
     }
-
+    
     public String getPassword() {
-        return password;
+        return this.password;
+    }
+
+    public String getHash() {
+        return hash;
+    }
+    public String getPBK() {
+        return pbk;
     }
 
     public void setPassword(String password) {
@@ -54,6 +75,6 @@ public class User implements IUser {
     }
 
     public boolean authorize(IUser u) {
-        return this.name.equals(u.getName())&&this.password.equals(u.getPassword());
+        return this.name.equals(u.getName())&&this.hash.equals(u.getHash());
     }
 }

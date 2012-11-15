@@ -38,6 +38,8 @@ public class PersistentWriteThroughStorage extends PersistenceService {
         this.user = user;
         this.postProcessor = postProcessor;
         this.xstream = new XStream();
+        this.xstream.omitField(User.class, "password");
+        this.xstream.omitField(User.class, "pbk");
         xstream.addImplicitCollection(HashMap.class, "classes");
         if (!baseDir.exists()) {
             baseDir.mkdirs();

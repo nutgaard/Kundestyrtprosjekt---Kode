@@ -4,6 +4,7 @@
  */
 package no.ntnu.kpro.core.service.implementation.PersistenceService.PersistentWriteThroughStorage;
 
+import no.ntnu.kpro.core.service.implementation.SecurityService.FileCryptoFactory;
 import java.io.File;
 import java.io.FileReader;
 import java.math.BigInteger;
