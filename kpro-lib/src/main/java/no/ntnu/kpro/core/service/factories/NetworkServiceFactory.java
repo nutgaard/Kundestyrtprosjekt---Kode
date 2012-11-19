@@ -64,14 +64,5 @@ public class NetworkServiceFactory {
                 System.out.println("MailreceivedError");
             }
         });
-//        List<Uri> a = new LinkedList<Uri>();
-//        a.add(Uri.parse(null));
-//        XOMessage m = new XOMessage("kprothales@gmail.com", "kprothales@gmail.com", "Sending with attachment", "Look at the attachments, should contain pom.xml", XOMessageSecurityLabel.UGRADERT, XOMessagePriority.FLASH, XOMessageType.DRILL, new Date(), new LinkedList<Uri>());
-//        m.addAttachment(a);
-//        try {
-//            ns.send(m);
-//        } catch (Exception ex) {
-//            Logger.getLogger(NetworkServiceFactory.class.getName()).log(Level.SEVERE, null, ex);
-//        }
     }
 }
